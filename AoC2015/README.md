@@ -1,5 +1,5 @@
 # Advent of Code 2015
-My solutions to the [2015 Advent of Code](https://adventofcode.com/2015) questions. 
+My solutions to the [2015 Advent of Code](https://adventofcode.com/2015) puzzle questions. 
 
 ## Language of Choice
 - C++
