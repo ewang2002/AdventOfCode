@@ -132,52 +132,26 @@ impl AoCProblem<usize, usize> for Day05 {
                 || pts.y1 == pts.y2
                 || (pts.y1 - pts.y2).abs() == (pts.x1 - pts.x2).abs())
             .for_each(|pts| {
+                let mut dx = if pts.x2 > pts.x1 {1} else {-1};
+                let mut dy = if pts.y2 > pts.y1 {1} else {-1};
+
                 if pts.x1 == pts.x2 {
-                    let min_y = min(pts.y1, pts.y2);
-                    let max_y = max(pts.y1, pts.y2);
-                    for y_val in min_y..=max_y {
-                        let entry = map.entry((pts.x1, y_val)).or_insert(0);
-                        *entry += 1;
-                    }
-
-                    return;
-                } else if pts.y1 == pts.y2 {
-                    let min_x = min(pts.x1, pts.x2);
-                    let max_x = max(pts.x1, pts.x2);
-                    for x_val in min_x..=max_x {
-                        let entry = map.entry((x_val, pts.y1)).or_insert(0);
-                        *entry += 1;
-                    }
-
-                    return;
+                    dx = 0;
                 }
 
-                // Bottom left to top right
-                if (pts.x1 > pts.x2 && pts.y1 > pts.y2) || (pts.x1 < pts.x2 && pts.y1 < pts.y2) {
-                    let min_x = min(pts.x1, pts.x2);
-                    let max_x = max(pts.x1, pts.x2);
-                    let min_y = min(pts.y1, pts.y2);
-                    let max_y = max(pts.y1, pts.y2);
-
-                    for (x, y) in (min_x..=max_x).zip(min_y..=max_y) {
-                        let entry = map.entry((x, y)).or_insert(0);
-                        *entry += 1;
-                    }
-
-                    return;
+                if pts.y1 == pts.y2 {
+                    dy = 0;
                 }
 
-                // Top left to bottom right
-                // Rust seems to hate it when you try to mix two different iterator types
-                // Even if both are exactly the same, just in reverse
-                let top_left_bot_rt_it = if pts.x1 > pts.x2 && pts.y1 < pts.y2 {
-                    (pts.x2..=pts.x1).zip((pts.y1..=pts.y2).rev())
-                } else {
-                    (pts.x1..=pts.x2).zip((pts.y2..=pts.y1).rev())
-                };
+                let mut curr_x = pts.x1;
+                let mut curr_y = pts.y1;
+                let entry = map.entry((curr_x, curr_y)).or_insert(0);
+                *entry += 1;
 
-                for (x, y) in top_left_bot_rt_it {
-                    let entry = map.entry((x, y)).or_insert(0);
+                while curr_x != pts.x2 || curr_y != pts.y2 {
+                    curr_x += dx;
+                    curr_y += dy;
+                    let entry = map.entry((curr_x, curr_y)).or_insert(0);
                     *entry += 1;
                 }
             });
