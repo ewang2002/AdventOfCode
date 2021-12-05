@@ -6,7 +6,7 @@ pub struct Day05 {
     points: Vec<ToFromPoint>,
 }
 
-impl AoCProblem<usize, i32> for Day05 {
+impl AoCProblem<usize, usize> for Day05 {
     fn prepare(input: Vec<String>) -> Self {
         return Day05 {
             points: input.iter()
@@ -14,7 +14,7 @@ impl AoCProblem<usize, i32> for Day05 {
                     let pts = x.replace(" -> ", ",")
                         .split(",")
                         .map(|y| y.parse::<i32>().unwrap()).collect::<Vec<_>>();
-                    return ToFromPoint::new(pts[0], pts[1], pts[2], pts[3]);
+                    return ToFromPoint {x1: pts[0], y1: pts[1], x2: pts[2], y2: pts[3]};
                 }).collect::<Vec<_>>()
         };
     }
@@ -75,7 +75,6 @@ impl AoCProblem<usize, i32> for Day05 {
         self.points.iter()
             .filter(|pts| pts.x1 == pts.x2 || pts.y1 == pts.y2)
             .for_each(|pts| {
-                // go through all y
                 if pts.x1 == pts.x2 {
                     let min_y = min(pts.y1, pts.y2);
                     let max_y = max(pts.y1, pts.y2);
@@ -98,8 +97,92 @@ impl AoCProblem<usize, i32> for Day05 {
         return map.values().filter(|x| x >= &&2).count();
     }
 
-    fn part2(&self) -> i32 {
-        return 0;
+    // --- Part Two ---
+    // Unfortunately, considering only horizontal and vertical lines doesn't give you the full
+    // picture; you need to also consider diagonal lines.
+    //
+    // Because of the limits of the hydrothermal vent mapping system, the lines in your list will
+    // only ever be horizontal, vertical, or a diagonal line at exactly 45 degrees. In other words:
+    //
+    // An entry like 1,1 -> 3,3 covers points 1,1, 2,2, and 3,3.
+    // An entry like 9,7 -> 7,9 covers points 9,7, 8,8, and 7,9.
+    //
+    // Considering all lines from the above example would now produce the following diagram:
+    //
+    //  1.1....11.
+    //  .111...2..
+    //  ..2.1.111.
+    //  ...1.2.2..
+    //  .112313211
+    //  ...1.2....
+    //  ..1...1...
+    //  .1.....1..
+    //  1.......1.
+    //  222111....
+    //
+    // You still need to determine the number of points where at least two lines overlap. In the
+    // above example, this is still anywhere in the diagram with a 2 or larger - now a total of 12
+    // points.
+    //
+    // Consider all of the lines. At how many points do at least two lines overlap?
+    fn part2(&self) -> usize {
+        let mut map: HashMap<(i32, i32), i32> = HashMap::new();
+        self.points.iter()
+            .filter(|pts| pts.x1 == pts.x2
+                || pts.y1 == pts.y2
+                || (pts.y1 - pts.y2).abs() == (pts.x1 - pts.x2).abs())
+            .for_each(|pts| {
+                if pts.x1 == pts.x2 {
+                    let min_y = min(pts.y1, pts.y2);
+                    let max_y = max(pts.y1, pts.y2);
+                    for y_val in min_y..=max_y {
+                        let entry = map.entry((pts.x1, y_val)).or_insert(0);
+                        *entry += 1;
+                    }
+
+                    return;
+                } else if pts.y1 == pts.y2 {
+                    let min_x = min(pts.x1, pts.x2);
+                    let max_x = max(pts.x1, pts.x2);
+                    for x_val in min_x..=max_x {
+                        let entry = map.entry((x_val, pts.y1)).or_insert(0);
+                        *entry += 1;
+                    }
+
+                    return;
+                }
+
+                // Bottom left to top right
+                if (pts.x1 > pts.x2 && pts.y1 > pts.y2) || (pts.x1 < pts.x2 && pts.y1 < pts.y2) {
+                    let min_x = min(pts.x1, pts.x2);
+                    let max_x = max(pts.x1, pts.x2);
+                    let min_y = min(pts.y1, pts.y2);
+                    let max_y = max(pts.y1, pts.y2);
+
+                    for (x, y) in (min_x..=max_x).zip(min_y..=max_y) {
+                        let entry = map.entry((x, y)).or_insert(0);
+                        *entry += 1;
+                    }
+
+                    return;
+                }
+
+                // Top left to bottom right
+                // Rust seems to hate it when you try to mix two different iterator types
+                // Even if both are exactly the same, just in reverse
+                let top_left_bot_rt_it = if pts.x1 > pts.x2 && pts.y1 < pts.y2 {
+                    (pts.x2..=pts.x1).zip((pts.y1..=pts.y2).rev())
+                } else {
+                    (pts.x1..=pts.x2).zip((pts.y2..=pts.y1).rev())
+                };
+
+                for (x, y) in top_left_bot_rt_it {
+                    let entry = map.entry((x, y)).or_insert(0);
+                    *entry += 1;
+                }
+            });
+
+        return map.values().filter(|x| x >= &&2).count();
     }
 }
 
@@ -108,10 +191,4 @@ struct ToFromPoint {
     y1: i32,
     x2: i32,
     y2: i32,
-}
-
-impl ToFromPoint {
-    pub fn new(x1: i32, y1: i32, x2: i32, y2: i32) -> Self {
-        return ToFromPoint { x1, y1, x2, y2 };
-    }
 }
