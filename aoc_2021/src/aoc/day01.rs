@@ -133,32 +133,3 @@ impl AoCProblem<usize, usize> for Day01 {
             .count();
     }
 }
-
-// Original Solutions
-//
-// fn part1(&self) -> usize {
-//     let mut num_increasing = 0;
-//     for i in 1..self.nums.len() {
-//         if self.nums[i - 1] < self.nums[i] {
-//             num_increasing += 1;
-//         }
-//     }
-//
-//     return num_increasing;
-// }
-//
-//
-// fn part2(&self) -> usize {
-//     let groups = self.nums.windows(3)
-//         .into_iter()
-//         .map(|x| x.iter().sum::<i32>())
-//         .collect::<Vec<_>>();
-//     let mut num_increasing = 0;
-//     for i in 1..groups.len() {
-//         if groups[i - 1] < groups[i] {
-//             num_increasing += 1;
-//         }
-//     }
-//
-//     return num_increasing;
-// }

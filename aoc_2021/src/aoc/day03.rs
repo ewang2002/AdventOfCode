@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use crate::aoc::aoc_problem::AoCProblem;
-use crate::helpers::vec::transpose;
+use crate::helpers::vec_arr::transpose_vec;
 
 pub struct Day03 {
     input: Vec<String>,
@@ -59,7 +59,7 @@ impl AoCProblem<u32, u32> for Day03 {
     // rate, then multiply them together. What is the power consumption of the submarine? (Be sure
     // to represent your answer in decimal, not binary.)
     fn part1(&self) -> u32 {
-        let binary_str_vec = transpose(&self.input.iter()
+        let binary_str_vec = transpose_vec(&self.input.iter()
             .map(|x| x.chars().collect::<Vec<_>>())
             .collect::<Vec<_>>());
 

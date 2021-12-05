@@ -1,2 +1,2 @@
 pub mod io;
-pub mod vec;
+pub mod vec_arr;

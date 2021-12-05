@@ -1,16 +1,16 @@
 use std::time::Instant;
 use helpers::io;
 use aoc::aoc_problem::AoCProblem;
-use crate::aoc::day03::Day03;
+use crate::aoc::day04::Day04;
 
 mod aoc;
 mod helpers;
 
 fn main() {
-    let input_file = io::file_read_all_lines("input/day03.txt");
+    let input_file = io::file_read_all_lines("input/day04.txt");
 
     // Prepare to solve
-    let solver = Day03::prepare(input_file);
+    let solver = Day04::prepare(input_file);
 
     // Execution begins
     let start = Instant::now();
