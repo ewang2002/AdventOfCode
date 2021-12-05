@@ -181,6 +181,11 @@ struct BoardElement {
     selected: bool,
 }
 
+/// Selects one or more element(s) that is equal to the target.
+///
+/// # Parameters
+/// - `board`: The board.
+/// - `target`: The target value.
 fn apply_num_to_board(board: &mut Board, target: i32) -> () {
     for i in 0..5 {
         for j in 0..5 {
@@ -191,6 +196,13 @@ fn apply_num_to_board(board: &mut Board, target: i32) -> () {
     }
 }
 
+/// Gets the sum of all unselected values in the board.
+///
+/// # Parameters
+/// - `board`: The board.
+///
+/// # Returns
+/// The sum of all unselected elements.
 fn get_sum_of_unselected(board: &Board) -> i32 {
     board.iter()
         .flat_map(|x| x)
@@ -199,7 +211,14 @@ fn get_sum_of_unselected(board: &Board) -> i32 {
         .sum::<i32>()
 }
 
-
+/// Checks if the board is in a state such that a row or column has all been selected.
+///
+/// # Parameters
+/// - `board`: The board.
+///
+/// # Returns
+/// Whether the board is considered to be "won" (i.e. there exists a row or column such that all
+/// elements are selected).
 fn check_win(board: &Board) -> bool {
     // Check rows
     let row_check = board
