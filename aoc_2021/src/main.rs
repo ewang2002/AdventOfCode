@@ -1,25 +1,25 @@
 use std::time::Instant;
 use helpers::io;
 use aoc::aoc_problem::AoCProblem;
-use crate::aoc::day05::Day05;
+use crate::aoc::day06::Day06;
 
 mod aoc;
 mod helpers;
 
 fn main() {
-    let input_file = io::file_read_all_lines("input/day05.txt");
+    let input_file = io::file_read_all_lines("input/day06.txt");
 
     // Prepare to solve
-    let solver = Day05::prepare(input_file);
+    let solver = Day06::prepare(input_file);
 
     // Execution begins
-    let start = Instant::now();
-
     // Part 1
+    let mut start = Instant::now();
     println!("Part 1 Solution: {}", solver.part1());
     let part1_time = start.elapsed();
 
     // Part 2
+    start = Instant::now();
     println!("Part 2 Solution: {}", solver.part2());
     let part2_time = start.elapsed();
 
