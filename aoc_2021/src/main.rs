@@ -1,31 +1,44 @@
 use std::time::Instant;
 use helpers::io;
 use aoc::aoc_problem::AoCProblem;
-use crate::aoc::day06::Day06;
+use crate::aoc::day07::Day07;
 
 mod aoc;
 mod helpers;
 
 fn main() {
-    let input_file = io::file_read_all_lines("input/day06.txt");
+    let input_file = io::file_read_all_lines("input/day07.txt");
 
     // Prepare to solve
-    let solver = Day06::prepare(input_file);
+    let mut start = Instant::now();
+    let solver = Day07::prepare(input_file);
+    let in_t = start.elapsed();
 
     // Execution begins
     // Part 1
-    let mut start = Instant::now();
+    start = Instant::now();
     println!("Part 1 Solution: {}", solver.part1());
-    let part1_time = start.elapsed();
+    let p1_t = start.elapsed();
 
     // Part 2
     start = Instant::now();
     println!("Part 2 Solution: {}", solver.part2());
-    let part2_time = start.elapsed();
+    let p2_t = start.elapsed();
 
     // Execution ends
     println!();
-    println!("Part 1 Time : \t{} ms.", part1_time.as_millis());
-    println!("Part 2 Time : \t{} ms.", part2_time.as_millis());
-    println!("Total Time  : \t{} ms.", (part1_time + part2_time).as_millis());
+    println!("Input Parse : \t{} ms.\tor\t{} μs.", in_t.as_millis(), in_t.as_micros());
+    println!("Part 1 Time : \t{} ms.\tor\t{} μs.", p1_t.as_millis(), p1_t.as_micros());
+    println!("Part 2 Time : \t{} ms.\tor\t{} μs.", p2_t.as_millis(), p2_t.as_micros());
+    println!();
+    println!(
+        "P1 + P2     : \t{} ms.\tor\t{} μs.",
+        (p1_t + p2_t).as_millis(),
+        (p1_t + p2_t).as_micros()
+    );
+    println!(
+        "P + P1 + P2 : \t{} ms.\tor\t{} μs.",
+        (in_t + p1_t + p2_t).as_millis(),
+        (in_t + p1_t + p2_t).as_micros()
+    );
 }
