@@ -48,15 +48,6 @@ impl AoCProblem<usize, i32> for Day08 {
             }
         };
 
-        let pos_finder = |v: &Vec<&String>, against: &HashSet<char>, target_len: usize| -> usize {
-            v.iter()
-                .position(|x| x.chars()
-                    .collect::<HashSet<_>>()
-                    .intersection(against)
-                    .count() == target_len
-                ).unwrap()
-        };
-
         let mut final_sum = 0;
         for entry in &self.pattern_res {
             // 1, 4, 7, 8 each have a unique number of segments
@@ -87,64 +78,89 @@ impl AoCProblem<usize, i32> for Day08 {
             temp_segments.insert(4, base[2].chars().collect::<_>());
             temp_segments.insert(8, base[3].chars().collect::<_>());
 
-            // Now that we've added the baseline maps, we need to construct the other numbers
-            // Start with either 6, 9, 0
-            let mut second_longest = entry.signal_pattern.iter()
-                .filter(|x| x.len() == 6)
-                .collect::<Vec<_>>();
+            // Borrow checker really making me do this
+            let one_set: HashSet<char> = base[0].chars().collect();
+            let seven_set: HashSet<char> = base[1].chars().collect();
+            let four_set: HashSet<char> = base[2].chars().collect();
+            let eight_set: HashSet<char> = base[3].chars().collect();
 
-            // The intersection of chars representing [9] and 4 (which we know) will give us a char
-            // vector of length 4. Use this to find what 9 is.
-            let nine_idx = pos_finder(
-                &second_longest,
-                temp_segments.get(&4).unwrap(),
-                4
-            );
+            // The idea is that, given an initial number (1, 4, 7, 8) and an unknown number, we can
+            // compare the number of overlapping segments and use that to figure out which numbers
+            // we're working with.
+            //
+            // For example, if we wrote out the segments for 1, 4, 7, 8, we know that the number
+            // 2 would overlap 1's segments 1 time; 2 would overlap 4's segments 2 times; 2 would
+            // overlap 7's segments 2 times; and 2 would overlap 8's segments 5 times.
+            //
+            // By repeatedly applying this to every unknown number, we get the following table:
+            //
+            //  ∩ | 1   4   7   8
+            //  ------------------
+            //  2 | 1   2   2   5
+            //  3 | 2   3   3   5
+            //  5 | 1   3   2   5
+            //  6 | 1   3   2   6
+            //  9 | 2   4   3   6
+            //  0 | 2   3   3   6
+            //
+            // For example, if we take the row with value 5, this table says that:
+            // - 5's segments "intersect" with 1's segments 1 time.
+            // - 5's segments "intersect" with 4's segments 3 time.
+            // - 5's segments "intersect" with 7's segments 2 time.
+            // - 5's segments "intersect" with 8's segments 5 time.
+            //
+            // By intersection, consider this 5:
+            //
+            //  dddd
+            // e
+            // e
+            //  ffff
+            //      b
+            //      b
+            //  cccc
+            //
+            // And consider this 4:
+            //
+            // e    a
+            // e    a
+            //  ffff
+            //      b
+            //      b
+            //
+            // If we were to take the "intersection" of the segments represented by these two
+            // numbers, we would get:
+            //
+            // e
+            // e
+            //  ffff
+            //      b
+            //      b
+            //
+            // Which means that there are 3 segments in the intersection (or, another way of
+            // putting it is there are 3 segments between the two numbers that overlap).
 
-            temp_segments.insert(9, second_longest[nine_idx].chars().collect::<_>());
-            second_longest.remove(nine_idx);
 
-            // The intersection of chars representing [0] and 1 (which we know) will give us a char
-            // vector of length 2. Use this to find what 0 is
-            let zero_idx = pos_finder(
-                &second_longest,
-                temp_segments.get(&1).unwrap(),
-                2
-            );
+            for sig in &entry.signal_pattern {
+                let set: HashSet<_> = sig.chars().collect();
+                let tuple = (
+                    set.intersection(&one_set).count(),
+                    set.intersection(&four_set).count(),
+                    set.intersection(&seven_set).count(),
+                    set.intersection(&eight_set).count()
+                );
 
-            temp_segments.insert(0, second_longest[zero_idx].chars().collect::<_>());
-            second_longest.remove(zero_idx);
-
-            // The last element must be 6, then.
-            temp_segments.insert(6, second_longest[0].chars().collect::<_>());
-
-            // Last thing we need to do is find 5, 2, 3.
-            let mut shortest = entry.signal_pattern.iter()
-                .filter(|x| x.len() == 5)
-                .collect::<Vec<_>>();
-
-            // The intersection of chars representing [3] and 1 (which we know) will give us a char
-            // vector of length 2. Use this to find what 3 is.
-            let three_idx = pos_finder(
-                &shortest,
-                temp_segments.get(&1).unwrap(),
-                2
-            );
-            temp_segments.insert(3, shortest[three_idx].chars().collect::<_>());
-            shortest.remove(three_idx);
-
-            // The intersection of chars representing [5] and 4 (which we know) will give us a char
-            // vector of length 3. Use this to find what 5 is.
-            let five_idx = pos_finder(
-                &shortest,
-                temp_segments.get(&4).unwrap(),
-                3
-            );
-            temp_segments.insert(5, shortest[five_idx].chars().collect::<_>());
-            shortest.remove(five_idx);
-
-            // Which means the last number to be found is 2
-            temp_segments.insert(2, shortest[0].chars().collect::<_>());
+                match tuple {
+                    (1, 2, 2, 5) => temp_segments.insert(2, set),
+                    (2, 3, 3, 5) => temp_segments.insert(3, set),
+                    (1, 3, 2, 5) => temp_segments.insert(5, set),
+                    (1, 3, 2, 6) => temp_segments.insert(6, set),
+                    (2, 4, 3, 6) => temp_segments.insert(9, set),
+                    (2, 3, 3, 6) => temp_segments.insert(0, set),
+                    // Ignore initial values
+                    (_, _, _, 2) | (_, _, _, 4) | (_, _, _, 3) | (_, _, _, 7) => continue,
+                    _ => panic!("Error: {:?}", tuple)
+                };
+            }
 
             // Map each number's character vec ID to the number
             let mut segment_map: HashMap<i32, i32> = HashMap::new();
