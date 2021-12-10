@@ -103,28 +103,23 @@ fn compute_low_points(height_map: &Vec<Vec<u32>>) -> Vec<(u32, (usize, usize))> 
         for col in 0..max_cols {
             let target = height_map[row][col];
 
-            let mut neighbors: Vec<u32> = vec![];
             // Check up
-            if row > 0 {
-                neighbors.push(height_map[row - 1][col]);
+            if row > 0 && target >= height_map[row - 1][col] {
+                continue;
             }
 
             // Check down
-            if row < max_rows - 1 {
-                neighbors.push(height_map[row + 1][col]);
+            if row < max_rows - 1 && target >= height_map[row + 1][col] {
+                continue;
             }
 
             // Check left
-            if col > 0 {
-                neighbors.push(height_map[row][col - 1]);
+            if col > 0 && target >= height_map[row][col - 1]{
+                continue;
             }
 
             // Check right
-            if col < max_cols - 1 {
-                neighbors.push(height_map[row][col + 1]);
-            }
-
-            if target >= *neighbors.iter().min().unwrap() {
+            if col < max_cols - 1 && target >= height_map[row][col + 1] {
                 continue;
             }
 
