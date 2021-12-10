@@ -97,14 +97,15 @@ impl Day10 {
             }
 
             let mut score: usize = 0;
-            for c in stack.iter().rev() {
+            while !stack.is_empty() {
                 score *= 5;
-                match *c {
+                let c = stack.pop().unwrap();
+                match c {
                     '(' => score += 1,
                     '[' => score += 2,
                     '{' => score += 3,
                     '<' => score += 4,
-                    _ => panic!("Invalid symbol: {}", *c)
+                    _ => panic!("Invalid symbol: {}", c)
                 };
             }
 
