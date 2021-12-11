@@ -13,19 +13,17 @@ const COORD_DIFF: [(i32, i32); 8] = [
 ];
 
 pub struct Day11 {
-    energy_levels: Vec<Vec<i32>>
+    energy_levels: Vec<Vec<i32>>,
 }
 
 // https://adventofcode.com/2021/day/11
 impl AoCProblem<u32, u32> for Day11 {
     fn prepare(input: Vec<String>) -> Self {
-        return Day11 {
-            energy_levels: input.iter()
-                .map(|x| x.split("")
-                    .filter(|y| !y.is_empty())
-                    .map(|y| y.parse::<_>().unwrap()).collect())
-                .collect::<_>()
-        };
+        Day11 {
+            energy_levels: input.iter().map(|x| x.split("")
+                .filter(|y| !y.is_empty())
+                .map(|y| y.parse().unwrap()).collect()).collect()
+        }
     }
 
     fn part1(&self) -> u32 {
@@ -64,6 +62,18 @@ impl AoCProblem<u32, u32> for Day11 {
     }
 }
 
+/// Increments the current energy level at the specified `(row, col)` coordinate. This will account
+/// for a flash that may occur at this coordinate and, if there is one, any potential flashes in
+/// other coordinates nearby as well.
+///
+/// # Parameters
+/// - `energy_levels`: The energy levels.
+/// - `row`: The current row.
+/// - `col`: The current columns.
+/// - `flashed_pts`: The points that have already flashed.
+///
+/// # Returns
+/// The number of flashes that have occurred at this point `(row, col)`.
 fn iterate_energy_level(energy_levels: &mut Vec<Vec<i32>>, row: usize, col: usize,
                         flashed_pts: &mut HashSet<(usize, usize)>) -> u32 {
     let this_pt = (row, col);
@@ -84,8 +94,7 @@ fn iterate_energy_level(energy_levels: &mut Vec<Vec<i32>>, row: usize, col: usiz
         let c_row = (row as i32) + dx;
         let c_col = (col as i32) + dy;
 
-        if c_row < 0
-            || c_col < 0
+        if c_row < 0 || c_col < 0
             || c_row >= energy_levels.len() as i32
             || c_col >= energy_levels[0].len() as i32 {
             continue;
@@ -95,10 +104,9 @@ fn iterate_energy_level(energy_levels: &mut Vec<Vec<i32>>, row: usize, col: usiz
             energy_levels,
             c_row as usize,
             c_col as usize,
-            flashed_pts
+            flashed_pts,
         );
     }
-
 
     return flashes;
 }
