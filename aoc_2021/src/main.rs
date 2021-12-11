@@ -1,5 +1,3 @@
-#![allow(unused_mut, unused_imports)]
-
 use std::time::Instant;
 use helpers::io;
 use crate::aoc::AoCProblem;
@@ -30,6 +28,7 @@ fn main() {
     let mut start = Instant::now();
 
     // Change this to the correct day!
+    #[allow(unused_mut)]
     let mut solver = prepare_day!(Day11);
     let in_t = start.elapsed();
 

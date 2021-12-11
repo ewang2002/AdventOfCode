@@ -1,4 +1,4 @@
-use std::collections::{BinaryHeap, HashSet};
+use std::collections::{HashSet};
 use crate::aoc::aoc_problem::AoCProblem;
 
 const COORD_DIFF: [(i32, i32); 8] = [
