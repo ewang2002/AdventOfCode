@@ -2,7 +2,7 @@
 
 use std::time::Instant;
 use helpers::io;
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::AoCProblem;
 
 mod aoc;
 mod helpers;
@@ -17,7 +17,6 @@ mod helpers;
 /// - The solutions for Day 10, use `10`: `prepare_day!(Day10);`
 macro_rules! prepare_day {
     ($day: ident) => {{
-        #[allow(unused_imports)]
         use crate::aoc::*;
         let input_file = io::file_read_all_lines(
             format!("input/{}.txt", stringify!($day).to_lowercase()).as_str()
@@ -31,7 +30,7 @@ fn main() {
     let mut start = Instant::now();
 
     // Change this to the correct day!
-    let mut solver = prepare_day!(Day10);
+    let mut solver = prepare_day!(Day11);
     let in_t = start.elapsed();
 
     // Execution begins
