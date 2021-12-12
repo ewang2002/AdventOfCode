@@ -69,7 +69,7 @@ impl<'a> AoCProblem<usize, usize> for Day12 {
                 return true;
             }
 
-            self.all_small_cave_idx.iter().map(|x| explored[*x]).filter(|x| x >= &2).count() > 1
+            self.all_small_cave_idx.iter().filter(|x| explored[**x] >= 2).count() > 1
         });
     }
 }
@@ -140,12 +140,7 @@ fn number_of_paths<F>(all_nodes: &HashMap<String, Node>, curr_node: &Node,
 
         let mut cloned_explored = explored.clone();
         cloned_explored[this_neighbor_node.id] += 1;
-        num_paths += number_of_paths(
-            all_nodes,
-            this_neighbor_node,
-            cloned_explored,
-            checker,
-        );
+        num_paths += number_of_paths(all_nodes, this_neighbor_node, cloned_explored, checker);
     }
 
     return num_paths;
