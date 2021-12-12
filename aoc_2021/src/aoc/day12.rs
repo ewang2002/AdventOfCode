@@ -3,6 +3,8 @@ use crate::aoc::aoc_problem::AoCProblem;
 
 pub struct Day12 {
     all_nodes: HashMap<String, Node>,
+    start_idx: usize,
+    all_small_cave_idx: Vec<usize>,
 }
 
 // https://adventofcode.com/2021/day/12
@@ -25,47 +27,56 @@ impl<'a> AoCProblem<usize, usize> for Day12 {
             t.add_neighbor(&from);
         }
 
-        return Day12 { all_nodes };
+        let mut id = 0;
+        let mut all_lowercase_idx: Vec<usize> = vec![];
+        for (_, node) in &mut all_nodes {
+            node.id = id;
+            if node.is_small_cave() {
+                all_lowercase_idx.push(node.id);
+            }
+
+            id += 1;
+        }
+
+        return Day12 {
+            start_idx: all_nodes.iter().position(|x| x.0 == "start").unwrap(),
+            all_nodes,
+            all_small_cave_idx: all_lowercase_idx,
+        };
     }
 
     fn part1(&self) -> usize {
-        let initial_explored = HashMap::from([
-            ("start", 1)
-        ]);
+        let mut initial_explored: Vec<usize> = vec![0; self.all_nodes.len()];
+        initial_explored[self.start_idx] += 1;
         let start_node = self.all_nodes.get("start").unwrap();
+
         return number_of_paths(&self.all_nodes, start_node, initial_explored, &|node, explored| {
-            node.is_small_cave() && explored.get(node.name.as_str()).is_some()
+            node.is_small_cave() && explored[node.id] > 0
         });
     }
 
     fn part2(&self) -> usize {
-        let initial_explored = HashMap::from([
-            ("start", 1)
-        ]);
+        let mut initial_explored: Vec<usize> = vec![0; self.all_nodes.len()];
+        initial_explored[self.start_idx] += 1;
         let start_node = self.all_nodes.get("start").unwrap();
+
         return number_of_paths(&self.all_nodes, start_node, initial_explored, &|node, explored| {
             if !node.is_small_cave() {
                 return false;
             }
 
-            match explored.get(&*node.name) {
-                Some(n) => {
-                    if n + 1 > 2 {
-                        return true;
-                    }
-                }
-                None => {}
-            };
+            if explored[node.id] + 1 > 2 {
+                return true;
+            }
 
-            explored.iter()
-                .filter(|x| (*x).0 != &"start" && (*x).0.chars().all(|y| y.is_lowercase()))
-                .filter(|x| x.1 >= &2).count() > 1
+            self.all_small_cave_idx.iter().map(|x| explored[*x]).filter(|x| x >= &2).count() > 1
         });
     }
 }
 
 pub struct Node {
-    pub name: String,
+    name: String,
+    id: usize,
     neighbors: Vec<String>,
 }
 
@@ -78,6 +89,7 @@ impl Node {
         Self {
             name: name.clone(),
             neighbors: Vec::new(),
+            id: usize::MAX,
         }
     }
 
@@ -103,14 +115,14 @@ impl Node {
 /// # Parameters
 /// - `all_nodes`: All possible nodes.
 /// - `curr_node`: The current nodes.
-/// - `explored`: All explored nodes, along with the number of times that node has been explored.
+/// - `explored`: The number of times each node (indexed by ID) has been explored.
 /// - `checker`: The function that determines whether this is a valid path.
 ///
 /// # Returns
 /// The number of paths possible.
 fn number_of_paths<F>(all_nodes: &HashMap<String, Node>, curr_node: &Node,
-                      explored: HashMap<&str, usize>, checker: &F) -> usize
-    where F: Fn(&Node, &HashMap<&str, usize>) -> bool {
+                      explored: Vec<usize>, checker: &F) -> usize
+    where F: Fn(&Node, &Vec<usize>) -> bool {
     if curr_node.name == "end" {
         return 1;
     }
@@ -127,8 +139,7 @@ fn number_of_paths<F>(all_nodes: &HashMap<String, Node>, curr_node: &Node,
         }
 
         let mut cloned_explored = explored.clone();
-        *cloned_explored.entry(neighbor).or_insert(0) += 1;
-
+        cloned_explored[this_neighbor_node.id] += 1;
         num_paths += number_of_paths(
             all_nodes,
             this_neighbor_node,
