@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 /// Transposes a vector of vectors of a copyable type.
 ///
 /// # Parameters
