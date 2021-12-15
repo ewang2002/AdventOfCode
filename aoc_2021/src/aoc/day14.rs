@@ -1,14 +1,77 @@
 use std::collections::{HashMap};
 use crate::aoc::aoc_problem::AoCProblem;
 
+// The plan that I chose to use is as follows:
+// - Consider the following polymer:
+//          NCNBCHB
+// - [W] First, we note that the last character of this polymer is 'B'. No matter how many times we
+// want to strengthen the polymer, we will have the same last character. This can be generalized to
+// any polymer.
+//
+// - [X] We can break this polymer up into pairs, like so:
+//          ['NC', 'CN', 'NB', 'BC', 'CH', 'HB']
+//
+// - This can be mapped into a map like so:
+//          NC => 1
+//          CN => 1
+//          NB => 1
+//          BC => 1
+//          CH => 1
+//          HB => 1
+// Where the key is the pair and the value is the number of occurrences of that pair.
+//
+// - Assuming that these are put in random order (since hashing doesn't guarantee order). Then, we
+// can map the pairs to the corresponding letter based on the polymer instruction mapping:
+//          NC -> B
+//          CN -> C
+//          NB -> B
+//          BC -> B
+//          CH -> B
+//          HB -> C
+//
+// - From this, we can create a new map with the new polymers, like so:
+//          PAIRING             C1 C2
+//          -------------------------
+//          NC -> B             NB BC
+//          CN -> C             CC CN
+//          NB -> B             NB BB
+//          BC -> B             BB BC
+//          CH -> B             CB BH
+//          HB -> C             HC CB
+//
+// - To count the number of actual characters in this polymer, we note that if we simply count the
+// number of characters in each of C1 and C2, we would be over-counting since the first character
+// of C2 is the same as the last character of C1 and the last character of C2 is the same as the
+// first character in the next row of C1, e.g. for NB and BC, notice how 'B' is shared between the
+// two pairs and how 'C' is shared between BC and CC (next row).
+//
+// So, the solution is to have two maps.
+// 1) Our first map would track the number of pairs we have in all of C1 and C2 above, just like
+// what we did in [X]. We need this if we want to strengthen the polymer again. In other words, for
+// the above C1 and C2, we would have the following mapping:
+//      {NB: 2, BC: 2, CC: 1, CN: 1, BB: 2, CB: 2, BH: 1, HC: 1}
+// This mapping represents the next polymer, should we have to strengthen the polymer again.
+//
+// 2) Our second map would track the number of characters that we have in C1 only. But, this would
+// omit the last character in the polymer. However, since we know that every polymer and its
+// derivations will share the last character (see [W]), we can simply add one to the last
+// character in the mapping. In other words, we would only consider the following pairs:
+//      [NB, CC, NB, BB, CB, HC, B]
+//                               ^ (Last character in polymer)
+// Which gives us the following number of each character in the next iteration of the polymer:
+//      {N: 2, B: 6, C: 4, H: 1}
+// We can use this to our advantage, as seen in the implementation below.
+
+
 type Pair = [char; 2];
 
 pub struct Day14 {
     polymer_template_pairing: HashMap<Pair, usize>,
     polymer_rules: HashMap<Pair, char>,
-    last_polymer_char: char
+    last_polymer_char: char,
 }
 
+// https://adventofcode.com/2021/day/14
 impl AoCProblem<usize, usize> for Day14 {
     fn prepare(input: Vec<String>) -> Self {
         let mut polymer_rules: HashMap<Pair, char> = HashMap::new();
@@ -26,7 +89,7 @@ impl AoCProblem<usize, usize> for Day14 {
         Self {
             polymer_template_pairing,
             polymer_rules,
-            last_polymer_char: *polymer.iter().last().unwrap()
+            last_polymer_char: *polymer.iter().last().unwrap(),
         }
     }
 
@@ -41,11 +104,12 @@ impl AoCProblem<usize, usize> for Day14 {
     }
 }
 
-/// Gets the difference between the most and least occurring polymers.
+/// Gets the difference between the most and least occurring characters in the polymer after
+/// strengthening the polymer `amt` number of times.
 ///
 /// # Parameters
 /// - `p_struct`: The Day14 problem structure.
-/// - `amt`: The number of times to run the frequency function.
+/// - `amt`: The number of times to strengthen the polymer, i.e. run the frequency function.
 ///
 /// # Returns
 /// The difference between the most and least occurring polymers.
