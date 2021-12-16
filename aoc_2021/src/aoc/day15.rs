@@ -105,13 +105,7 @@ impl PartialEq<Self> for PointValue {
 
 impl PartialOrd<Self> for PointValue {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        if self.weight < other.weight {
-            Some(Ordering::Greater)
-        } else if self.weight > other.weight {
-            Some(Ordering::Less)
-        } else {
-            Some(Ordering::Equal)
-        }
+        Some(self.cmp(other))
     }
 }
 
