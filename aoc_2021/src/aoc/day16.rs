@@ -2,9 +2,6 @@ use std::cmp::min;
 use std::collections::HashMap;
 use crate::aoc::aoc_problem::AoCProblem;
 
-const ONE: char = '1';
-const ZERO: char = '0';
-
 pub struct Day16 {
     orig_transmission: Vec<char>,
     transmission_binary: Vec<char>,
@@ -33,17 +30,11 @@ impl AoCProblem<usize, usize> for Day16 {
     }
 
     fn part1(&self) -> usize {
-        let mut res: PacketResult = PacketResult {
-            all_packet_ids: vec![],
-            literal_packets: vec![]
-        };
-
-        process_packet(&self.transmission_binary, &mut 0, self.transmission_binary.len(), &mut res);
-        res.all_packet_ids.iter().sum()
+        process_packet(&self.transmission_binary, &mut 0, self.transmission_binary.len()).all_packet_ids.iter().sum()
     }
 
     fn part2(&self) -> usize {
-        0
+        process_packet(&self.transmission_binary, &mut 0, self.transmission_binary.len()).literal_packets[0]
     }
 }
 
@@ -69,38 +60,94 @@ fn has_another_packet(transmission: &[char], i: usize, to: usize) -> bool {
 /// - `transmission`: The transmission.
 /// - `i`: The current index.
 /// - `to`: The end index.
-/// - `packet_res`: The packet result. This is where the parsed packets will be put in.
-fn process_packet(transmission: &[char], i: &mut usize, to: usize,
-                  packet_res: &mut PacketResult) -> () {
+///
+/// # Returns
+/// The packet result.
+fn process_packet(transmission: &[char], i: &mut usize, to: usize) -> PacketResult {
+    let mut res: PacketResult = PacketResult {
+        literal_packets: vec![],
+        all_packet_ids: vec![],
+    };
+
     while has_another_packet(transmission, *i, to) {
-        let version = extract_number(transmission, i, 3);
-        packet_res.all_packet_ids.push(version);
+        let p = process_one_packet(transmission, i, to);
+        p.literal_packets.into_iter().for_each(|x| res.literal_packets.push(x));
+        p.all_packet_ids.into_iter().for_each(|x| res.all_packet_ids.push(x));
+    }
 
-        let type_id = extract_number(transmission, i, 3);
-        // Literal packet
-        if type_id == 4 {
-            packet_res.literal_packets.push((version, process_literal_packet(transmission, i)));
-            continue;
+    res
+}
+
+/// Processes one packet.
+///
+/// # Parameters
+/// - `transmission`: The transmission.
+/// - `i`: The current index.
+/// - `to`: The end index.
+///
+/// # Returns
+/// The packet result.
+fn process_one_packet(transmission: &[char], i: &mut usize, to: usize) -> PacketResult {
+    let mut res: PacketResult = PacketResult {
+        literal_packets: vec![],
+        all_packet_ids: vec![],
+    };
+
+    let version = extract_number(transmission, i, 3);
+    res.all_packet_ids.push(version);
+
+    let type_id = extract_number(transmission, i, 3);
+    // Literal packet
+    if type_id == 4 {
+        res.literal_packets.push(process_literal_packet(transmission, i));
+        return res;
+    }
+
+    // Otherwise, this must be some special packet
+    let length_id = transmission[*i];
+    *i += 1;
+
+    match length_id {
+        '0' => {
+            let total_length = extract_number(transmission, i, 15);
+            let p = process_packet(transmission, i, *i + total_length);
+            p.all_packet_ids.into_iter().for_each(|x| {
+                res.all_packet_ids.push(x);
+            });
+
+            res.literal_packets.push(calculate_packet(&p.literal_packets, type_id));
         }
+        '1' => {
+            let mut num_sub_packets = extract_number(transmission, i, 11);
+            let mut literal_packets: Vec<usize> = vec![];
+            while num_sub_packets > 0 {
+                let p = process_one_packet(transmission, i, to);
+                p.all_packet_ids.into_iter().for_each(|x| {
+                    res.all_packet_ids.push(x);
+                });
+                p.literal_packets.into_iter().for_each(|x| literal_packets.push(x));
+                num_sub_packets -= 1;
+            }
 
-        // Otherwise, this must be some special packet
-        let length_id = transmission[*i];
-        *i += 1;
-
-        match length_id {
-            '0' => {
-                let total_length = extract_number(transmission, i, 15);
-                process_packet(transmission, i, *i + total_length, packet_res);
-            },
-            '1' => {
-                let mut num_sub_packets = extract_number(transmission, i, 11);
-                while num_sub_packets > 0 {
-                    process_packet(transmission, i, to, packet_res);
-                    num_sub_packets -= 1;
-                }
-            },
-            _ => panic!("Unknown character: {}", length_id)
+            res.literal_packets.push(calculate_packet(&literal_packets, type_id));
         }
+        _ => panic!("Unknown character: {}", length_id)
+    }
+
+    res
+}
+
+fn calculate_packet(values: &[usize], type_id: usize) -> usize {
+    println!("{}: {:?}", type_id, values);
+    match type_id {
+        0 => values.iter().sum(),
+        1 => values.iter().product(),
+        2 => *values.iter().min().unwrap(),
+        3 => *values.iter().max().unwrap(),
+        5 => if values[0] > values[1] { 1 } else { 0 },
+        6 => if values[0] < values[1] { 1 } else { 0 },
+        7 => if values[0] == values[1] { 1 } else { 0 },
+        _ => panic!("Unknown operator: {}", type_id)
     }
 }
 
@@ -152,5 +199,5 @@ fn process_literal_packet(transmissions: &[char], i: &mut usize) -> usize {
 #[derive(Debug)]
 struct PacketResult {
     all_packet_ids: Vec<usize>,
-    literal_packets: Vec<(usize, usize)>
+    literal_packets: Vec<usize>,
 }
