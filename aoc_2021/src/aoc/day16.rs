@@ -111,9 +111,7 @@ fn process_one_packet(transmission: &[char], i: &mut usize, to: usize) -> Packet
         '0' => {
             let total_length = extract_number(transmission, i, 15);
             let p = process_packet(transmission, i, *i + total_length);
-            p.all_packet_ids.into_iter().for_each(|x| {
-                res.all_packet_ids.push(x);
-            });
+            p.all_packet_ids.into_iter().for_each(|x| res.all_packet_ids.push(x));
 
             res.literal_packets.push(calculate_packet(&p.literal_packets, type_id));
         }
@@ -122,9 +120,7 @@ fn process_one_packet(transmission: &[char], i: &mut usize, to: usize) -> Packet
             let mut literal_packets: Vec<usize> = vec![];
             while num_sub_packets > 0 {
                 let p = process_one_packet(transmission, i, to);
-                p.all_packet_ids.into_iter().for_each(|x| {
-                    res.all_packet_ids.push(x);
-                });
+                p.all_packet_ids.into_iter().for_each(|x| res.all_packet_ids.push(x));
                 p.literal_packets.into_iter().for_each(|x| literal_packets.push(x));
                 num_sub_packets -= 1;
             }
@@ -137,8 +133,15 @@ fn process_one_packet(transmission: &[char], i: &mut usize, to: usize) -> Packet
     res
 }
 
+/// Calculates the value of a set of packets.
+///
+/// # Parameters
+/// - `values`: The packets.
+/// - `type_id`: The operator ID.
+///
+/// # Returns
+/// The resulting packet value.
 fn calculate_packet(values: &[usize], type_id: usize) -> usize {
-    println!("{}: {:?}", type_id, values);
     match type_id {
         0 => values.iter().sum(),
         1 => values.iter().product(),
