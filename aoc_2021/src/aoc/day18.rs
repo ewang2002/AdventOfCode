@@ -1,6 +1,9 @@
 use std::cmp::max;
 use crate::aoc::aoc_problem::AoCProblem;
 
+// Remark: At a later time, I'll try to implement this using a binary tree (which would have been
+// ideal for a problem like this, except it was late and I was -- and still am -- lazy).
+
 const LEFT_BRACE: i32 = -1;
 const RIGHT_BRACE: i32 = -2;
 const COMMA: i32 = -3;
@@ -29,9 +32,13 @@ impl AoCProblem<i32, i32> for Day18 {
                     continue;
                 }
 
-                let a = solve_homework_problem(&[hw[i], hw[j]]);
-                let b = solve_homework_problem(&[hw[j], hw[i]]);
-                max_mag = max(max(a, b), max_mag);
+                max_mag = max(
+                    max(
+                        solve_homework_problem(&[hw[i], hw[j]]),
+                        solve_homework_problem(&[hw[j], hw[i]]),
+                    ),
+                    max_mag,
+                );
             }
         }
 
@@ -66,6 +73,7 @@ fn parse_line(line: &str) -> Vec<i32> {
 /// # Returns
 /// A vector containing the new snail number.
 fn add(a: &[i32], b: &[i32]) -> Vec<i32> {
+    // a + b = [(all of a), (all of b)]
     let mut v: Vec<i32> = vec![LEFT_BRACE];
     v.extend(a);
     v.push(COMMA);
@@ -94,13 +102,16 @@ fn explode(n: &mut Vec<i32>) -> bool {
             continue;
         }
 
+        // We use 5 because we also count the outer-most braces.
         if b < 5 {
             continue;
         }
 
+        // If this is a valid pair...
         if n[i] == COMMA && n[i - 1] >= 0 && n[i + 1] >= 0 {
             let before_num = n[i - 1];
             let after_num = n[i + 1];
+            // Look for the nearest valid left number to add to
             for j in (0..(i - 2)).rev() {
                 if n[j] < 0 {
                     continue;
@@ -110,6 +121,7 @@ fn explode(n: &mut Vec<i32>) -> bool {
                 break;
             }
 
+            // Look for the nearest valid right number to add to
             for j in (i + 2)..n.len() {
                 if n[j] < 0 {
                     continue;
@@ -119,11 +131,14 @@ fn explode(n: &mut Vec<i32>) -> bool {
                 break;
             }
 
-            for _ in 0..5 {
-                n.remove(i - 2);
-            }
-
-            n.insert(i - 2, 0);
+            // Index i looks like:
+            //      ...[z,[x,y]],k...
+            //              ^ i
+            // So, we remove everything from (i - 2), inclusive, to (i + 3), exclusive and then
+            // put a singular 0 in its place:
+            //      ...[z,0],k...
+            //            ^ i
+            n.splice((i - 2)..(i + 3), [0]);
             return true;
         }
     }
@@ -146,13 +161,7 @@ fn split(n: &mut Vec<i32>) -> bool {
             _ => {
                 let left = n[i] / 2;
                 let right = n[i] - left;
-                n.remove(i);
-                n.insert(i, RIGHT_BRACE);
-                n.insert(i, right);
-                n.insert(i, COMMA);
-                n.insert(i, left);
-                n.insert(i, LEFT_BRACE);
-
+                n.splice(i..(i + 1), [LEFT_BRACE, left, COMMA, right, RIGHT_BRACE]);
                 return true;
             }
         };
@@ -194,11 +203,13 @@ fn flatten(n: &mut Vec<i32>) -> bool {
         if n[i] == COMMA && n[i - 1] >= 0 && n[i + 1] >= 0 {
             let left = n[i - 1];
             let right = n[i + 1];
-            for _ in 0..5 {
-                n.remove(i - 2);
-            }
-
-            n.insert(i - 2, 3 * left + 2 * right);
+            // Remove from index (i - 2) 5 times. Since index i looks like:
+            //          [x,y]
+            //            ^
+            //            i
+            // We can remove everything from (i - 2), inclusive, to (i + 3), exclusive and then
+            // put the result of the operation in its place; in this case, 3 * x + 2 * y.
+            n.splice((i - 2)..(i + 3), [3 * left + 2 * right]);
             return true;
         }
     }
