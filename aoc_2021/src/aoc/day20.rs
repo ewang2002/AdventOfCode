@@ -51,7 +51,7 @@ impl AoCProblem<usize, usize> for Day20 {
             &self.algorithm,
             (self.min_x, self.min_y),
             (self.max_x, self.max_y),
-            2
+            2,
         )
     }
 
@@ -61,7 +61,7 @@ impl AoCProblem<usize, usize> for Day20 {
             &self.algorithm,
             (self.min_x, self.min_y),
             (self.max_x, self.max_y),
-            50
+            50,
         )
     }
 }
@@ -85,27 +85,32 @@ fn enhance_image(image: &HashSet<Point>, algorithm: &[bool], min: Point, max: Po
     let mut max_x = max.0;
     let mut max_y = max.1;
 
+    let mut binary_str = String::new();
     for iterations in 0..num_apply {
         let mut temp_image: HashSet<Point> = HashSet::new();
         for x in (min_x - 1)..=(max_x + 1) {
             for y in (min_y - 1)..=(max_y + 1) {
-                let mut binary_str = String::new();
                 for (n_x, n_y) in get_surrounding_points((x, y)) {
-                    if algorithm[0] && (n_x < min_x || n_y < min_y || n_x > max_x || n_y > max_y) {
-                        binary_str.push(
-                            if iterations & 1 == 1 || image.contains(&(n_x, n_y)) { '1' } else { '0' }
-                        );
-                    } else {
-                        binary_str.push(
-                            if image.contains(&(n_x, n_y)) { '1' } else { '0' }
-                        );
+                    if image.contains(&(n_x, n_y)) {
+                        binary_str.push('1');
+                        continue;
                     }
+
+                    if algorithm[0] && iterations & 1 == 1
+                        && (n_x < min_x || n_y < min_y || n_x > max_x || n_y > max_y) {
+                        binary_str.push('1');
+                        continue;
+                    }
+
+                    binary_str.push('0');
                 }
 
                 let b = usize::from_str_radix(&*binary_str, 2).unwrap();
                 if algorithm[b] {
                     temp_image.insert((x, y));
                 }
+
+                binary_str.clear();
             }
         }
 
