@@ -29,7 +29,7 @@ fn main() {
 
     // Change this to the correct day!
     #[allow(unused_mut)]
-    let mut solver = prepare_day!(Day18);
+    let mut solver = prepare_day!(Day20);
     let in_t = start.elapsed();
 
     // Execution begins
