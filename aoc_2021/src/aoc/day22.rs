@@ -5,6 +5,7 @@ pub struct Day22 {
     reboot_steps: Vec<RebootStep>,
 }
 
+// https://adventofcode.com/2021/day/22
 impl AoCProblem<usize, usize> for Day22 {
     fn prepare(input: Vec<String>) -> Self {
         let mut reboot_steps: Vec<RebootStep> = vec![];
