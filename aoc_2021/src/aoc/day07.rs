@@ -30,12 +30,12 @@ impl AoCProblem<usize, usize> for Day07 {
 /// Gets the amount of fuel needed to align every crab to the same horizontal position.
 ///
 /// # Parameters
-/// - `horiz_pos`: The vector containing the initial horizontal positions.
+/// - `horiz_pos`: The slice containing the initial horizontal positions.
 /// - `fuel_function`: The function used to calculate the amount of fuel used.
 ///
 /// # Returns
 /// The amount of fuel used.
-fn get_amt_fuel<F>(horiz_pos: &Vec<i32>, fuel_function: F) -> usize where F: Fn(i32) -> i32 {
+fn get_amt_fuel<F>(horiz_pos: &[i32], fuel_function: F) -> usize where F: Fn(i32) -> i32 {
     let mut min_fuel_used = usize::MAX;
 
     let min = *horiz_pos.iter().min().unwrap();

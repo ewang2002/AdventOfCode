@@ -7,7 +7,7 @@ My solutions to various puzzle problems in [Advent of Code](https://adventofcode
 
 | Year          | Language      | Stars | Skipped (Days) |
 | ------------- | ------------- | ----- | -------------- |
-| 2021          | Rust          | 41/44 | 19, 22p2       |
+| 2021          | Rust          | 43/50 | 19, 22p2, 23p2, 24 |
 | 2020          | C#            | 45/50 | 19p2, 21, 23p2 |
 | 2019          | -             | 0/0   |                |
 | 2018          | Rust          | 26/26 |                |
@@ -15,7 +15,7 @@ My solutions to various puzzle problems in [Advent of Code](https://adventofcode
 | 2016          | -             | 0/0   |                |
 | 2015          | C++           | 10/12 | 4              |
 
-*Last Updated: Dec. 21, 2021 at 10:50 PM (PST)*
+*Last Updated: Dec. 25, 2021 at ~12:00 AM (PST)*
 
 ## Notes
 

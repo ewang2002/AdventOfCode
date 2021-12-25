@@ -65,7 +65,7 @@ impl AoCProblem<u32, u32> for Day03 {
 ///
 /// # Returns
 /// The number that is left after processing all binary numbers.
-fn get_elem_by_bit_criteria<F>(input: &Vec<String>, criteria: F) -> u32
+fn get_elem_by_bit_criteria<F>(input: &[String], criteria: F) -> u32
     where F: Fn(i32, i32, char) -> bool {
     let mut map: HashMap<&String, Vec<char>> = HashMap::new();
     for elem in input {

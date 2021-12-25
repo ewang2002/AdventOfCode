@@ -27,13 +27,13 @@ impl AoCProblem<usize, usize> for Day06 {
 /// Calculates the number of fish after a certain number of day.
 ///
 /// # Parameters
-/// - `initial_count`: A vector containing the initial number of lanternfish, where each element
+/// - `initial_count`: A slice containing the initial number of lanternfish, where each element
 /// represents the amount of time left before reproducing.
 /// - `target_day`: The target day to calculate.
 ///
 /// # Returns
 /// The number of fish after `target_day` days passes.
-fn calculate_fish_amt(initial_count: &Vec<usize>, target_day: i32) -> usize {
+fn calculate_fish_amt(initial_count: &[usize], target_day: i32) -> usize {
     // Index 0 = fish with timer 0
     // Index 1 = fish with timer 1
     // ...

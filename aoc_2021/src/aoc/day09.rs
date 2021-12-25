@@ -57,7 +57,7 @@ impl AoCProblem<u32, u32> for Day09 {
 ///
 /// # Returns
 /// The size of this basin.
-fn explore(height_map: &Vec<Vec<u32>>, row: usize, col: usize,
+fn explore(height_map: &[Vec<u32>], row: usize, col: usize,
            explored: &mut HashSet<(usize, usize)>, basin_size: &mut u32) -> () {
     let curr_pt = (row, col);
     if explored.contains(&curr_pt) {
