@@ -1,9 +1,10 @@
 use crate::aoc::aoc_problem::AoCProblem;
 
 pub struct Day25 {
-    sea_map: Vec<Vec<char>>
+    sea_map: Vec<Vec<char>>,
 }
 
+// https://adventofcode.com/2021/day/25
 impl AoCProblem<usize, usize> for Day25 {
     fn prepare(input: Vec<String>) -> Self {
         Self {
@@ -34,14 +35,14 @@ impl AoCProblem<usize, usize> for Day25 {
                                     curr_map[(i + 1) % max_i][j] = 'v';
                                     num_movements += 1;
                                 }
-                            },
+                            }
                             '>' if b => {
                                 if orig[i][(j + 1) % max_j] == '.' {
                                     curr_map[i][j] = '.';
                                     curr_map[i][(j + 1) % max_j] = '>';
                                     num_movements += 1;
                                 }
-                            },
+                            }
                             _ => continue
                         };
                     }
