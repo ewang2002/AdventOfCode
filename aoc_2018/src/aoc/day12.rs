@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 // https://adventofcode.com/2018/day/12
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (i64, i64) {
+pub fn execute(input: &[String]) -> (i64, i64) {
     let initial_state = input[0].replace("initial state: ", "");
     let mut plant_mapping: HashMap<String, String> = HashMap::new();
 
@@ -11,14 +11,14 @@ pub fn execute(input: &Vec<String>) -> (i64, i64) {
         plant_mapping.insert(plant_layout[0].to_string(), plant_layout[1].to_string());
     });
 
-    return (
+    (
         part1(&initial_state, &plant_mapping),
-        part2(&initial_state, &plant_mapping)
-    );
+        part2(&initial_state, &plant_mapping),
+    )
 }
 
-pub fn part1(init_state: &String, plant_notes: &HashMap<String, String>) -> i64 {
-    let mut curr_state = init_state.clone();
+pub fn part1(init_state: &str, plant_notes: &HashMap<String, String>) -> i64 {
+    let mut curr_state = init_state.to_string();
     // The plant that we're initially looking at
     let mut init_plant_idx = 0;
     for _ in 1..=20 {
@@ -30,20 +30,24 @@ pub fn part1(init_state: &String, plant_notes: &HashMap<String, String>) -> i64 
     let mut sum = 0;
     let bytes = curr_state.bytes().collect::<Vec<_>>();
     for i in 0..bytes.len() {
-        sum += if bytes[i] == b'#' { (i as i64) - init_plant_idx } else { 0 }
+        sum += if bytes[i] == b'#' {
+            (i as i64) - init_plant_idx
+        } else {
+            0
+        }
     }
 
-    return sum;
+    sum
 }
 
-pub fn part2(init_state: &String, plant_notes: &HashMap<String, String>) -> i64 {
+pub fn part2(init_state: &str, plant_notes: &HashMap<String, String>) -> i64 {
     // From my observation, it appears that after a certain number of generation, the only change
     // between generations is that all plants (dead or alive) are shifted one to the right.
     //
     // Thus, the goal is to find the generation such that the next generation exhibits this
     // behavior, and then use this to our advantage.
 
-    let mut curr_state = init_state.clone();
+    let mut curr_state = init_state.to_string();
     let mut prev_state = String::from("#");
     // The plant that we're initially looking at
     let mut init_plant_idx: i64 = 0;
@@ -58,15 +62,9 @@ pub fn part2(init_state: &String, plant_notes: &HashMap<String, String>) -> i64 
         let curr_bytes = curr_state.bytes().collect::<Vec<_>>();
         let prev_bytes = prev_state.bytes().collect::<Vec<_>>();
 
-        let (curr_first, curr_last) = find_first_last_char(
-            &curr_bytes,
-            b'#',
-        );
+        let (curr_first, curr_last) = find_first_last_char(&curr_bytes, b'#');
 
-        let (prev_first, prev_last) = find_first_last_char(
-            &prev_bytes,
-            b'#',
-        );
+        let (prev_first, prev_last) = find_first_last_char(&prev_bytes, b'#');
 
         let curr_slice = &curr_bytes[(curr_first as usize)..=(curr_last as usize)];
         let prev_slice = &prev_bytes[(prev_first as usize)..=(prev_last as usize)];
@@ -125,11 +123,11 @@ pub fn part2(init_state: &String, plant_notes: &HashMap<String, String>) -> i64 
         // We can apply the same idea here.
         sum += match bytes[i] {
             b'#' => (i as i64) - init_plant_idx + (50_000_000_000 - generation_count),
-            _ => 0
+            _ => 0,
         };
     }
 
-    return sum;
+    sum
 }
 
 /// Finds the first and last index of a byte (character).
@@ -141,13 +139,13 @@ pub fn part2(init_state: &String, plant_notes: &HashMap<String, String>) -> i64 
 /// # Returns
 /// - A tuple contianing the starting index and the ending index. Both will either be a
 /// non-negative integer (if found) or -1 (if not found).
-fn find_first_last_char(bytes: &Vec<u8>, byte_to_check: u8) -> (i32, i32) {
+fn find_first_last_char(bytes: &[u8], byte_to_check: u8) -> (i32, i32) {
     let first = bytes.iter().position(|&x| x == byte_to_check);
     let last = bytes.iter().rposition(|&x| x == byte_to_check);
-    return match first {
+    match first {
         Some(idx) => (idx as i32, last.unwrap() as i32),
-        None => (-1, -1)
-    };
+        None => (-1, -1),
+    }
 }
 
 /// Runs one generation, simulating the growth or death of the plants.
@@ -160,8 +158,11 @@ fn find_first_last_char(bytes: &Vec<u8>, byte_to_check: u8) -> (i32, i32) {
 /// # Returns
 /// - A tuple where the first element is the new state and the second element is the new initial
 /// index.
-fn run_one_generation(init_state: String, init_idx: i64,
-                      plant_notes: &HashMap<String, String>) -> (String, i64) {
+fn run_one_generation(
+    init_state: String,
+    init_idx: i64,
+    plant_notes: &HashMap<String, String>,
+) -> (String, i64) {
     // The plant that we're initially looking at
     let mut init_plant_idx = init_idx;
 
@@ -176,14 +177,26 @@ fn run_one_generation(init_state: String, init_idx: i64,
     // - Adding x - 2 characters (where x > 2) will add (x - 2) to the initial plant index.
     let left_offset_inc = match first_idx {
         -1 => 2,
-        idx => if idx < 6 { 6 } else { -2 }
+        idx => {
+            if idx < 6 {
+                6
+            } else {
+                -2
+            }
+        }
     };
 
     init_plant_idx += left_offset_inc - 2;
 
     let right_offset_inc = match last_idx {
         -1 => 2,
-        idx => if (idx as usize) > curr_state_chars.len() - 6 { 6 } else { 2 }
+        idx => {
+            if (idx as usize) > curr_state_chars.len() - 6 {
+                6
+            } else {
+                2
+            }
+        }
     };
 
     for _ in 0..left_offset_inc.abs() {
@@ -202,10 +215,10 @@ fn run_one_generation(init_state: String, init_idx: i64,
         let window_str = String::from_utf8_lossy(window);
         match plant_notes.get(&*window_str) {
             Some(s) => new_state.push_str(s),
-            None => new_state.push('.')
+            None => new_state.push('.'),
         }
     });
 
     assert_eq!(new_state.len(), curr_state_chars.len() - 4);
-    return (new_state, init_plant_idx);
+    (new_state, init_plant_idx)
 }

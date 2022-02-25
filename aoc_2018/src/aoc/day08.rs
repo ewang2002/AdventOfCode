@@ -1,10 +1,10 @@
-use std::collections::{VecDeque};
+use std::collections::VecDeque;
 
 // https://adventofcode.com/2018/day/8
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (usize, usize) {
+pub fn execute(input: &[String]) -> (usize, usize) {
     let header: Vec<usize> = input[0]
-        .split(" ")
+        .split(' ')
         .map(|x| x.parse::<usize>().unwrap())
         .collect();
 
@@ -13,24 +13,24 @@ pub fn execute(input: &Vec<String>) -> (usize, usize) {
     // Construct the "tree"
     let tree = Tree::new(&mut header_deque);
 
-    return (part1(&tree), part2(&tree));
+    (part1(&tree), part2(&tree))
 }
 
 pub fn part1(tree: &Tree) -> usize {
-    return tree.sum_of_meta_data();
+    tree.sum_of_meta_data()
 }
 
 pub fn part2(tree: &Tree) -> usize {
-    return tree.sum_second_check();
+    tree.sum_second_check()
 }
 
 struct Node {
     child_nodes: Vec<Node>,
-    metadata_entries: Vec<usize>
+    metadata_entries: Vec<usize>,
 }
 
 pub struct Tree {
-    root_node: Node
+    root_node: Node,
 }
 
 impl Tree {
@@ -42,9 +42,12 @@ impl Tree {
     /// # Returns
     /// The new `Tree`.
     pub fn new(input: &mut VecDeque<usize>) -> Self {
-        let mut node = Node {child_nodes: vec![], metadata_entries: vec![]};
+        let mut node = Node {
+            child_nodes: vec![],
+            metadata_entries: vec![],
+        };
         Tree::process_input(input, &mut node);
-        return Tree {root_node: node};
+        Tree { root_node: node }
     }
 
     /// Populates the tree with the nodes.
@@ -65,7 +68,9 @@ impl Tree {
         // If no child nodes, then put metadata in the current node and leave
         if num_child_nodes == 0 {
             while num_meta_data > 0 {
-                curr_node.metadata_entries.push(input.pop_front().expect("[c]"));
+                curr_node
+                    .metadata_entries
+                    .push(input.pop_front().expect("[c]"));
                 num_meta_data -= 1;
             }
 
@@ -74,7 +79,10 @@ impl Tree {
 
         // Otherwise, create a new node for each child node then attach to the current node.
         while num_child_nodes > 0 {
-            let mut new_node = Node {child_nodes: vec![], metadata_entries: vec![]};
+            let mut new_node = Node {
+                child_nodes: vec![],
+                metadata_entries: vec![],
+            };
             Tree::process_input(input, &mut new_node);
             curr_node.child_nodes.push(new_node);
             num_child_nodes -= 1;
@@ -82,7 +90,9 @@ impl Tree {
 
         // Then, add the meta data to the current node.
         while num_meta_data > 0 {
-            curr_node.metadata_entries.push(input.pop_front().expect("[d]"));
+            curr_node
+                .metadata_entries
+                .push(input.pop_front().expect("[d]"));
             num_meta_data -= 1;
         }
     }
@@ -92,7 +102,7 @@ impl Tree {
     /// # Returns
     /// The sum of all metadata entries.
     pub fn sum_of_meta_data(&self) -> usize {
-        return Tree::p_sum_meta_data(&self.root_node);
+        Tree::p_sum_meta_data(&self.root_node)
     }
 
     /// Gets the sum of the current node's metadata. This will recursively do the same to the other
@@ -103,10 +113,10 @@ impl Tree {
     fn p_sum_meta_data(node: &Node) -> usize {
         let mut node_sum: usize = 0;
         for n in &node.child_nodes {
-            node_sum += Tree::p_sum_meta_data(&n);
+            node_sum += Tree::p_sum_meta_data(n);
         }
 
-        return node.metadata_entries.iter().sum::<usize>() + node_sum;
+        node.metadata_entries.iter().sum::<usize>() + node_sum
     }
 
     /// Gets the sum, as specified by the second part.
@@ -118,7 +128,7 @@ impl Tree {
         for md in &self.root_node.metadata_entries {
             sum += Tree::p_sum_second_check(&self.root_node, *md);
         }
-        return sum;
+        sum
     }
 
     /// Gets the sum, as specified by the second part, of this specific node and its children nodes.
@@ -148,6 +158,6 @@ impl Tree {
             sum += Tree::p_sum_second_check(&node.child_nodes[real_idx], *metadata);
         }
 
-        return sum;
+        sum
     }
 }

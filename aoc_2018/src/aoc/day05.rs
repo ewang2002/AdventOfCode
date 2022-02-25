@@ -1,11 +1,11 @@
-// https://adventofcode.com/2018/day/5 
+// https://adventofcode.com/2018/day/5
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (usize, usize) {
+pub fn execute(input: &[String]) -> (usize, usize) {
     let line = &input[0];
-    return (part1(line), part2(line));
+    (part1(line), part2(line))
 }
 
-pub fn part1(line: &String) -> usize {
+pub fn part1(line: &str) -> usize {
     // We aren't dealing with any weird characters.
     let mut char_arr: Vec<_> = line.as_bytes().to_vec();
 
@@ -34,10 +34,12 @@ pub fn part1(line: &String) -> usize {
         idx += 1;
     }
 
-    return String::from_utf8(char_arr).expect("How did this hit?").len();
+    String::from_utf8(char_arr)
+        .expect("How did this hit?")
+        .len()
 }
 
-pub fn part2(line: &String) -> usize {
+pub fn part2(line: &str) -> usize {
     let all_important_letters = "abcdefghijklmnopqrstuvwxyz".split("");
     let mut len_of_shortest: usize = line.len();
     for letter in all_important_letters {
@@ -50,9 +52,13 @@ pub fn part2(line: &String) -> usize {
         }
     }
 
-    return len_of_shortest;
+    len_of_shortest
 }
 
 fn can_react(a: u8, b: u8) -> bool {
-    return if a < b { b - a == 32 } else { a - b == 32 };
+    if a < b {
+        b - a == 32
+    } else {
+        a - b == 32
+    }
 }

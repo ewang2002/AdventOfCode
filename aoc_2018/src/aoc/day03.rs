@@ -1,8 +1,8 @@
-use std::collections::{HashMap};
+use std::collections::HashMap;
 
 // https://adventofcode.com/2018/day/3
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (i32, i32) {
+pub fn execute(input: &[String]) -> (i32, i32) {
     // Get all claims from the input vector
     let claims: Vec<Claim> = get_claims_from_input(input);
     // We're going to map each possible point to the number of times we've seen that point.
@@ -15,43 +15,46 @@ pub fn execute(input: &Vec<String>) -> (i32, i32) {
         }
     }
 
-    return (part1(&map), part2(&map, &claims));
+    (part1(&map), part2(&map, &claims))
 }
 
 pub fn part1(map: &HashMap<(i32, i32), i32>) -> i32 {
-    return map.values().map(|&x| if x == 1 { 0 } else { 1 }).sum();
+    map.values().map(|&x| if x == 1 { 0 } else { 1 }).sum()
 }
 
-pub fn part2(map: &HashMap<(i32, i32), i32>, claims: &Vec<Claim>) -> i32 {
+pub fn part2(map: &HashMap<(i32, i32), i32>, claims: &[Claim]) -> i32 {
     for claim in claims {
         // Same idea as part 1. Here, we're checking to make sure ALL points in this claim
         // were seen only once.
-        if claim.get_all_points().iter().all(|p| map[&p] == 1) {
+        if claim.get_all_points().iter().all(|p| map[p] == 1) {
             return claim.claim_id;
         }
     }
 
-    return -1;
+    -1
 }
 
-fn get_claims_from_input(input: &Vec<String>) -> Vec<Claim> {
-    return input.iter().map(|x| {
-        let fixed_str = x
-            .replace("#", "")
-            .replace(" @ ", " ")
-            .replace( ":", "")
-            .replace("x", " ")
-            .replace(",", " ");
+fn get_claims_from_input(input: &[String]) -> Vec<Claim> {
+    input
+        .iter()
+        .map(|x| {
+            let fixed_str = x
+                .replace("#", "")
+                .replace(" @ ", " ")
+                .replace(":", "")
+                .replace("x", " ")
+                .replace(",", " ");
 
-        let arr: Vec<&str> = fixed_str.split(" ").collect();
-        return Claim {
-            claim_id: arr[0].parse().unwrap(),
-            left_edge: arr[1].parse().unwrap(),
-            top_edge: arr[2].parse().unwrap(),
-            width: arr[3].parse().unwrap(),
-            height: arr[4].parse().unwrap()
-        };
-    }).collect();
+            let arr: Vec<&str> = fixed_str.split(' ').collect();
+            Claim {
+                claim_id: arr[0].parse().unwrap(),
+                left_edge: arr[1].parse().unwrap(),
+                top_edge: arr[2].parse().unwrap(),
+                width: arr[3].parse().unwrap(),
+                height: arr[4].parse().unwrap(),
+            }
+        })
+        .collect()
 }
 
 pub struct Claim {
@@ -59,7 +62,7 @@ pub struct Claim {
     left_edge: i32,
     top_edge: i32,
     width: i32,
-    height: i32
+    height: i32,
 }
 
 impl Claim {
@@ -71,10 +74,9 @@ impl Claim {
             }
         }
 
-        return return_vec;
+        return_vec
     }
 }
-
 
 // if map.contains_key(&pair) {
 //      *map.get_mut(&pair).unwrap() += 1;

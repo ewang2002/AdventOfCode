@@ -1,43 +1,41 @@
 // https://adventofcode.com/2018/day/2
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (i32, String) {
-    return (part1(input), part2(input));
+pub fn execute(input: &[String]) -> (i32, String) {
+    (part1(input), part2(input))
 }
 
-pub fn part1(input: &Vec<String>) -> i32 {
+pub fn part1(input: &[String]) -> i32 {
     let mut two = 0;
     let mut three = 0;
     for line in input {
         let mut two_temp = 0;
         let mut three_temp = 0;
-        line.chars().for_each(|x| {
-            match line.matches(x).count() {
-                2 => two_temp = 1,
-                3 => three_temp = 1,
-                _ => {}
-            }
+        line.chars().for_each(|x| match line.matches(x).count() {
+            2 => two_temp = 1,
+            3 => three_temp = 1,
+            _ => {}
         });
 
         two += two_temp;
         three += three_temp;
     }
 
-    return two * three;
+    two * three
 }
 
-pub fn part2(input: &Vec<String>) -> String {
+pub fn part2(input: &[String]) -> String {
     for a in input {
         for b in input {
-            if let Some(s) = check_words(&a, &b) {
+            if let Some(s) = check_words(a, b) {
                 return s;
             }
         }
     }
 
-    return String::new();
+    String::new()
 }
 
-fn check_words(w1: &String, w2: &String) -> Option<String> {
+fn check_words(w1: &str, w2: &str) -> Option<String> {
     let mut res_word = String::new();
     let mut mismatches = 0;
     for (a, b) in w1.chars().zip(w2.chars()) {
@@ -53,12 +51,15 @@ fn check_words(w1: &String, w2: &String) -> Option<String> {
         res_word.push(a);
     }
 
-    return if mismatches == 1 { Option::Some(res_word) } else { Option::None };
+    if mismatches == 1 {
+        Option::Some(res_word)
+    } else {
+        Option::None
+    }
 }
 
-
 // Old AoC code
-// pub fn part1(input: &Vec<String>) -> i32 {
+// pub fn part1(input: &[String]) -> i32 {
 //     // Find all general number of repeat chars in case part 2 requires it.
 //     let mut num_letters: HashMap<i32, i32> = HashMap::new();
 //

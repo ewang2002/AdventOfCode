@@ -2,10 +2,9 @@ type PowerGrid = [[i32; 300]; 300];
 
 // https://adventofcode.com/2018/day/11
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (String, String) {
-    let serial_number = input[0].parse::<i32>()
-        .expect("parse error.");
-    return (part1(serial_number), part2(serial_number));
+pub fn execute(input: &[String]) -> (String, String) {
+    let serial_number = input[0].parse::<i32>().expect("parse error.");
+    (part1(serial_number), part2(serial_number))
 }
 
 pub fn part1(serial_number: i32) -> String {
@@ -31,7 +30,7 @@ pub fn part1(serial_number: i32) -> String {
         }
     }
 
-    return format!("{},{}", top_left_x + 1, top_left_y + 1);
+    format!("{},{}", top_left_x + 1, top_left_y + 1)
 }
 
 pub fn part2(serial_number: i32) -> String {
@@ -43,11 +42,7 @@ pub fn part2(serial_number: i32) -> String {
         }
     }
 
-    let mut max_region: BoxedRegion = all_regions
-        .iter()
-        .max_by_key(|x| x.sum)
-        .unwrap()
-        .clone();
+    let mut max_region: BoxedRegion = *all_regions.iter().max_by_key(|x| x.sum).unwrap();
 
     for _ in 1..300 {
         // all_regions.iter_mut().for_each(|x| x.add_one(&power_grid));
@@ -81,8 +76,12 @@ pub fn part2(serial_number: i32) -> String {
         all_regions = valid_regions;
     }
 
-    return format!("{},{},{}", max_region.top_left_x + 1, max_region.top_left_y + 1,
-                   max_region.bottom_right_y - max_region.top_left_y + 1);
+    format!(
+        "{},{},{}",
+        max_region.top_left_x + 1,
+        max_region.top_left_y + 1,
+        max_region.bottom_right_y - max_region.top_left_y + 1
+    )
 }
 
 /// Constructs the power grid for this problem.
@@ -115,7 +114,7 @@ fn construct_grid(serial_number: i32) -> PowerGrid {
         }
     }
 
-    return power_grid;
+    power_grid
 }
 
 /// Prints the power grid out.
@@ -123,7 +122,7 @@ fn construct_grid(serial_number: i32) -> PowerGrid {
 /// # Parameters
 /// - `grid`: The grid to print out.
 #[allow(dead_code)]
-fn print_power_grid(grid: &PowerGrid) -> () {
+fn print_power_grid(grid: &PowerGrid) {
     for x in 0..grid.len() {
         for y in 0..grid[x].len() {
             print!("{}\t", grid[x][y]);
@@ -131,7 +130,6 @@ fn print_power_grid(grid: &PowerGrid) -> () {
         println!();
     }
 }
-
 
 #[derive(Debug, Copy, Clone)]
 struct BoxedRegion {
@@ -156,8 +154,13 @@ impl BoxedRegion {
     ///
     /// # Returns
     /// - The new `BoxedRegion` structure.
-    pub fn new(top_left_x: usize, top_left_y: usize, bottom_right_x: usize, bottom_right_y: usize,
-               grid: &PowerGrid) -> Self {
+    pub fn new(
+        top_left_x: usize,
+        top_left_y: usize,
+        bottom_right_x: usize,
+        bottom_right_y: usize,
+        grid: &PowerGrid,
+    ) -> Self {
         let mut sum: i32 = 0;
         for y in top_left_y..=bottom_right_y {
             for x in top_left_x..=bottom_right_x {
@@ -165,14 +168,14 @@ impl BoxedRegion {
             }
         }
 
-        return BoxedRegion {
+        BoxedRegion {
             top_left_x,
             top_left_y,
             bottom_right_x,
             bottom_right_y,
             sum,
             is_valid: true,
-        };
+        }
     }
 
     /// Adds one to the bottom right `(x, y)` coordinates, adding the appropriate sums as needed.
@@ -181,7 +184,7 @@ impl BoxedRegion {
     ///
     /// # Parameters
     /// - `grid`: The power grid.
-    pub fn add_one(&mut self, grid: &PowerGrid) -> () {
+    pub fn add_one(&mut self, grid: &PowerGrid) {
         self.bottom_right_x += 1;
         self.bottom_right_y += 1;
         if self.bottom_right_x >= 300 || self.bottom_right_y >= 300 {

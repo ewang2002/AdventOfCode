@@ -2,13 +2,17 @@ use std::collections::HashSet;
 
 // https://adventofcode.com/2018/day/7
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (String, usize) {
-    let steps: Vec<_> = input.iter()
+pub fn execute(input: &[String]) -> (String, usize) {
+    let steps: Vec<_> = input
+        .iter()
         .map(|x| {
             // Step C must be finished before step A can begin.
             // 0    1 2    3  4        5      6    7 8   9
-            let res = x.split(" ").collect::<Vec<_>>();
-            return Step { requirement: res[1].to_string(), for_part: res[7].to_string() };
+            let res = x.split(' ').collect::<Vec<_>>();
+            Step {
+                requirement: res[1].to_string(),
+                for_part: res[7].to_string(),
+            }
         })
         .collect();
 
@@ -36,10 +40,10 @@ pub fn execute(input: &Vec<String>) -> (String, usize) {
         base_letters.insert(&instruction.for_part);
     }
 
-    return (part1(&steps, &base_letters), part2(&steps, &base_letters));
+    (part1(&steps, &base_letters), part2(&steps, &base_letters))
 }
 
-pub fn part1(ins: &Vec<Step>, base_letters: &HashSet<&String>) -> String {
+pub fn part1(ins: &[Step], base_letters: &HashSet<&String>) -> String {
     let mut instructions: Vec<&Step> = ins.iter().collect();
     let mut finished = String::new();
     // Clone this since we need the original hashset for part 2.
@@ -74,7 +78,7 @@ pub fn part1(ins: &Vec<Step>, base_letters: &HashSet<&String>) -> String {
                 return false;
             }
 
-            return true;
+            true
         });
 
         poss_avail.retain(|&item| item != target_elem);
@@ -83,20 +87,40 @@ pub fn part1(ins: &Vec<Step>, base_letters: &HashSet<&String>) -> String {
         finished += target_elem.as_str();
     }
 
-    return finished;
+    finished
 }
 
-pub fn part2(ins: &Vec<Step>, base_letters: &HashSet<&String>) -> usize {
+pub fn part2(ins: &[Step], base_letters: &HashSet<&String>) -> usize {
     let mut instructions: Vec<&Step> = ins.iter().collect();
     let mut finished = String::new();
-    let mut poss_avail: HashSet<&String> = base_letters.iter().map(|x| *x).collect();
+    let mut poss_avail: HashSet<&String> = base_letters.iter().copied().collect();
 
     let mut workers: [Worker; 5] = [
-        Worker { id: 1, curr_job: EMPTY_STR, time_left: 0 },
-        Worker { id: 2, curr_job: EMPTY_STR, time_left: 0 },
-        Worker { id: 3, curr_job: EMPTY_STR, time_left: 0 },
-        Worker { id: 4, curr_job: EMPTY_STR, time_left: 0 },
-        Worker { id: 5, curr_job: EMPTY_STR, time_left: 0 }
+        Worker {
+            id: 1,
+            curr_job: EMPTY_STR,
+            time_left: 0,
+        },
+        Worker {
+            id: 2,
+            curr_job: EMPTY_STR,
+            time_left: 0,
+        },
+        Worker {
+            id: 3,
+            curr_job: EMPTY_STR,
+            time_left: 0,
+        },
+        Worker {
+            id: 4,
+            curr_job: EMPTY_STR,
+            time_left: 0,
+        },
+        Worker {
+            id: 5,
+            curr_job: EMPTY_STR,
+            time_left: 0,
+        },
     ];
 
     let mut time_taken: usize = 0;
@@ -122,16 +146,16 @@ pub fn part2(ins: &Vec<Step>, base_letters: &HashSet<&String>) -> usize {
         // TODO how to not use an indexed-for loop to set values?
         // Seems like if you want to use a normal for each loop, an error will be brought up
         // regarding immutability.
-        for i in 0..workers.len() {
-            if workers[i].has_assigned_job() {
+        for worker in &mut workers {
+            if worker.has_assigned_job() {
                 continue;
             }
 
-            if all_avail.len() == 0 {
+            if all_avail.is_empty() {
                 break;
             }
 
-            workers[i].set_job(all_avail[0]);
+            worker.set_job(all_avail[0]);
             poss_avail.retain(|&item| item != all_avail[0]);
             all_avail.remove(0);
         }
@@ -155,7 +179,7 @@ pub fn part2(ins: &Vec<Step>, base_letters: &HashSet<&String>) -> usize {
                         return false;
                     }
 
-                    return true;
+                    true
                 });
 
                 finished += completed_job.as_str();
@@ -165,7 +189,7 @@ pub fn part2(ins: &Vec<Step>, base_letters: &HashSet<&String>) -> usize {
         time_taken += 1;
     }
 
-    return time_taken;
+    time_taken
 }
 
 #[derive(Clone, Debug)]
@@ -191,14 +215,14 @@ impl Worker {
     ///
     /// # Returns
     /// `true` if the job was set; `false` otherwise.
-    fn set_job(&mut self, job_id: &String) -> bool {
+    fn set_job(&mut self, job_id: &str) -> bool {
         if self.time_left > 0 {
             return false;
         }
 
         self.curr_job = job_id.to_string();
         self.time_left = 60 + (job_id.as_bytes()[0] as usize) - 64;
-        return true;
+        true
     }
 
     /// Checks if this worker has an assigned job. This does not check if the time remaining is 0,
@@ -207,7 +231,7 @@ impl Worker {
     /// # Returns
     /// `true` if this worker has a job, `false` otherwise.
     fn has_assigned_job(&self) -> bool {
-        return self.curr_job != EMPTY_STR;
+        self.curr_job != EMPTY_STR
     }
 
     /// Makes the worker work for 1 second. All this does is decrements the `time_left` member by 1
@@ -221,7 +245,7 @@ impl Worker {
         }
 
         self.time_left -= 1;
-        return self.time_left == 0;
+        self.time_left == 0
     }
 
     /// Returns the job ID and resets it.
@@ -236,7 +260,7 @@ impl Worker {
 
         let str_to_return = String::from(&self.curr_job);
         self.curr_job = EMPTY_STR;
-        return Some(str_to_return);
+        Some(str_to_return)
     }
 
     /// Checks if the worker still needs to work on the job.
@@ -244,6 +268,6 @@ impl Worker {
     /// # Returns
     /// `true` if the worker is still working, `false` otherwise.
     fn is_working(&self) -> bool {
-        return self.time_left > 0;
+        self.time_left > 0
     }
 }

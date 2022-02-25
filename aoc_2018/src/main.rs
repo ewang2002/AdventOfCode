@@ -1,6 +1,6 @@
-use std::time::Instant;
-use helpers::io;
 use aoc::*;
+use helpers::io;
+use std::time::Instant;
 
 mod aoc;
 mod helpers;

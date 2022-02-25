@@ -1,5 +1,5 @@
 use std::cmp::Ordering;
-use std::collections::{HashSet};
+use std::collections::HashSet;
 use std::fmt::{Display, Formatter, Write};
 
 const STRAIGHT_VERT: char = '|';
@@ -18,8 +18,11 @@ type Coord = (usize, usize);
 
 // https://adventofcode.com/2018/day/13
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (String, String) {
-    let char_input = input.iter().map(|x| x.chars().collect::<Vec<_>>()).collect::<Vec<_>>();
+pub fn execute(input: &[String]) -> (String, String) {
+    let char_input = input
+        .iter()
+        .map(|x| x.chars().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
 
     let mut track_system: Vec<Vec<Track>> = vec![];
     let mut active_carts: Vec<Cart> = vec![];
@@ -40,17 +43,17 @@ pub fn execute(input: &Vec<String>) -> (String, String) {
         track_system.push(row_track);
     }
 
-    return (part1(&track_system, &active_carts), part2(&track_system, &active_carts));
+    (
+        part1(&track_system, &active_carts),
+        part2(&track_system, &active_carts),
+    )
 }
 
-pub fn part1(track_system: &Vec<Vec<Track>>, active_carts: &Vec<Cart>) -> String {
-    let mut all_active_coords: HashSet<Coord> = active_carts
-        .iter()
-        .map(|x| ((*x).2, (*x).3))
-        .collect();
+pub fn part1(track_system: &[Vec<Track>], active_carts: &[Cart]) -> String {
+    let mut all_active_coords: HashSet<Coord> =
+        active_carts.iter().map(|x| ((*x).2, (*x).3)).collect();
 
-    let mut all_active_carts = active_carts.clone();
-
+    let mut all_active_carts = active_carts.to_vec();
 
     let mut conflicting_coords: Option<Coord> = None;
     while conflicting_coords.is_none() {
@@ -63,9 +66,13 @@ pub fn part1(track_system: &Vec<Vec<Track>>, active_carts: &Vec<Cart>) -> String
             let (next_cart, next_track) = get_next_cart_track(cart, track_system);
             next_active_carts.push((
                 next_cart,
-                if next_track.raw_track_type == INTERSECTION { (dir + 1) % 3 } else { dir },
+                if next_track.raw_track_type == INTERSECTION {
+                    (dir + 1) % 3
+                } else {
+                    dir
+                },
                 next_track.x_pos,
-                next_track.y_pos
+                next_track.y_pos,
             ));
 
             let coord: Coord = (next_track.x_pos, next_track.y_pos);
@@ -83,16 +90,18 @@ pub fn part1(track_system: &Vec<Vec<Track>>, active_carts: &Vec<Cart>) -> String
         sort_carts_by_row_col(&mut all_active_carts);
     }
 
-    return format!("{},{}", conflicting_coords.unwrap().0, conflicting_coords.unwrap().1);
+    format!(
+        "{},{}",
+        conflicting_coords.unwrap().0,
+        conflicting_coords.unwrap().1
+    )
 }
 
-pub fn part2(track_system: &Vec<Vec<Track>>, active_carts: &Vec<Cart>) -> String {
-    let mut all_active_coords: HashSet<Coord> = active_carts
-        .iter()
-        .map(|x| ((*x).2, (*x).3))
-        .collect();
+pub fn part2(track_system: &[Vec<Track>], active_carts: &[Cart]) -> String {
+    let mut all_active_coords: HashSet<Coord> =
+        active_carts.iter().map(|x| ((*x).2, (*x).3)).collect();
 
-    let mut all_active_carts = active_carts.clone();
+    let mut all_active_carts = active_carts.to_owned();
 
     while all_active_carts.len() > 1 {
         let mut new_active_carts: Vec<Cart> = vec![];
@@ -113,9 +122,13 @@ pub fn part2(track_system: &Vec<Vec<Track>>, active_carts: &Vec<Cart>) -> String
             let new_coord = (next_track.x_pos, next_track.y_pos);
             let new_cart = (
                 next_cart,
-                if next_track.raw_track_type == INTERSECTION { (dir + 1) % 3 } else { dir },
+                if next_track.raw_track_type == INTERSECTION {
+                    (dir + 1) % 3
+                } else {
+                    dir
+                },
                 next_track.x_pos,
-                next_track.y_pos
+                next_track.y_pos,
             );
             // Is this coordinate in the hashset of active coordinates? If so, then don't add the
             // next cart
@@ -144,20 +157,19 @@ pub fn part2(track_system: &Vec<Vec<Track>>, active_carts: &Vec<Cart>) -> String
     return format!("{},{}", all_active_carts[0].2, all_active_carts[0].3);
 }
 
-
 /// Prints the track out. Useful for debugging.
 ///
 /// # Parameters
 /// - `track`: The track.
 /// - `carts`: The carts.
 #[allow(dead_code)]
-fn print_track(track: &Vec<Vec<Track>>, carts: &Vec<Cart>) -> () {
+fn print_track(track: &[Vec<Track>], carts: &[Cart]) {
     for y in 0..track.len() {
         for x in 0..track[y].len() {
             let res = carts.iter().find(|r| (**r).2 == x && (**r).3 == y);
             match res {
                 Some(c) => print!("{}", (*c).0),
-                None => print!("{}", track[y][x].raw_track_type)
+                None => print!("{}", track[y][x].raw_track_type),
             };
         }
 
@@ -184,16 +196,20 @@ impl Track {
         let track_to_use: char = match track_char {
             CART_UP | CART_DOWN => STRAIGHT_VERT,
             CART_RIGHT | CART_LEFT => STRAIGHT_HORIZ,
-            rest => rest
+            rest => rest,
         };
 
-        return Track { x_pos, y_pos, raw_track_type: track_to_use };
+        Track {
+            x_pos,
+            y_pos,
+            raw_track_type: track_to_use,
+        }
     }
 }
 
 impl Display for Track {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        return f.write_char(self.raw_track_type);
+        f.write_char(self.raw_track_type)
     }
 }
 
@@ -205,7 +221,7 @@ impl Display for Track {
 ///
 /// # Parameters
 /// - `all_active_carts`: All active carts.
-fn sort_carts_by_row_col(all_active_carts: &mut Vec<Cart>) -> () {
+fn sort_carts_by_row_col(all_active_carts: &mut Vec<Cart>) {
     all_active_carts.sort_by(|cart_a, cart_b| {
         let (_, _, ax, ay) = *cart_a;
         let (_, _, bx, by) = *cart_b;
@@ -221,7 +237,7 @@ fn sort_carts_by_row_col(all_active_carts: &mut Vec<Cart>) -> () {
             return Ordering::Greater;
         }
 
-        return Ordering::Equal;
+        Ordering::Equal
     })
 }
 
@@ -234,14 +250,14 @@ fn sort_carts_by_row_col(all_active_carts: &mut Vec<Cart>) -> () {
 /// # Returns
 /// - A tuple containing the next cart character and the next track. You will need to manually
 /// adjust any properties (like direction count, if applicable).
-fn get_next_cart_track(cart_tuple: Cart, track_system: &Vec<Vec<Track>>) -> (char, &Track) {
+fn get_next_cart_track(cart_tuple: Cart, track_system: &[Vec<Track>]) -> (char, &Track) {
     let (cart, dir, x, y) = cart_tuple;
     let next_track = match cart {
         CART_DOWN => &track_system[y + 1][x],
         CART_UP => &track_system[y - 1][x],
         CART_RIGHT => &track_system[y][x + 1],
         CART_LEFT => &track_system[y][x - 1],
-        _ => panic!("invalid cart given: {}", cart)
+        _ => panic!("invalid cart given: {}", cart),
     };
 
     // determine the next cart
@@ -252,14 +268,14 @@ fn get_next_cart_track(cart_tuple: Cart, track_system: &Vec<Vec<Track>>) -> (cha
             '<' => 'v',
             '>' => '^',
             'v' => '<',
-            _ => panic!("invalid cart {} given with dir {}", cart, CURVE_SLASH)
+            _ => panic!("invalid cart {} given with dir {}", cart, CURVE_SLASH),
         },
         CURVE_BACKSLASH => match cart {
             '>' => 'v',
             '^' => '<',
             '<' => '^',
             'v' => '>',
-            _ => panic!("invalid cart {} given with dir {}", cart, CURVE_SLASH)
+            _ => panic!("invalid cart {} given with dir {}", cart, CURVE_SLASH),
         },
         INTERSECTION => match dir {
             // Left
@@ -268,7 +284,7 @@ fn get_next_cart_track(cart_tuple: Cart, track_system: &Vec<Vec<Track>>) -> (cha
                 '>' => '^',
                 '^' => '<',
                 '<' => 'v',
-                _ => panic!("invalid cart {}", cart)
+                _ => panic!("invalid cart {}", cart),
             },
             // Straight
             1 => cart,
@@ -278,12 +294,12 @@ fn get_next_cart_track(cart_tuple: Cart, track_system: &Vec<Vec<Track>>) -> (cha
                 '>' => 'v',
                 '^' => '>',
                 '<' => '^',
-                _ => panic!("invalid cart {}", cart)
+                _ => panic!("invalid cart {}", cart),
             },
-            _ => panic!("invalid cart {} given with dir", cart)
+            _ => panic!("invalid cart {} given with dir", cart),
         },
-        _ => panic!("invalid track {}", next_track.raw_track_type)
+        _ => panic!("invalid track {}", next_track.raw_track_type),
     };
 
-    return (next_cart, next_track);
+    (next_cart, next_track)
 }

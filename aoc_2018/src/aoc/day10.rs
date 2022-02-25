@@ -4,30 +4,34 @@ type I64Pair = (i64, i64);
 
 // https://adventofcode.com/2018/day/10
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (String, u64) {
+pub fn execute(input: &[String]) -> (String, u64) {
     let mut points: Vec<Point> = vec![];
 
-    input.iter().map(|x| {
-        return x.replace("position=<", "")
-            .replace("> velocity=<", ", ")
-            .replace(">", "");
-    }).map(|x| {
-        return x.split(",")
-            .collect::<Vec<_>>()
-            .iter()
-            .map(|y| y.trim().parse::<i64>().unwrap())
-            .collect::<Vec<_>>();
-    }).for_each(|x| {
-        if x.len() != 4 {
-            panic!("invalid input.");
-        }
+    input
+        .iter()
+        .map(|x| {
+            x.replace("position=<", "")
+                .replace("> velocity=<", ", ")
+                .replace(">", "")
+        })
+        .map(|x| {
+            x.split(',')
+                .collect::<Vec<_>>()
+                .iter()
+                .map(|y| y.trim().parse::<i64>().unwrap())
+                .collect::<Vec<_>>()
+        })
+        .for_each(|x| {
+            if x.len() != 4 {
+                panic!("invalid input.");
+            }
 
-        points.push(Point::new(x[0], x[1], x[2], x[3]));
-    });
+            points.push(Point::new(x[0], x[1], x[2], x[3]));
+        });
 
     // For the sake of consistency, pass this as reference so we can print it out for part 2
     let mut minimum_seconds: u64 = 0;
-    return (part1(points, &mut minimum_seconds), part2(minimum_seconds));
+    (part1(points, &mut minimum_seconds), part2(minimum_seconds))
 }
 
 pub fn part1(mut points: Vec<Point>, minimum_seconds: &mut u64) -> String {
@@ -54,7 +58,6 @@ pub fn part1(mut points: Vec<Point>, minimum_seconds: &mut u64) -> String {
             continue;
         }
 
-
         if group_count < min_group {
             increased_amt = 0;
             min_group = group_count;
@@ -74,39 +77,47 @@ pub fn part1(mut points: Vec<Point>, minimum_seconds: &mut u64) -> String {
     }
 
     // Find bounding box
-    let min_x = points.iter()
+    let min_x = points
+        .iter()
         .min_by_key(|p| p.curr_pos_x)
         .expect("invalid min x found")
         .curr_pos_x;
-    let max_x = points.iter()
+    let max_x = points
+        .iter()
         .max_by_key(|p| p.curr_pos_x)
         .expect("invalid max x found")
         .curr_pos_x;
-    let min_y = points.iter()
+    let min_y = points
+        .iter()
         .min_by_key(|p| p.curr_pos_y)
         .expect("invalid min y found")
         .curr_pos_y;
-    let max_y = points.iter()
+    let max_y = points
+        .iter()
         .max_by_key(|p| p.curr_pos_y)
         .expect("invalid max y found")
         .curr_pos_y;
 
     // Create output string with the message
-    let mut str = String::new();
-    str.push('\n');
+    let mut s = String::new();
+    s.push('\n');
     for y in min_y..=max_y {
         for x in min_x..=max_x {
-            str.push(if all_points.contains(&(x, y)) { '#' } else { '.' });
+            s.push(if all_points.contains(&(x, y)) {
+                '#'
+            } else {
+                '.'
+            });
         }
-        str.push('\n');
+        s.push('\n');
     }
 
     *minimum_seconds = min_sec;
-    return str;
+    s
 }
 
 pub fn part2(min_sec: u64) -> u64 {
-    return min_sec;
+    min_sec
 }
 
 /// Applies a given function to all `Point` structures in the vector.
@@ -117,9 +128,11 @@ pub fn part2(min_sec: u64) -> u64 {
 ///
 /// # Notes
 /// - Should we be using `Fn` or `FnMut` here?
-fn apply_to_all_pts<F>(pts: &mut Vec<Point>, func: F) -> ()
-    where F: Fn(&mut Point) -> () {
-    pts.into_iter().for_each(|x| func(x));
+fn apply_to_all_pts<F>(pts: &mut Vec<Point>, func: F)
+where
+    F: Fn(&mut Point),
+{
+    pts.iter_mut().for_each(func);
 }
 
 /// Calculates the number of "grouped" points. Two points are grouped if they are direct neighbors
@@ -131,7 +144,7 @@ fn apply_to_all_pts<F>(pts: &mut Vec<Point>, func: F) -> ()
 ///
 /// # Returns
 /// - The number of groups.
-fn calculate_group_count(pts: &Vec<Point>) -> u32 {
+fn calculate_group_count(pts: &[Point]) -> u32 {
     let mut explored_points: HashSet<I64Pair> = HashSet::new();
     let mut all_points: HashSet<I64Pair> = HashSet::new();
     for point_info in pts {
@@ -141,7 +154,7 @@ fn calculate_group_count(pts: &Vec<Point>) -> u32 {
     let mut groups: u32 = 0;
 
     for point in &all_points {
-        if explored_points.contains(&point) {
+        if explored_points.contains(point) {
             continue;
         }
 
@@ -149,7 +162,7 @@ fn calculate_group_count(pts: &Vec<Point>) -> u32 {
         groups += 1;
     }
 
-    return groups;
+    groups
 }
 
 /// Recursively explores all neighbors (definition of neighbor is provided above) of a point.
@@ -161,13 +174,16 @@ fn calculate_group_count(pts: &Vec<Point>) -> u32 {
 ///
 /// # Notes
 /// - As this is a recursive function, this can be optimized.
-fn explore_neighbors(current_point: &I64Pair, all_points: &HashSet<I64Pair>,
-                     explored_points: &mut HashSet<I64Pair>) -> () {
-    if explored_points.contains(&current_point) {
+fn explore_neighbors(
+    current_point: &I64Pair,
+    all_points: &HashSet<I64Pair>,
+    explored_points: &mut HashSet<I64Pair>,
+) {
+    if explored_points.contains(current_point) {
         return;
     }
 
-    if !all_points.contains(&current_point) {
+    if !all_points.contains(current_point) {
         return;
     }
 
@@ -202,22 +218,22 @@ impl Point {
     /// # Returns
     /// - The new `Point`.
     pub fn new(pos_x: i64, pos_y: i64, vel_x: i64, vel_y: i64) -> Self {
-        return Point {
+        Point {
             velocity: (vel_x, vel_y),
             initial_pos: (pos_x, pos_y),
             curr_pos_x: pos_x,
             curr_pos_y: pos_y,
-        };
+        }
     }
 
     /// Moves the `Point` coordinates by the velocity one time.
-    pub fn increment_second(&mut self) -> () {
+    pub fn increment_second(&mut self) {
         self.curr_pos_x += self.velocity.0;
         self.curr_pos_y += self.velocity.1;
     }
 
     /// Resets the `Point` to the initial position.
-    pub fn reset(&mut self) -> () {
+    pub fn reset(&mut self) {
         self.curr_pos_x = self.initial_pos.0;
         self.curr_pos_y = self.initial_pos.1;
     }
@@ -226,7 +242,7 @@ impl Point {
     ///
     /// # Parameters
     /// - `sec`: The number of seconds that will have passed.
-    pub fn increment_by(&mut self, sec: i64) -> () {
+    pub fn increment_by(&mut self, sec: i64) {
         self.curr_pos_x += self.velocity.0 * sec;
         self.curr_pos_y += self.velocity.1 * sec;
     }

@@ -3,31 +3,39 @@ use std::collections::{HashMap, HashSet};
 
 // https://adventofcode.com/2018/day/4
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (i32, usize) {
+pub fn execute(input: &[String]) -> (i32, usize) {
     let (events, guards) = get_guards_and_events(input);
     // Now determine how much time was spent sleeping
     let (guard_slept_time, guard_most_occurring_min) = get_guard_sleep_time(events, guards);
 
-    return (part1(&guard_slept_time, &guard_most_occurring_min), part2(&guard_most_occurring_min));
+    (
+        part1(&guard_slept_time, &guard_most_occurring_min),
+        part2(&guard_most_occurring_min),
+    )
 }
 
-pub fn part1(guard_slept_time: &HashMap<u32, i64>, guard_most_occurring_min: &HashMap<u32, [usize; 60]>) -> i32 {
+pub fn part1(
+    guard_slept_time: &HashMap<u32, i64>,
+    guard_most_occurring_min: &HashMap<u32, [usize; 60]>,
+) -> i32 {
     // Find the laziest guard
     let laziest_guard = guard_slept_time
         .iter()
-        .max_by(|a, b| a.1.cmp(&b.1))
+        .max_by(|a, b| a.1.cmp(b.1))
         .map(|(k, _v)| k)
         .expect("Something went wrong when trying to find max.");
 
     // Find index corresponding to minute that is most encountered in sleeping process
-    let longest_time = guard_most_occurring_min.get(&laziest_guard).unwrap()
+    let longest_time = guard_most_occurring_min
+        .get(laziest_guard)
+        .unwrap()
         .iter()
         .enumerate()
         .max_by(|(_, v), (_, w)| v.cmp(w))
         .map(|(idx, _)| idx)
         .expect("Something bad happened.");
 
-    return (laziest_guard * longest_time as u32) as i32;
+    (laziest_guard * longest_time as u32) as i32
 }
 
 pub fn part2(guard_most_occurring_min: &HashMap<u32, [usize; 60]>) -> usize {
@@ -47,25 +55,27 @@ pub fn part2(guard_most_occurring_min: &HashMap<u32, [usize; 60]>) -> usize {
 
     assert_ne!(guard_id, 0);
     assert_ne!(minute_most_occurring, 0);
-    return guard_id as usize * minute_most_occurring;
+    guard_id as usize * minute_most_occurring
 }
 
 #[derive(Debug)]
 struct Event {
     time: NaiveDateTime,
     guard_num: u32,
-    event_type: EventType
+    event_type: EventType,
 }
 
-#[derive(Debug)]
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 enum EventType {
     BeginShift,
     FallAsleep,
-    WakesUp
+    WakesUp,
 }
 
-fn get_guard_sleep_time(events: Vec<Event>, guards: HashSet<u32>) -> (HashMap<u32, i64>, HashMap<u32, [usize; 60]>) {
+fn get_guard_sleep_time(
+    events: Vec<Event>,
+    guards: HashSet<u32>,
+) -> (HashMap<u32, i64>, HashMap<u32, [usize; 60]>) {
     let mut guard_slept_time: HashMap<u32, i64> = HashMap::new();
     let mut guard_most_occurring_min: HashMap<u32, [usize; 60]> = HashMap::new();
     for guard in guards {
@@ -98,15 +108,19 @@ fn get_guard_sleep_time(events: Vec<Event>, guards: HashSet<u32>) -> (HashMap<u3
     (guard_slept_time, guard_most_occurring_min)
 }
 
-fn get_guards_and_events(input: &Vec<String>) -> (Vec<Event>, HashSet<u32>) {
+fn get_guards_and_events(input: &[String]) -> (Vec<Event>, HashSet<u32>) {
     let mut date_event: Vec<(NaiveDateTime, String)> = Vec::new();
 
     for line in input {
         let date_time = NaiveDateTime::parse_from_str(
             line.split(&['[', ']'][..]).collect::<Vec<_>>()[1],
-            "%Y-%m-%d %H:%M"
-        ).expect(format!("Error parsing \"{}\"", line).as_str());
-        date_event.push((date_time, line.split("] ").collect::<Vec<_>>()[1].parse().unwrap()))
+            "%Y-%m-%d %H:%M",
+        )
+        .unwrap_or_else(|_| panic!("Error parsing \"{}\"", line));
+        date_event.push((
+            date_time,
+            line.split("] ").collect::<Vec<_>>()[1].parse().unwrap(),
+        ))
     }
 
     date_event.sort_by(|a, b| a.cmp(b));
@@ -117,12 +131,12 @@ fn get_guards_and_events(input: &Vec<String>) -> (Vec<Event>, HashSet<u32>) {
     let mut current_guard = 0;
     for (d, e) in &date_event {
         if e.starts_with("Guard") {
-            current_guard = get_guard_id(&e);
+            current_guard = get_guard_id(e);
             guards.insert(current_guard);
             events.push(Event {
                 time: *d,
                 guard_num: current_guard,
-                event_type: EventType::BeginShift
+                event_type: EventType::BeginShift,
             });
             continue;
         }
@@ -131,7 +145,7 @@ fn get_guards_and_events(input: &Vec<String>) -> (Vec<Event>, HashSet<u32>) {
             events.push(Event {
                 time: *d,
                 guard_num: current_guard,
-                event_type: EventType::FallAsleep
+                event_type: EventType::FallAsleep,
             });
             continue;
         }
@@ -140,18 +154,21 @@ fn get_guards_and_events(input: &Vec<String>) -> (Vec<Event>, HashSet<u32>) {
             events.push(Event {
                 time: *d,
                 guard_num: current_guard,
-                event_type: EventType::WakesUp
+                event_type: EventType::WakesUp,
             });
             continue;
         }
     }
 
     assert_eq!(date_event.len(), events.len());
-    return (events, guards);
+    (events, guards)
 }
 
-fn get_guard_id(str: &String) -> u32 {
-    return str.split("#")
+fn get_guard_id(str: &str) -> u32 {
+    return str
+        .split('#')
         .flat_map(|x| x.split(" begins"))
-        .collect::<Vec<&str>>()[1].parse::<u32>().unwrap();
+        .collect::<Vec<&str>>()[1]
+        .parse::<u32>()
+        .unwrap();
 }

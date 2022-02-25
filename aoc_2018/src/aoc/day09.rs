@@ -1,15 +1,19 @@
-use std::collections::{VecDeque};
+use std::collections::VecDeque;
 
 // https://adventofcode.com/2018/day/9
 #[allow(dead_code)]
-pub fn execute(input: &Vec<String>) -> (usize, usize) {
-    let split_input: Vec<_> = input[0].split(" players; last marble is worth ")
+pub fn execute(input: &[String]) -> (usize, usize) {
+    let split_input: Vec<_> = input[0]
+        .split(" players; last marble is worth ")
         .map(|x| x.replace(" points", ""))
         .map(|x| x.parse::<usize>().unwrap())
         .collect();
     let num_players = split_input[0];
     let last_marble = split_input[1];
-    return (part1(num_players, last_marble), part2(num_players, last_marble * 100));
+    (
+        part1(num_players, last_marble),
+        part2(num_players, last_marble * 100),
+    )
 }
 
 pub fn part1(num_players: usize, last_marble: usize) -> usize {
@@ -34,29 +38,25 @@ pub fn part1(num_players: usize, last_marble: usize) -> usize {
                 cur_marble_idx = (marbles.len() as i32) - cur_marble_idx.abs();
             }
 
-            players[cur_player] += marbles.remove(
-                if cur_marble_idx == (marbles.len() - 1) as i32 {
+            players[cur_player] +=
+                marbles.remove(if cur_marble_idx == (marbles.len() - 1) as i32 {
                     0
                 } else {
                     cur_marble_idx as usize
-                }
-            ) + cur_marble;
+                }) + cur_marble;
 
             cur_player += 1;
             cur_marble += 1;
             continue;
         }
 
-        cur_marble_idx = add_to_marble_arr(
-            &mut marbles,
-            cur_marble_idx as usize,
-            cur_marble,
-        ) as i32;
+        cur_marble_idx =
+            add_to_marble_arr(&mut marbles, cur_marble_idx as usize, cur_marble) as i32;
         cur_marble += 1;
         cur_player += 1;
     }
 
-    return *players.iter().max().unwrap();
+    *players.iter().max().unwrap()
 }
 
 pub fn part2(num_players: usize, last_marble: usize) -> usize {
@@ -87,9 +87,8 @@ pub fn part2(num_players: usize, last_marble: usize) -> usize {
         }
     }
 
-    return *player_scores.iter().max().unwrap();
+    *player_scores.iter().max().unwrap()
 }
-
 
 /// Adds the marble to the given vector and returns the new index. Decided to make this function
 /// since I was tired and didn't want to figure out how to deal with vectors and wrapping around.
@@ -113,5 +112,5 @@ fn add_to_marble_arr(marbles: &mut Vec<usize>, idx: usize, num: usize) -> usize 
     }
 
     marbles.insert(1, num);
-    return 1;
+    1
 }
