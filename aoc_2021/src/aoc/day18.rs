@@ -1,5 +1,5 @@
-use std::cmp::max;
 use crate::aoc::aoc_problem::AoCProblem;
+use std::cmp::max;
 
 // Remark: At a later time, I'll try to implement this using a binary tree (which would have been
 // ideal for a problem like this, except it was late and I was -- and still am -- lazy).
@@ -54,14 +54,14 @@ impl AoCProblem<i32, i32> for Day18 {
 /// # Returns
 /// A vector that represents the snail number.
 fn parse_line(line: &str) -> Vec<i32> {
-    line.chars().map(|x| {
-        match x {
+    line.chars()
+        .map(|x| match x {
             '[' => LEFT_BRACE,
             ']' => RIGHT_BRACE,
             ',' => COMMA,
-            _ => x.to_digit(10).unwrap() as i32
-        }
-    }).collect()
+            _ => x.to_digit(10).unwrap() as i32,
+        })
+        .collect()
 }
 
 /// Adds two snail numbers together.
@@ -122,12 +122,12 @@ fn explode(n: &mut Vec<i32>) -> bool {
             }
 
             // Look for the nearest valid right number to add to
-            for j in (i + 2)..n.len() {
-                if n[j] < 0 {
+            for val in n.iter_mut().skip(i + 2) {
+                if *val < 0 {
                     continue;
                 }
 
-                n[j] += after_num;
+                *val += after_num;
                 break;
             }
 
@@ -165,7 +165,7 @@ fn split(n: &mut Vec<i32>) -> bool {
                 return true;
             }
         };
-    };
+    }
 
     false
 }
@@ -184,7 +184,7 @@ fn get_string_representation(n: &[i32]) -> String {
             LEFT_BRACE => s.push('['),
             RIGHT_BRACE => s.push(']'),
             COMMA => s.push(','),
-            _ => s.push_str(&*c.to_string())
+            _ => s.push_str(&*c.to_string()),
         };
     }
 
@@ -225,11 +225,11 @@ fn flatten(n: &mut Vec<i32>) -> bool {
 /// # Returns
 /// The result (magnitude).
 fn solve_homework_problem(problems: &[&str]) -> i32 {
-    let mut start = parse_line(&problems[0]);
+    let mut start = parse_line(problems[0]);
     process_line(&mut start);
 
-    for i in 1..problems.len() {
-        start = add(&start, &parse_line(&problems[i]));
+    for p in problems.iter().skip(1) {
+        start = add(&start, &parse_line(p));
         process_line(&mut start);
     }
 
@@ -242,7 +242,7 @@ fn solve_homework_problem(problems: &[&str]) -> i32 {
 ///
 /// # Parameters
 /// - `n`: The snail number to process.
-fn process_line(n: &mut Vec<i32>) -> () {
+fn process_line(n: &mut Vec<i32>) {
     loop {
         if explode(n) {
             continue;

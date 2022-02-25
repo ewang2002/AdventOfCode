@@ -1,6 +1,6 @@
+use crate::aoc::aoc_problem::AoCProblem;
 use std::cmp::min;
 use std::collections::HashMap;
-use crate::aoc::aoc_problem::AoCProblem;
 
 pub struct Day16 {
     orig_transmission: Vec<char>,
@@ -12,15 +12,29 @@ impl AoCProblem<usize, usize> for Day16 {
     fn prepare(input: Vec<String>) -> Self {
         let orig_transmission: Vec<char> = input[0].chars().collect();
         let hex_to_bin_map: HashMap<char, &str> = HashMap::from([
-            ('0', "0000"), ('1', "0001"), ('2', "0010"), ('3', "0011"), ('4', "0100"),
-            ('5', "0101"), ('6', "0110"), ('7', "0111"), ('8', "1000"), ('9', "1001"),
-            ('A', "1010"), ('B', "1011"), ('C', "1100"), ('D', "1101"), ('E', "1110"),
-            ('F', "1111")
+            ('0', "0000"),
+            ('1', "0001"),
+            ('2', "0010"),
+            ('3', "0011"),
+            ('4', "0100"),
+            ('5', "0101"),
+            ('6', "0110"),
+            ('7', "0111"),
+            ('8', "1000"),
+            ('9', "1001"),
+            ('A', "1010"),
+            ('B', "1011"),
+            ('C', "1100"),
+            ('D', "1101"),
+            ('E', "1110"),
+            ('F', "1111"),
         ]);
 
         let mut transmission_binary: Vec<char> = vec![];
         for c in &orig_transmission {
-            hex_to_bin_map[c].chars().for_each(|bit| transmission_binary.push(bit));
+            hex_to_bin_map[c]
+                .chars()
+                .for_each(|bit| transmission_binary.push(bit));
         }
 
         Self {
@@ -30,11 +44,23 @@ impl AoCProblem<usize, usize> for Day16 {
     }
 
     fn part1(&self) -> usize {
-        process_packet(&self.transmission_binary, &mut 0, self.transmission_binary.len()).all_packet_ids.iter().sum()
+        process_packet(
+            &self.transmission_binary,
+            &mut 0,
+            self.transmission_binary.len(),
+        )
+        .all_packet_ids
+        .iter()
+        .sum()
     }
 
     fn part2(&self) -> usize {
-        process_packet(&self.transmission_binary, &mut 0, self.transmission_binary.len()).literal_packets[0]
+        process_packet(
+            &self.transmission_binary,
+            &mut 0,
+            self.transmission_binary.len(),
+        )
+        .literal_packets[0]
     }
 }
 
@@ -51,7 +77,8 @@ fn has_another_packet(transmission: &[char], i: usize, to: usize) -> bool {
     // 3 for the version
     // 3 for the type ID
     // Should have at least a 1 somewhere in there (no zero packet, assumption)
-    (min(to, transmission.len()) as i64) - (i as i64) >= 6 && transmission[i..].iter().any(|x| *x == '1')
+    (min(to, transmission.len()) as i64) - (i as i64) >= 6
+        && transmission[i..].iter().any(|x| *x == '1')
 }
 
 /// Processes the entire packet.
@@ -71,8 +98,12 @@ fn process_packet(transmission: &[char], i: &mut usize, to: usize) -> PacketResu
 
     while has_another_packet(transmission, *i, to) {
         let p = process_one_packet(transmission, i, to);
-        p.literal_packets.into_iter().for_each(|x| res.literal_packets.push(x));
-        p.all_packet_ids.into_iter().for_each(|x| res.all_packet_ids.push(x));
+        p.literal_packets
+            .into_iter()
+            .for_each(|x| res.literal_packets.push(x));
+        p.all_packet_ids
+            .into_iter()
+            .for_each(|x| res.all_packet_ids.push(x));
     }
 
     res
@@ -99,7 +130,8 @@ fn process_one_packet(transmission: &[char], i: &mut usize, to: usize) -> Packet
     let type_id = extract_number(transmission, i, 3);
     // Literal packet
     if type_id == 4 {
-        res.literal_packets.push(process_literal_packet(transmission, i));
+        res.literal_packets
+            .push(process_literal_packet(transmission, i));
         return res;
     }
 
@@ -111,23 +143,31 @@ fn process_one_packet(transmission: &[char], i: &mut usize, to: usize) -> Packet
         '0' => {
             let total_length = extract_number(transmission, i, 15);
             let p = process_packet(transmission, i, *i + total_length);
-            p.all_packet_ids.into_iter().for_each(|x| res.all_packet_ids.push(x));
+            p.all_packet_ids
+                .into_iter()
+                .for_each(|x| res.all_packet_ids.push(x));
 
-            res.literal_packets.push(calculate_packet(&p.literal_packets, type_id));
+            res.literal_packets
+                .push(calculate_packet(&p.literal_packets, type_id));
         }
         '1' => {
             let mut num_sub_packets = extract_number(transmission, i, 11);
             let mut literal_packets: Vec<usize> = vec![];
             while num_sub_packets > 0 {
                 let p = process_one_packet(transmission, i, to);
-                p.all_packet_ids.into_iter().for_each(|x| res.all_packet_ids.push(x));
-                p.literal_packets.into_iter().for_each(|x| literal_packets.push(x));
+                p.all_packet_ids
+                    .into_iter()
+                    .for_each(|x| res.all_packet_ids.push(x));
+                p.literal_packets
+                    .into_iter()
+                    .for_each(|x| literal_packets.push(x));
                 num_sub_packets -= 1;
             }
 
-            res.literal_packets.push(calculate_packet(&literal_packets, type_id));
+            res.literal_packets
+                .push(calculate_packet(&literal_packets, type_id));
         }
-        _ => panic!("Unknown character: {}", length_id)
+        _ => panic!("Unknown character: {}", length_id),
     }
 
     res
@@ -147,10 +187,28 @@ fn calculate_packet(values: &[usize], type_id: usize) -> usize {
         1 => values.iter().product(),
         2 => *values.iter().min().unwrap(),
         3 => *values.iter().max().unwrap(),
-        5 => if values[0] > values[1] { 1 } else { 0 },
-        6 => if values[0] < values[1] { 1 } else { 0 },
-        7 => if values[0] == values[1] { 1 } else { 0 },
-        _ => panic!("Unknown operator: {}", type_id)
+        5 => {
+            if values[0] > values[1] {
+                1
+            } else {
+                0
+            }
+        }
+        6 => {
+            if values[0] < values[1] {
+                1
+            } else {
+                0
+            }
+        }
+        7 => {
+            if values[0] == values[1] {
+                1
+            } else {
+                0
+            }
+        }
+        _ => panic!("Unknown operator: {}", type_id),
     }
 }
 

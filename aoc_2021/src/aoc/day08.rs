@@ -1,6 +1,6 @@
+use crate::aoc::aoc_problem::AoCProblem;
 use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
-use crate::aoc::aoc_problem::AoCProblem;
 
 const A: i32 = 1 << 0;
 const B: i32 = 1 << 1;
@@ -18,18 +18,24 @@ pub struct Day08 {
 impl AoCProblem<usize, i32> for Day08 {
     fn prepare(input: Vec<String>) -> Self {
         return Day08 {
-            pattern_res: input.iter().map(|x| {
-                let s = x.split(" | ").collect::<Vec<_>>();
-                return SegmentDisplayEntry {
-                    signal_pattern: s[0].split(" ").map(|z| z.to_string()).collect::<_>(),
-                    output_value: s[1].split(" ").map(|z| z.to_string()).collect::<_>(),
-                };
-            }).collect::<_>()
+            pattern_res: input
+                .iter()
+                .map(|x| {
+                    let s = x.split(" | ").collect::<Vec<_>>();
+                    return SegmentDisplayEntry {
+                        signal_pattern: s[0].split(' ').map(|z| z.to_string()).collect::<_>(),
+                        output_value: s[1].split(' ').map(|z| z.to_string()).collect::<_>(),
+                    };
+                })
+                .collect::<_>(),
         };
     }
 
     fn part1(&self) -> usize {
-        return self.pattern_res.iter().flat_map(|x| &x.output_value)
+        return self
+            .pattern_res
+            .iter()
+            .flat_map(|x| &x.output_value)
             .filter(|x| x.len() == 2 || x.len() == 3 || x.len() == 4 || x.len() == 7)
             .count();
     }
@@ -44,7 +50,7 @@ impl AoCProblem<usize, i32> for Day08 {
                 'e' => E,
                 'f' => F,
                 'g' => G,
-                _ => panic!("Unknown character {}", c)
+                _ => panic!("Unknown character {}", c),
             }
         };
 
@@ -56,11 +62,11 @@ impl AoCProblem<usize, i32> for Day08 {
             // temp_segments: key -> [0, 9], value = [...]
             let mut temp_segments: HashMap<i32, HashSet<char>> = HashMap::new();
 
-            let mut base = entry.signal_pattern.iter()
-                .filter(|x| match x.len() {
-                    2 | 3 | 4 | 7 => true,
-                    _ => false
-                }).collect::<Vec<_>>();
+            let mut base = entry
+                .signal_pattern
+                .iter()
+                .filter(|x| matches!(x.len(), 2 | 3 | 4 | 7))
+                .collect::<Vec<_>>();
             base.sort_by(|x, y| {
                 if x.len() < y.len() {
                     return Ordering::Less;
@@ -70,7 +76,7 @@ impl AoCProblem<usize, i32> for Day08 {
                     return Ordering::Greater;
                 }
 
-                return Ordering::Equal;
+                Ordering::Equal
             });
 
             temp_segments.insert(1, base[0].chars().collect::<_>());
@@ -139,14 +145,13 @@ impl AoCProblem<usize, i32> for Day08 {
             // Which means that there are 3 segments in the intersection (or, another way of
             // putting it is there are 3 segments between the two numbers that overlap).
 
-
             for sig in &entry.signal_pattern {
                 let set: HashSet<_> = sig.chars().collect();
                 let tuple = (
                     set.intersection(&one_set).count(),
                     set.intersection(&four_set).count(),
                     set.intersection(&seven_set).count(),
-                    set.intersection(&eight_set).count()
+                    set.intersection(&eight_set).count(),
                 );
 
                 match tuple {
@@ -158,7 +163,7 @@ impl AoCProblem<usize, i32> for Day08 {
                     (2, 3, 3, 6) => temp_segments.insert(0, set),
                     // Ignore initial values
                     (_, _, _, 2) | (_, _, _, 4) | (_, _, _, 3) | (_, _, _, 7) => continue,
-                    _ => panic!("Error: {:?}", tuple)
+                    _ => panic!("Error: {:?}", tuple),
                 };
             }
 
@@ -182,9 +187,7 @@ impl AoCProblem<usize, i32> for Day08 {
                     seg_id |= get_val(c);
                 }
 
-                let parsed_num = segment_map
-                    .get(&seg_id)
-                    .expect("Invalid value found");
+                let parsed_num = segment_map.get(&seg_id).expect("Invalid value found");
                 temp_sum += *parsed_num * mult_by;
                 mult_by /= 10;
             }
@@ -192,7 +195,7 @@ impl AoCProblem<usize, i32> for Day08 {
             final_sum += temp_sum;
         }
 
-        return final_sum;
+        final_sum
     }
 }
 

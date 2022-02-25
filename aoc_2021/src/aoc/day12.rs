@@ -1,5 +1,5 @@
-use std::collections::{HashMap};
 use crate::aoc::aoc_problem::AoCProblem;
+use std::collections::HashMap;
 
 pub struct Day12 {
     all_nodes: HashMap<String, Node>,
@@ -10,26 +10,33 @@ pub struct Day12 {
 // https://adventofcode.com/2021/day/12
 impl<'a> AoCProblem<usize, usize> for Day12 {
     fn prepare(input: Vec<String>) -> Self {
-        let all_mappings: Vec<(String, String)> = input.iter().map(|x| {
-            let start_end = x.split("-").collect::<Vec<_>>();
-            (start_end[0].to_string(), start_end[1].to_string())
-        }).collect();
+        let all_mappings: Vec<(String, String)> = input
+            .iter()
+            .map(|x| {
+                let start_end = x.split('-').collect::<Vec<_>>();
+                (start_end[0].to_string(), start_end[1].to_string())
+            })
+            .collect();
 
         let mut all_nodes: HashMap<String, Node> = HashMap::new();
         for (from, to) in &all_mappings {
-            all_nodes.entry(String::from(from)).or_insert(Node::new(from));
-            all_nodes.entry(String::from(to)).or_insert(Node::new(to));
+            all_nodes
+                .entry(String::from(from))
+                .or_insert_with(|| Node::new(from));
+            all_nodes
+                .entry(String::from(to))
+                .or_insert_with(|| Node::new(to));
 
             let f = all_nodes.get_mut(&*from).unwrap();
-            f.add_neighbor(&to);
+            f.add_neighbor(to);
 
             let t = all_nodes.get_mut(&*to).unwrap();
-            t.add_neighbor(&from);
+            t.add_neighbor(from);
         }
 
         let mut id = 0;
         let mut all_lowercase_idx: Vec<usize> = vec![];
-        for (_, node) in &mut all_nodes {
+        for node in all_nodes.values_mut() {
             node.id = id;
             if node.is_small_cave() {
                 all_lowercase_idx.push(node.id);
@@ -50,9 +57,12 @@ impl<'a> AoCProblem<usize, usize> for Day12 {
         initial_explored[self.start_idx] += 1;
         let start_node = self.all_nodes.get("start").unwrap();
 
-        return number_of_paths(&self.all_nodes, start_node, initial_explored, &|node, explored| {
-            node.is_small_cave() && explored[node.id] > 0
-        });
+        number_of_paths(
+            &self.all_nodes,
+            start_node,
+            initial_explored,
+            &|node, explored| node.is_small_cave() && explored[node.id] > 0,
+        )
     }
 
     fn part2(&self) -> usize {
@@ -60,17 +70,26 @@ impl<'a> AoCProblem<usize, usize> for Day12 {
         initial_explored[self.start_idx] += 1;
         let start_node = self.all_nodes.get("start").unwrap();
 
-        return number_of_paths(&self.all_nodes, start_node, initial_explored, &|node, explored| {
-            if !node.is_small_cave() {
-                return false;
-            }
+        number_of_paths(
+            &self.all_nodes,
+            start_node,
+            initial_explored,
+            &|node, explored| {
+                if !node.is_small_cave() {
+                    return false;
+                }
 
-            if explored[node.id] + 1 > 2 {
-                return true;
-            }
+                if explored[node.id] + 1 > 2 {
+                    return true;
+                }
 
-            self.all_small_cave_idx.iter().filter(|x| explored[**x] >= 2).count() > 1
-        });
+                self.all_small_cave_idx
+                    .iter()
+                    .filter(|x| explored[**x] >= 2)
+                    .count()
+                    > 1
+            },
+        )
     }
 }
 
@@ -85,9 +104,9 @@ impl Node {
     ///
     /// # Parameters
     /// - `name`: The name of this node.
-    pub fn new(name: &String) -> Self {
+    pub fn new(name: &str) -> Self {
         Self {
-            name: name.clone(),
+            name: name.to_string(),
             neighbors: Vec::new(),
             id: usize::MAX,
         }
@@ -98,15 +117,15 @@ impl Node {
     /// # Returns
     /// `true` if this is a small cave and `false` otherwise.
     pub fn is_small_cave(&self) -> bool {
-        return self.name.to_lowercase() == self.name;
+        self.name.to_lowercase() == self.name
     }
 
     /// Adds a neighbor to this node.
     ///
     /// # Parameters
     /// - `node`: The other node.
-    pub fn add_neighbor(&mut self, node: &String) -> () {
-        self.neighbors.push(node.clone());
+    pub fn add_neighbor(&mut self, node: &str) {
+        self.neighbors.push(node.to_string());
     }
 }
 
@@ -120,9 +139,15 @@ impl Node {
 ///
 /// # Returns
 /// The number of paths possible.
-fn number_of_paths<F>(all_nodes: &HashMap<String, Node>, curr_node: &Node,
-                      explored: Vec<usize>, checker: &F) -> usize
-    where F: Fn(&Node, &Vec<usize>) -> bool {
+fn number_of_paths<F>(
+    all_nodes: &HashMap<String, Node>,
+    curr_node: &Node,
+    explored: Vec<usize>,
+    checker: &F,
+) -> usize
+where
+    F: Fn(&Node, &Vec<usize>) -> bool,
+{
     if curr_node.name == "end" {
         return 1;
     }
@@ -143,5 +168,5 @@ fn number_of_paths<F>(all_nodes: &HashMap<String, Node>, curr_node: &Node,
         num_paths += number_of_paths(all_nodes, this_neighbor_node, cloned_explored, checker);
     }
 
-    return num_paths;
+    num_paths
 }

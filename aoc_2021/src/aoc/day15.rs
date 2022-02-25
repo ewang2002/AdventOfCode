@@ -1,6 +1,6 @@
-use std::cmp::{Ordering};
-use std::collections::{BinaryHeap, HashMap};
 use crate::aoc::aoc_problem::AoCProblem;
+use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashMap};
 
 type Point = (usize, usize);
 
@@ -13,7 +13,8 @@ pub struct Day15 {
 // https://adventofcode.com/2021/day/15
 impl AoCProblem<usize, usize> for Day15 {
     fn prepare(input: Vec<String>) -> Self {
-        let risk_levels: Vec<Vec<_>> = input.iter()
+        let risk_levels: Vec<Vec<_>> = input
+            .iter()
             .map(|i| i.bytes().map(|v| (v - b'0') as usize).collect::<Vec<_>>())
             .collect::<Vec<_>>();
 
@@ -21,18 +22,31 @@ impl AoCProblem<usize, usize> for Day15 {
     }
 
     fn part1(&self) -> usize {
-        find_shortest_path_score(&self.risk_levels, |levels, x, y| {
-            levels[x][y]
-        }, (self.risk_levels.len() - 1, self.risk_levels[0].len() - 1))
+        find_shortest_path_score(
+            &self.risk_levels,
+            |levels, x, y| levels[x][y],
+            (self.risk_levels.len() - 1, self.risk_levels[0].len() - 1),
+        )
     }
 
     fn part2(&self) -> usize {
-        find_shortest_path_score(&self.risk_levels, |levels, x, y| {
-            let dx = x / levels.len();
-            let dy = y / levels.len();
-            let orig = levels[x % levels.len()][y % levels[0].len()] + dx + dy;
-            if orig < 10 { orig } else { (orig % 10) + 1 }
-        }, (self.risk_levels.len() * 5 - 1, self.risk_levels[0].len() * 5 - 1))
+        find_shortest_path_score(
+            &self.risk_levels,
+            |levels, x, y| {
+                let dx = x / levels.len();
+                let dy = y / levels.len();
+                let orig = levels[x % levels.len()][y % levels[0].len()] + dx + dy;
+                if orig < 10 {
+                    orig
+                } else {
+                    (orig % 10) + 1
+                }
+            },
+            (
+                self.risk_levels.len() * 5 - 1,
+                self.risk_levels[0].len() * 5 - 1,
+            ),
+        )
     }
 }
 
@@ -47,13 +61,15 @@ impl AoCProblem<usize, usize> for Day15 {
 /// # Returns
 /// The shortest path score.
 fn find_shortest_path_score<F>(input: &[Vec<usize>], weight_fn: F, end_point: Point) -> usize
-    where F: Fn(&[Vec<usize>], usize, usize) -> usize {
+where
+    F: Fn(&[Vec<usize>], usize, usize) -> usize,
+{
     // Also see: https://doc.rust-lang.org/std/collections/binary_heap/index.html
     let mut heap = BinaryHeap::new();
     heap.push(PointValue::new(0, 0, 0));
 
     let mut explored = HashMap::new();
-    while heap.len() > 0 {
+    while !heap.is_empty() {
         let node = heap.pop().unwrap();
         let point = node.point;
         if explored.contains_key(&point) {
@@ -90,7 +106,10 @@ impl PointValue {
     /// - `y`: The `y`-coordinate.
     /// - `weight`: The weight.
     pub fn new(x: usize, y: usize, weight: usize) -> Self {
-        Self { point: (x, y), weight }
+        Self {
+            point: (x, y),
+            weight,
+        }
     }
 }
 

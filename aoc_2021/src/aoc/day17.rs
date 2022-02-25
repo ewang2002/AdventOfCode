@@ -15,10 +15,11 @@ pub struct Day17 {
 impl AoCProblem<i32, usize> for Day17 {
     fn prepare(input: Vec<String>) -> Self {
         // target area: x=248..285, y=-85..-56
-        let bounds: Vec<_> = input[0].replace("target area: x=", "")
+        let bounds: Vec<_> = input[0]
+            .replace("target area: x=", "")
             .replace(", y=", " ")
             .replace("..", " ")
-            .split(" ")
+            .split(' ')
             .map(|x| x.parse::<i32>().unwrap())
             .collect();
 
@@ -35,13 +36,10 @@ impl AoCProblem<i32, usize> for Day17 {
         let mut highest: i32 = i32::MIN;
         for dx in -BOUNDING_BOX..=BOUNDING_BOX {
             for dy in -BOUNDING_BOX..=BOUNDING_BOX {
-                match launch_probe(dx, dy, (self.min_x, self.max_x), (self.min_y, self.max_y)) {
-                    Some(val) => {
-                        if val > highest {
-                            highest = val;
-                        }
-                    },
-                    _ => {}
+                if let Some(val) = launch_probe(dx, dy, (self.min_x, self.max_x), (self.min_y, self.max_y)) {
+                    if val > highest {
+                        highest = val;
+                    }
                 }
             }
         }
@@ -53,9 +51,14 @@ impl AoCProblem<i32, usize> for Day17 {
         let mut valid: usize = 0;
         for dx in -BOUNDING_BOX..=BOUNDING_BOX {
             for dy in -BOUNDING_BOX..=BOUNDING_BOX {
-                valid += match launch_probe(dx, dy, (self.min_x, self.max_x), (self.min_y, self.max_y)) {
+                valid += match launch_probe(
+                    dx,
+                    dy,
+                    (self.min_x, self.max_x),
+                    (self.min_y, self.max_y),
+                ) {
                     Some(_) => 1,
-                    None => 0
+                    None => 0,
                 };
             }
         }
@@ -88,12 +91,18 @@ fn launch_probe(mut x_vel: i32, mut y_vel: i32, x_bound: Point, y_bound: Point) 
         }
 
         if min_x <= x && x <= max_x && min_y <= y && y <= max_y {
-            return Some(highest_y)
+            return Some(highest_y);
         }
 
         x += x_vel;
         y += y_vel;
-        x_vel += if x_vel > 0 { -1 } else if x_vel < 0 { 1 } else { 0 };
+        x_vel += if x_vel > 0 {
+            -1
+        } else if x_vel < 0 {
+            1
+        } else {
+            0
+        };
         y_vel -= 1;
     }
 

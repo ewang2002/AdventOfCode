@@ -10,19 +10,15 @@ pub struct Day10 {
 // inconvenience.
 impl Day10 {
     pub fn prepare(input: Vec<String>) -> Self {
-        return Day10 {
+        Day10 {
             nav_subsystem: input,
             incomplete: vec![],
-        };
+        }
     }
 
     pub fn part1(&mut self) -> usize {
-        let score_map: HashMap<char, usize> = HashMap::from([
-            (')', 3),
-            (']', 57),
-            ('}', 1197),
-            ('>', 25137)
-        ]);
+        let score_map: HashMap<char, usize> =
+            HashMap::from([(')', 3), (']', 57), ('}', 1197), ('>', 25137)]);
 
         let mut total_score: usize = 0;
         for sub in &self.nav_subsystem {
@@ -66,7 +62,7 @@ impl Day10 {
                             None => {}
                         };
                     }
-                    _ => panic!("Invalid char: {}", c)
+                    _ => panic!("Invalid char: {}", c),
                 };
             }
 
@@ -75,7 +71,7 @@ impl Day10 {
             }
         }
 
-        return total_score;
+        total_score
     }
 
     pub fn part2(&self) -> usize {
@@ -92,7 +88,7 @@ impl Day10 {
                             break;
                         }
                     }
-                    _ => panic!("Invalid char: {}", c)
+                    _ => panic!("Invalid char: {}", c),
                 };
             }
 
@@ -105,14 +101,14 @@ impl Day10 {
                     '[' => score += 2,
                     '{' => score += 3,
                     '<' => score += 4,
-                    _ => panic!("Invalid symbol: {}", c)
+                    _ => panic!("Invalid symbol: {}", c),
                 };
             }
 
             all_scores.push(score);
         }
 
-        all_scores.sort();
-        return all_scores[all_scores.len() / 2];
+        all_scores.sort_unstable();
+        all_scores[all_scores.len() / 2]
     }
 }

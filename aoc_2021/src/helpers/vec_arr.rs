@@ -5,20 +5,24 @@
 ///
 /// # Returns
 /// The transposed vector.
-pub fn transpose_vec<T>(v: &Vec<Vec<T>>) -> Vec<Vec<T>> where T: Copy {
+pub fn transpose_vec<T>(v: &[Vec<T>]) -> Vec<Vec<T>>
+where
+    T: Copy,
+{
     if v.is_empty() {
         return vec![];
     }
 
     let len = v[0].len();
-    let mut iters: Vec<_> = v.into_iter().map(|n| n.into_iter()).collect();
-    return (0..len)
+    let mut iters: Vec<_> = v.iter().map(|n| n.iter()).collect();
+    (0..len)
         .map(|_| {
             iters
                 .iter_mut()
                 .map(|n| *n.next().unwrap())
                 .collect::<Vec<T>>()
-        }).collect();
+        })
+        .collect()
 }
 
 /// Transposes a matrix of a copyable type.
@@ -29,7 +33,9 @@ pub fn transpose_vec<T>(v: &Vec<Vec<T>>) -> Vec<Vec<T>> where T: Copy {
 /// # Returns
 /// The transposed matrix.
 pub fn transpose_mat<T, const R: usize, const C: usize>(v: &[[T; C]; R]) -> [[T; R]; C]
-    where T: Copy + Default {
+where
+    T: Copy + Default,
+{
     let mut new_arr: [[T; R]; C] = [[T::default(); R]; C];
     for r in 0..R {
         for c in 0..C {
@@ -37,5 +43,5 @@ pub fn transpose_mat<T, const R: usize, const C: usize>(v: &[[T; C]; R]) -> [[T;
         }
     }
 
-    return new_arr;
+    new_arr
 }

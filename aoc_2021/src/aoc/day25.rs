@@ -8,7 +8,7 @@ pub struct Day25 {
 impl AoCProblem<usize, usize> for Day25 {
     fn prepare(input: Vec<String>) -> Self {
         Self {
-            sea_map: input.iter().map(|x| x.chars().collect()).collect()
+            sea_map: input.iter().map(|x| x.chars().collect()).collect(),
         }
     }
 
@@ -43,7 +43,7 @@ impl AoCProblem<usize, usize> for Day25 {
                                     num_movements += 1;
                                 }
                             }
-                            _ => continue
+                            _ => continue,
                         };
                     }
                 }
@@ -53,7 +53,6 @@ impl AoCProblem<usize, usize> for Day25 {
                 break;
             }
         }
-
 
         num_steps
     }

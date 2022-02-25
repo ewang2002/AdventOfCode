@@ -1,5 +1,5 @@
-use std::collections::HashSet;
 use crate::aoc::aoc_problem::AoCProblem;
+use std::collections::HashSet;
 
 type Board = [[BoardElement; 5]; 5];
 
@@ -11,7 +11,8 @@ pub struct Day04 {
 // https://adventofcode.com/2021/day/4
 impl AoCProblem<i32, i32> for Day04 {
     fn prepare(input: Vec<String>) -> Self {
-        let numbers_to_draw = input[0].split(",")
+        let numbers_to_draw = input[0]
+            .split(',')
             .into_iter()
             .map(|x| x.parse::<i32>().unwrap())
             .collect::<Vec<_>>();
@@ -19,30 +20,35 @@ impl AoCProblem<i32, i32> for Day04 {
 
         // Skip first two lines so we start at the board directly.
         // Remove the new lines so we can get proper chunks.
-        input.iter()
+        input
+            .iter()
             .skip(2)
             .filter(|x| !x.is_empty())
             .collect::<Vec<_>>()
             .chunks(5)
             .for_each(|board_chunk| {
-                let mut board: Board = [[BoardElement { value: -1, selected: false }; 5]; 5];
-                let mut row_idx: usize = 0;
-                for chunk in board_chunk {
-                    let col_vals = chunk.split(" ")
+                let mut board: Board = [[BoardElement {
+                    value: -1,
+                    selected: false,
+                }; 5]; 5];
+                for (row_idx, chunk) in board_chunk.iter().enumerate() {
+                    let col_vals = chunk
+                        .split(' ')
                         .filter(|x| !x.is_empty())
                         .map(|x| x.parse::<i32>().unwrap())
                         .collect::<Vec<_>>();
                     for col in 0..5 {
                         board[row_idx][col].value = col_vals[col];
                     }
-
-                    row_idx += 1;
                 }
 
                 bingo_boards.push(board);
             });
 
-        return Day04 { numbers_to_draw, bingo_boards };
+        Self {
+            numbers_to_draw,
+            bingo_boards,
+        }
     }
 
     fn part1(&self) -> i32 {
@@ -60,7 +66,7 @@ impl AoCProblem<i32, i32> for Day04 {
             }
         }
 
-        return -1;
+        -1
     }
 
     fn part2(&self) -> i32 {
@@ -77,8 +83,7 @@ impl AoCProblem<i32, i32> for Day04 {
                 }
 
                 // Assume that every first row has a unique sum; this will be our identifier.
-                let first_row_sum = board.first().unwrap().iter()
-                    .map(|x| x.value).sum::<i32>();
+                let first_row_sum = board.first().unwrap().iter().map(|x| x.value).sum::<i32>();
 
                 if checked.contains(&first_row_sum) {
                     continue;
@@ -89,7 +94,11 @@ impl AoCProblem<i32, i32> for Day04 {
             }
         }
 
-        return if sums.is_empty() { -1 } else { *sums.last().unwrap() };
+        if sums.is_empty() {
+            -1
+        } else {
+            *sums.last().unwrap()
+        }
     }
 }
 
@@ -104,7 +113,7 @@ struct BoardElement {
 /// # Parameters
 /// - `board`: The board.
 /// - `target`: The target value.
-fn apply_num_to_board(board: &mut Board, target: i32) -> () {
+fn apply_num_to_board(board: &mut Board, target: i32) {
     for i in 0..5 {
         for j in 0..5 {
             if board[i][j].value == target {
@@ -122,8 +131,9 @@ fn apply_num_to_board(board: &mut Board, target: i32) -> () {
 /// # Returns
 /// The sum of all unselected elements.
 fn get_sum_of_unselected(board: &Board) -> i32 {
-    board.iter()
-        .flat_map(|x| x)
+    board
+        .iter()
+        .flatten()
         .filter(|x| !x.selected)
         .map(|x| x.value)
         .sum::<i32>()
@@ -139,9 +149,7 @@ fn get_sum_of_unselected(board: &Board) -> i32 {
 /// elements are selected).
 fn check_win(board: &Board) -> bool {
     // Check rows
-    let row_check = board
-        .iter()
-        .any(|x| x.iter().all(|y| y.selected));
+    let row_check = board.iter().any(|x| x.iter().all(|y| y.selected));
     if row_check {
         return true;
     }
@@ -161,5 +169,5 @@ fn check_win(board: &Board) -> bool {
         }
     }
 
-    return false;
+    false
 }

@@ -1,26 +1,26 @@
 use crate::aoc::aoc_problem::AoCProblem;
 
-
 pub struct Day06 {
-    fish_timers: Vec<usize>
+    fish_timers: Vec<usize>,
 }
 
 // https://adventofcode.com/2021/day/6
 impl AoCProblem<usize, usize> for Day06 {
     fn prepare(input: Vec<String>) -> Self {
         return Day06 {
-            fish_timers: input[0].split(",")
+            fish_timers: input[0]
+                .split(',')
                 .map(|x| x.parse::<usize>().unwrap())
-                .collect::<Vec<_>>()
-        }
+                .collect::<Vec<_>>(),
+        };
     }
 
     fn part1(&self) -> usize {
-        return calculate_fish_amt(&self.fish_timers, 80);
+        calculate_fish_amt(&self.fish_timers, 80)
     }
 
     fn part2(&self) -> usize {
-        return calculate_fish_amt(&self.fish_timers, 256);
+        calculate_fish_amt(&self.fish_timers, 256)
     }
 }
 

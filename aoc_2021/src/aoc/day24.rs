@@ -1,5 +1,5 @@
-use std::collections::{HashMap};
 use crate::aoc::aoc_problem::AoCProblem;
+use std::collections::HashMap;
 
 const MIN_TO_MAX: [i64; 9] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const MAX_TO_MIN: [i64; 9] = [9, 8, 7, 6, 5, 4, 3, 2, 1];
@@ -12,7 +12,7 @@ impl AoCProblem<usize, usize> for Day24 {
     fn prepare(input: Vec<String>) -> Self {
         let mut instructions: Vec<ALUInstruction> = vec![];
         for line in input {
-            let mut split_line = line.split(" ");
+            let mut split_line = line.split(' ');
             let op = match split_line.next().unwrap() {
                 "inp" => Op::Inp,
                 "add" => Op::Add,
@@ -20,7 +20,7 @@ impl AoCProblem<usize, usize> for Day24 {
                 "div" => Op::Div,
                 "mod" => Op::Mod,
                 "eql" => Op::Eql,
-                _ => panic!("Unknown operator.")
+                _ => panic!("Unknown operator."),
             };
 
             let first = split_line.next().unwrap().chars().next().unwrap();
@@ -47,11 +47,31 @@ impl AoCProblem<usize, usize> for Day24 {
     }
 
     fn part1(&self) -> usize {
-        run(&self.instructions, 0, &mut HashMap::new(), 0, 0, 0, 0, MAX_TO_MIN).1 as usize
+        run(
+            &self.instructions,
+            0,
+            &mut HashMap::new(),
+            0,
+            0,
+            0,
+            0,
+            MAX_TO_MIN,
+        )
+        .1 as usize
     }
 
     fn part2(&self) -> usize {
-        run(&self.instructions, 0, &mut HashMap::new(), 0, 0, 0, 0, MIN_TO_MAX).1 as usize
+        run(
+            &self.instructions,
+            0,
+            &mut HashMap::new(),
+            0,
+            0,
+            0,
+            0,
+            MIN_TO_MAX,
+        )
+        .1 as usize
     }
 }
 
@@ -73,8 +93,16 @@ type Cache = HashMap<CacheKey, CacheValue>;
 ///
 /// # Returns
 /// Whether `z` is 0, and the corresponding value (or `-1` if no such value exists).
-fn run(instructions: &[ALUInstruction], i: usize, cache: &mut Cache, w: i64,
-       x: i64, y: i64, z: i64, digits: [i64; 9]) -> (bool, i64) {
+fn run(
+    instructions: &[ALUInstruction],
+    i: usize,
+    cache: &mut Cache,
+    w: i64,
+    x: i64,
+    y: i64,
+    z: i64,
+    digits: [i64; 9],
+) -> (bool, i64) {
     // Find some upperbound for z. Assume that if we go above this value, we won't get 0.
     // Lower power = faster but less accurate (note that using 10^6 gives a >14 digit number)
     // Higher power = slower but more accurate
@@ -83,8 +111,8 @@ fn run(instructions: &[ALUInstruction], i: usize, cache: &mut Cache, w: i64,
     }
 
     let c_res = cache.get(&(i, w, x, y, z));
-    if c_res.is_some() {
-        return *c_res.unwrap();
+    if let Some(val) = c_res {
+        return *val;
     }
 
     if i >= instructions.len() {
@@ -97,16 +125,7 @@ fn run(instructions: &[ALUInstruction], i: usize, cache: &mut Cache, w: i64,
         Op::Inp => {
             for n in digits {
                 v[idx(is.first)] = n;
-                let (valid, val) = run(
-                    instructions,
-                    i + 1,
-                    cache,
-                    v[0],
-                    v[1],
-                    v[2],
-                    v[3],
-                    digits,
-                );
+                let (valid, val) = run(instructions, i + 1, cache, v[0], v[1], v[2], v[3], digits);
 
                 let key = (i + 1, v[0], v[1], v[2], v[3]);
 
@@ -130,7 +149,13 @@ fn run(instructions: &[ALUInstruction], i: usize, cache: &mut Cache, w: i64,
         Op::Mul => v[idx(is.first)] *= val(&is.second, &v),
         Op::Div => v[idx(is.first)] /= val(&is.second, &v),
         Op::Mod => v[idx(is.first)] %= val(&is.second, &v),
-        Op::Eql => v[idx(is.first)] = if v[idx(is.first)] == val(&is.second, &v) { 1 } else { 0 }
+        Op::Eql => {
+            v[idx(is.first)] = if v[idx(is.first)] == val(&is.second, &v) {
+                1
+            } else {
+                0
+            }
+        }
     };
 
     let r = run(instructions, i + 1, cache, v[0], v[1], v[2], v[3], digits);
@@ -164,7 +189,7 @@ fn idx(c: char) -> usize {
         'x' => 1,
         'y' => 2,
         'z' => 3,
-        _ => unreachable!()
+        _ => unreachable!(),
     }
 }
 
@@ -180,7 +205,7 @@ fn val(second_arg: &SecondArg, vars: &[i64; 4]) -> i64 {
     match second_arg {
         SecondArg::Num(n) => *n,
         SecondArg::Var(n) => vars[idx(*n)],
-        SecondArg::None => panic!("second argument is invalid")
+        SecondArg::None => panic!("second argument is invalid"),
     }
 }
 

@@ -1,5 +1,5 @@
-use std::collections::{HashSet};
 use crate::aoc::aoc_problem::AoCProblem;
+use std::collections::HashSet;
 
 pub struct Day13 {
     coordinates: HashSet<(i32, i32)>,
@@ -9,7 +9,8 @@ pub struct Day13 {
 // https://adventofcode.com/2021/day/13
 impl AoCProblem<usize, String> for Day13 {
     fn prepare(input: Vec<String>) -> Self {
-        let coordinates = input.iter()
+        let coordinates = input
+            .iter()
             .filter(|x| x.contains(','))
             .map(|line| {
                 let (x, y) = line.split_once(',').unwrap();
@@ -17,21 +18,26 @@ impl AoCProblem<usize, String> for Day13 {
             })
             .collect::<HashSet<(i32, i32)>>();
 
-        let fold_directions = input.iter()
+        let fold_directions = input
+            .iter()
             .filter(|x| x.contains('='))
             .map(|line| {
-                let (along, amt) = line
-                    .split_once('=')
-                    .unwrap();
-                (if along.ends_with("x") { 'x' } else { 'y' }, amt.parse::<i32>().unwrap())
+                let (along, amt) = line.split_once('=').unwrap();
+                (
+                    if along.ends_with('x') { 'x' } else { 'y' },
+                    amt.parse::<i32>().unwrap(),
+                )
             })
             .collect::<Vec<_>>();
 
-        Day13 { coordinates, fold_directions }
+        Day13 {
+            coordinates,
+            fold_directions,
+        }
     }
 
     fn part1(&self) -> usize {
-        return run_fold_direction(&self.coordinates, self.fold_directions[0]).len();
+        run_fold_direction(&self.coordinates, self.fold_directions[0]).len()
     }
 
     fn part2(&self) -> String {
@@ -40,10 +46,26 @@ impl AoCProblem<usize, String> for Day13 {
             points = run_fold_direction(&points, *dir);
         }
 
-        let min_x = (*points.iter().min_by_key(|p| (**p).0).expect("invalid min x")).0;
-        let max_x = (*points.iter().max_by_key(|p| (**p).0).expect("invalid max x")).0;
-        let min_y = (*points.iter().min_by_key(|p| (**p).1).expect("invalid min y")).1;
-        let max_y = (*points.iter().max_by_key(|p| (**p).1).expect("invalid max y")).1;
+        let min_x = (*points
+            .iter()
+            .min_by_key(|p| (**p).0)
+            .expect("invalid min x"))
+        .0;
+        let max_x = (*points
+            .iter()
+            .max_by_key(|p| (**p).0)
+            .expect("invalid max x"))
+        .0;
+        let min_y = (*points
+            .iter()
+            .min_by_key(|p| (**p).1)
+            .expect("invalid min y"))
+        .1;
+        let max_y = (*points
+            .iter()
+            .max_by_key(|p| (**p).1)
+            .expect("invalid max y"))
+        .1;
 
         // Create output string with the message
         let mut message = String::new();
@@ -55,7 +77,7 @@ impl AoCProblem<usize, String> for Day13 {
             message.push('\n');
         }
 
-        return message;
+        message
     }
 }
 
@@ -80,7 +102,7 @@ fn run_fold_direction(curr: &HashSet<(i32, i32)>, fold_dir: (char, i32)) -> Hash
                 }
                 new_points.insert((x - (2 * (x - at)), *y));
             }
-        },
+        }
         'y' => {
             for (x, y) in curr {
                 if *y <= at {
@@ -89,9 +111,9 @@ fn run_fold_direction(curr: &HashSet<(i32, i32)>, fold_dir: (char, i32)) -> Hash
                 }
                 new_points.insert((*x, y - (2 * (y - at))));
             }
-        },
-        _ => panic!("Unknown direction: {}", dir)
+        }
+        _ => panic!("Unknown direction: {}", dir),
     };
 
-    return new_points;
+    new_points
 }

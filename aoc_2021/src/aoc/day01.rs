@@ -7,27 +7,29 @@ pub struct Day01 {
 // https://adventofcode.com/2021/day/1
 impl AoCProblem<usize, usize> for Day01 {
     fn prepare(input: Vec<String>) -> Self {
-        let nums = input.iter()
+        let nums = input
+            .iter()
             .map(|x| x.parse::<i32>().unwrap())
             .collect::<Vec<_>>();
-        return Day01 { nums };
+        Self { nums }
     }
 
     fn part1(&self) -> usize {
-        return self.nums
+        self.nums
             .windows(2)
             .into_iter()
             .filter(|x| x[0] < x[1])
-            .count();
+            .count()
     }
 
     fn part2(&self) -> usize {
         // Note that we need to see if:
         //      a + b + c < b + c + d
         //      => a < d
-        return self.nums.windows(4)
+        self.nums
+            .windows(4)
             .into_iter()
             .filter(|x| x[0] < x[3])
-            .count();
+            .count()
     }
 }

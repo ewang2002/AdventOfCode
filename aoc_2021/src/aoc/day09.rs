@@ -1,8 +1,8 @@
-use std::collections::{BinaryHeap, HashSet};
 use crate::aoc::aoc_problem::AoCProblem;
+use std::collections::{BinaryHeap, HashSet};
 
 pub struct Day09 {
-    height_map: Vec<Vec<u32>>
+    height_map: Vec<Vec<u32>>,
 }
 
 // https://adventofcode.com/2021/day/9
@@ -14,11 +14,11 @@ impl AoCProblem<u32, u32> for Day09 {
                 line.split("")
                     .filter(|x| !x.is_empty())
                     .map(|x| x.parse::<u32>().unwrap())
-                    .collect()
+                    .collect(),
             );
         }
 
-        return Day09 { height_map };
+        Day09 { height_map }
     }
 
     fn part1(&self) -> u32 {
@@ -42,7 +42,7 @@ impl AoCProblem<u32, u32> for Day09 {
         let s1 = poss_basin_sizes.pop().unwrap();
         let s2 = poss_basin_sizes.pop().unwrap();
         let s3 = poss_basin_sizes.pop().unwrap();
-        return s1 * s2 * s3;
+        s1 * s2 * s3
     }
 }
 
@@ -57,8 +57,13 @@ impl AoCProblem<u32, u32> for Day09 {
 ///
 /// # Returns
 /// The size of this basin.
-fn explore(height_map: &[Vec<u32>], row: usize, col: usize,
-           explored: &mut HashSet<(usize, usize)>, basin_size: &mut u32) -> () {
+fn explore(
+    height_map: &[Vec<u32>],
+    row: usize,
+    col: usize,
+    explored: &mut HashSet<(usize, usize)>,
+    basin_size: &mut u32,
+) {
     let curr_pt = (row, col);
     if explored.contains(&curr_pt) {
         return;
@@ -94,7 +99,7 @@ fn explore(height_map: &[Vec<u32>], row: usize, col: usize,
 ///
 /// # Returns
 /// A vector containing the low points followed by the coordinates that these points were found in.
-fn compute_low_points(height_map: &Vec<Vec<u32>>) -> Vec<(u32, (usize, usize))> {
+fn compute_low_points(height_map: &[Vec<u32>]) -> Vec<(u32, (usize, usize))> {
     let max_rows = height_map.len();
     let max_cols = height_map[0].len();
     let mut low_points: Vec<(u32, (usize, usize))> = vec![];
@@ -114,7 +119,7 @@ fn compute_low_points(height_map: &Vec<Vec<u32>>) -> Vec<(u32, (usize, usize))> 
             }
 
             // Check left
-            if col > 0 && target >= height_map[row][col - 1]{
+            if col > 0 && target >= height_map[row][col - 1] {
                 continue;
             }
 
@@ -127,5 +132,5 @@ fn compute_low_points(height_map: &Vec<Vec<u32>>) -> Vec<(u32, (usize, usize))> 
         }
     }
 
-    return low_points;
+    low_points
 }

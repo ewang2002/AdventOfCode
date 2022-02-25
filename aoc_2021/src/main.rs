@@ -1,6 +1,6 @@
-use std::time::Instant;
-use helpers::io;
 use crate::aoc::AoCProblem;
+use helpers::io;
+use std::time::Instant;
 
 mod aoc;
 mod helpers;
@@ -17,7 +17,7 @@ macro_rules! prepare_day {
     ($day: ident) => {{
         use crate::aoc::*;
         let input_file = io::file_read_all_lines(
-            format!("input/{}.txt", stringify!($day).to_lowercase()).as_str()
+            format!("input/{}.txt", stringify!($day).to_lowercase()).as_str(),
         );
         $day::prepare(input_file)
     }};
@@ -29,7 +29,7 @@ fn main() {
 
     // Change this to the correct day!
     #[allow(unused_mut)]
-    let mut solver = prepare_day!(Day24);
+    let mut solver = prepare_day!(Day18);
     let in_t = start.elapsed();
 
     // Execution begins
@@ -45,9 +45,21 @@ fn main() {
 
     // Execution ends
     println!();
-    println!("Input Parse : \t{} ms.\tor\t{} μs.", in_t.as_millis(), in_t.as_micros());
-    println!("Part 1 Time : \t{} ms.\tor\t{} μs.", p1_t.as_millis(), p1_t.as_micros());
-    println!("Part 2 Time : \t{} ms.\tor\t{} μs.", p2_t.as_millis(), p2_t.as_micros());
+    println!(
+        "Input Parse : \t{} ms.\tor\t{} μs.",
+        in_t.as_millis(),
+        in_t.as_micros()
+    );
+    println!(
+        "Part 1 Time : \t{} ms.\tor\t{} μs.",
+        p1_t.as_millis(),
+        p1_t.as_micros()
+    );
+    println!(
+        "Part 2 Time : \t{} ms.\tor\t{} μs.",
+        p2_t.as_millis(),
+        p2_t.as_micros()
+    );
     println!();
     println!(
         "P1 + P2     : \t{} ms.\tor\t{} μs.",

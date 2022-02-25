@@ -1,5 +1,5 @@
-use std::collections::{HashSet};
 use crate::aoc::aoc_problem::AoCProblem;
+use std::collections::HashSet;
 
 const COORD_DIFF: [(i32, i32); 8] = [
     (-1, -1),
@@ -9,7 +9,7 @@ const COORD_DIFF: [(i32, i32); 8] = [
     (0, 1),
     (1, -1),
     (1, 0),
-    (1, 1)
+    (1, 1),
 ];
 
 pub struct Day11 {
@@ -20,9 +20,15 @@ pub struct Day11 {
 impl AoCProblem<u32, u32> for Day11 {
     fn prepare(input: Vec<String>) -> Self {
         Day11 {
-            energy_levels: input.iter().map(|x| x.split("")
-                .filter(|y| !y.is_empty())
-                .map(|y| y.parse().unwrap()).collect()).collect()
+            energy_levels: input
+                .iter()
+                .map(|x| {
+                    x.split("")
+                        .filter(|y| !y.is_empty())
+                        .map(|y| y.parse().unwrap())
+                        .collect()
+                })
+                .collect(),
         }
     }
 
@@ -39,7 +45,7 @@ impl AoCProblem<u32, u32> for Day11 {
             }
         }
 
-        return flashes;
+        flashes
     }
 
     fn part2(&self) -> u32 {
@@ -74,8 +80,12 @@ impl AoCProblem<u32, u32> for Day11 {
 ///
 /// # Returns
 /// The number of flashes that have occurred at this point `(row, col)`.
-fn iterate_energy_level(energy_levels: &mut Vec<Vec<i32>>, row: usize, col: usize,
-                        flashed_pts: &mut HashSet<(usize, usize)>) -> u32 {
+fn iterate_energy_level(
+    energy_levels: &mut Vec<Vec<i32>>,
+    row: usize,
+    col: usize,
+    flashed_pts: &mut HashSet<(usize, usize)>,
+) -> u32 {
     let this_pt = (row, col);
     if flashed_pts.contains(&this_pt) {
         return 0;
@@ -94,19 +104,16 @@ fn iterate_energy_level(energy_levels: &mut Vec<Vec<i32>>, row: usize, col: usiz
         let c_row = (row as i32) + dx;
         let c_col = (col as i32) + dy;
 
-        if c_row < 0 || c_col < 0
+        if c_row < 0
+            || c_col < 0
             || c_row >= energy_levels.len() as i32
-            || c_col >= energy_levels[0].len() as i32 {
+            || c_col >= energy_levels[0].len() as i32
+        {
             continue;
         }
 
-        flashes += iterate_energy_level(
-            energy_levels,
-            c_row as usize,
-            c_col as usize,
-            flashed_pts,
-        );
+        flashes += iterate_energy_level(energy_levels, c_row as usize, c_col as usize, flashed_pts);
     }
 
-    return flashes;
+    flashes
 }

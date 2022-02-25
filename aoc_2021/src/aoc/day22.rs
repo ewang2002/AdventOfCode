@@ -1,5 +1,5 @@
-use std::collections::{HashSet};
 use crate::aoc::aoc_problem::AoCProblem;
+use std::collections::HashSet;
 
 pub struct Day22 {
     reboot_steps: Vec<RebootStep>,
@@ -18,9 +18,7 @@ impl AoCProblem<usize, usize> for Day22 {
                 .replace(",z=", " ")
                 .replace("..", " ");
 
-            let mut iterator = parsed_rest.split(" ")
-                .map(|x| x.parse::<i32>().unwrap())
-                .into_iter();
+            let mut iterator = parsed_rest.split(' ').map(|x| x.parse::<i32>().unwrap());
 
             reboot_steps.push(RebootStep {
                 toggle: toggle_val == "on",
@@ -33,16 +31,19 @@ impl AoCProblem<usize, usize> for Day22 {
             });
         }
 
-        Self {
-            reboot_steps
-        }
+        Self { reboot_steps }
     }
 
     fn part1(&self) -> usize {
         let mut enabled: HashSet<(i32, i32, i32)> = HashSet::new();
         for reboot_step in &self.reboot_steps {
-            if reboot_step.from_x < -50 || reboot_step.to_x > 50 || reboot_step.from_y < -50
-                || reboot_step.to_y > 50 || reboot_step.from_z < -50 || reboot_step.to_z > 50 {
+            if reboot_step.from_x < -50
+                || reboot_step.to_x > 50
+                || reboot_step.from_y < -50
+                || reboot_step.to_y > 50
+                || reboot_step.from_z < -50
+                || reboot_step.to_z > 50
+            {
                 continue;
             }
 

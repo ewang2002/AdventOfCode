@@ -1,6 +1,6 @@
+use crate::aoc::aoc_problem::AoCProblem;
 use std::cmp::{max, min};
 use std::collections::HashMap;
-use crate::aoc::aoc_problem::AoCProblem;
 
 pub struct Day21 {
     p1_starting: usize,
@@ -46,7 +46,14 @@ impl AoCProblem<usize, usize> for Day21 {
     }
 
     fn part2(&self) -> usize {
-        let r = play_dirac(&mut HashMap::new(), self.p1_starting, self.p2_starting, 0, 0, true);
+        let r = play_dirac(
+            &mut HashMap::new(),
+            self.p1_starting,
+            self.p2_starting,
+            0,
+            0,
+            true,
+        );
         max(r.0, r.1)
     }
 }
@@ -68,12 +75,18 @@ type Cache = HashMap<(usize, usize, usize, usize, bool), (usize, usize)>;
 /// # Returns
 /// The number of universes that both player 1 (first element in the tuple) and 2 won (second
 /// element of the tuple) won.
-fn play_dirac(cache: &mut Cache, p1_p: usize, p2_p: usize, p1_s: usize, p2_s: usize,
-              p1_turn: bool) -> (usize, usize) {
+fn play_dirac(
+    cache: &mut Cache,
+    p1_p: usize,
+    p2_p: usize,
+    p1_s: usize,
+    p2_s: usize,
+    p1_turn: bool,
+) -> (usize, usize) {
     let key = (p1_p, p2_p, p1_s, p2_s, p1_turn);
     let val = cache.get(&key);
-    if val.is_some() {
-        return *val.unwrap();
+    if let Some(v) = val {
+        return *v;
     }
 
     // Player 1 won this universe.
@@ -117,7 +130,7 @@ fn play_dirac(cache: &mut Cache, p1_p: usize, p2_p: usize, p1_s: usize, p2_s: us
             8 => 3,
             // 3 + 3 + 3
             9 => 1,
-            _ => panic!("unknown combination {}", roll)
+            _ => panic!("unknown combination {}", roll),
         };
 
         let mut new_p1_p = p1_p;

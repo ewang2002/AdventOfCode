@@ -1,5 +1,5 @@
-use std::collections::HashSet;
 use crate::aoc::aoc_problem::AoCProblem;
+use std::collections::HashSet;
 
 type Point = (i32, i32);
 
@@ -77,8 +77,13 @@ impl AoCProblem<usize, usize> for Day20 {
 ///
 /// # Returns
 /// The number of bright pixels.
-fn enhance_image(image: &HashSet<Point>, algorithm: &[bool], min: Point, max: Point,
-                 num_apply: usize) -> usize {
+fn enhance_image(
+    image: &HashSet<Point>,
+    algorithm: &[bool],
+    min: Point,
+    max: Point,
+    num_apply: usize,
+) -> usize {
     let mut image = image.clone();
     let mut min_x = min.0;
     let mut min_y = min.1;
@@ -96,8 +101,10 @@ fn enhance_image(image: &HashSet<Point>, algorithm: &[bool], min: Point, max: Po
                         continue;
                     }
 
-                    if algorithm[0] && iterations & 1 == 1
-                        && (n_x < min_x || n_y < min_y || n_x > max_x || n_y > max_y) {
+                    if algorithm[0]
+                        && iterations & 1 == 1
+                        && (n_x < min_x || n_y < min_y || n_x > max_x || n_y > max_y)
+                    {
                         binary_str.push('1');
                         continue;
                     }
@@ -123,7 +130,6 @@ fn enhance_image(image: &HashSet<Point>, algorithm: &[bool], min: Point, max: Po
 
     image.len()
 }
-
 
 /// Gets all surrounding points of a point.
 ///

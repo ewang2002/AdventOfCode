@@ -1,5 +1,5 @@
-use std::collections::{HashMap};
 use crate::aoc::aoc_problem::AoCProblem;
+use std::collections::HashMap;
 
 // The plan that I chose to use is as follows:
 // - Consider the following polymer:
@@ -62,7 +62,6 @@ use crate::aoc::aoc_problem::AoCProblem;
 //      {N: 2, B: 6, C: 4, H: 1}
 // We can use this to our advantage, as seen in the implementation below.
 
-
 type Pair = [char; 2];
 
 pub struct Day14 {
@@ -77,7 +76,7 @@ impl AoCProblem<usize, usize> for Day14 {
         let mut polymer_rules: HashMap<Pair, char> = HashMap::new();
         for (rule, res) in input.iter().skip(2).map(|x| x.split_once(" -> ").unwrap()) {
             let c = rule.chars().collect::<Vec<_>>();
-            polymer_rules.insert([c[0], c[1]], res.chars().nth(0).unwrap());
+            polymer_rules.insert([c[0], c[1]], res.chars().next().unwrap());
         }
 
         let mut polymer_template_pairing: HashMap<Pair, usize> = HashMap::new();
@@ -93,11 +92,9 @@ impl AoCProblem<usize, usize> for Day14 {
         }
     }
 
-
     fn part1(&self) -> usize {
         get_max_min_quantity_diff(self, 10)
     }
-
 
     fn part2(&self) -> usize {
         get_max_min_quantity_diff(self, 40)

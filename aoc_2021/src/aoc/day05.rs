@@ -1,6 +1,6 @@
+use crate::aoc::aoc_problem::AoCProblem;
 use std::cmp::{max, min};
 use std::collections::HashMap;
-use crate::aoc::aoc_problem::AoCProblem;
 
 pub struct Day05 {
     points: Vec<ToFromPoint>,
@@ -10,19 +10,29 @@ pub struct Day05 {
 impl AoCProblem<usize, usize> for Day05 {
     fn prepare(input: Vec<String>) -> Self {
         return Day05 {
-            points: input.iter()
+            points: input
+                .iter()
                 .map(|x| {
-                    let pts = x.replace(" -> ", ",")
-                        .split(",")
-                        .map(|y| y.parse::<i32>().unwrap()).collect::<Vec<_>>();
-                    return ToFromPoint {x1: pts[0], y1: pts[1], x2: pts[2], y2: pts[3]};
-                }).collect::<Vec<_>>()
+                    let pts = x
+                        .replace(" -> ", ",")
+                        .split(',')
+                        .map(|y| y.parse::<i32>().unwrap())
+                        .collect::<Vec<_>>();
+                    ToFromPoint {
+                        x1: pts[0],
+                        y1: pts[1],
+                        x2: pts[2],
+                        y2: pts[3],
+                    }
+                })
+                .collect::<Vec<_>>(),
         };
     }
 
     fn part1(&self) -> usize {
         let mut map: HashMap<(i32, i32), i32> = HashMap::new();
-        self.points.iter()
+        self.points
+            .iter()
             .filter(|pts| pts.x1 == pts.x2 || pts.y1 == pts.y2)
             .for_each(|pts| {
                 if pts.x1 == pts.x2 {
@@ -49,13 +59,16 @@ impl AoCProblem<usize, usize> for Day05 {
 
     fn part2(&self) -> usize {
         let mut map: HashMap<(i32, i32), i32> = HashMap::new();
-        self.points.iter()
-            .filter(|pts| pts.x1 == pts.x2
-                || pts.y1 == pts.y2
-                || (pts.y1 - pts.y2).abs() == (pts.x1 - pts.x2).abs())
+        self.points
+            .iter()
+            .filter(|pts| {
+                pts.x1 == pts.x2
+                    || pts.y1 == pts.y2
+                    || (pts.y1 - pts.y2).abs() == (pts.x1 - pts.x2).abs()
+            })
             .for_each(|pts| {
-                let mut dx = if pts.x2 > pts.x1 {1} else {-1};
-                let mut dy = if pts.y2 > pts.y1 {1} else {-1};
+                let mut dx = if pts.x2 > pts.x1 { 1 } else { -1 };
+                let mut dy = if pts.y2 > pts.y1 { 1 } else { -1 };
 
                 if pts.x1 == pts.x2 {
                     dx = 0;
