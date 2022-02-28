@@ -26,13 +26,13 @@ impl AoCProblem<usize, usize> for Day01 {
             loop {
                 mass = mass / 3 - 2;
                 if mass <= 0 {
-                    break; 
+                    break;
                 }
-                
+
                 res += mass;
             }
 
-            res as usize 
+            res as usize
         })
     }
 }

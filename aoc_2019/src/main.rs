@@ -4,6 +4,7 @@ use std::io::{BufRead, BufReader};
 use std::time::Instant;
 
 mod aoc;
+mod intcode;
 
 /// A macro that can be used to automatically parse the input file and prepare the corresponding
 /// problem structure for execution. To use:
@@ -31,7 +32,7 @@ fn main() {
     let mut start = Instant::now();
 
     // Change this to the correct day!
-    let mut solver = prepare_day!(Day01);
+    let mut solver = prepare_day!(Day02);
     let in_t = start.elapsed();
 
     // Execution begins
