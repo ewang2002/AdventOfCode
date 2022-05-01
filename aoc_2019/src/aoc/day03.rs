@@ -96,9 +96,8 @@ impl AoCProblem<usize, usize> for Day03 {
                 curr_y += dy;
                 i += 1;
                 steps += 1;
-                match map.remove(&(curr_x, curr_y)) {
-                    Some(v) => heap.push(Reverse(v + steps)),
-                    None => {},
+                if let Some(v) = map.remove(&(curr_x, curr_y)) {
+                    heap.push(Reverse(v + steps);
                 }
             }
         }

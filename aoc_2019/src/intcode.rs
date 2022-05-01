@@ -1,5 +1,9 @@
 use std::ops::{Index, IndexMut};
 
+const ADD: usize = 1;
+const MULTIPLY: usize = 2;
+const HALT: usize = 99;
+
 pub struct IntCodeComputer {
     /// The original program code.
     original: Vec<usize>,
@@ -49,9 +53,9 @@ impl IntCodeComputer {
     pub fn run(&mut self) {
         while self.ins_pointer < self.curr_prgm.len() {
             match self.curr_prgm[self.ins_pointer] {
-                1 => self.add(),
-                2 => self.multiply(),
-                99 => break,
+                ADD => self.add(),
+                MULTIPLY => self.multiply(),
+                HALT => break,
                 _ => panic!("Unknown opcode {}", self.curr_prgm[self.ins_pointer]),
             }
         }

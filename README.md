@@ -10,11 +10,11 @@ My solutions to various [Advent of Code](https://adventofcode.com) puzzles.
 | 2020          | C#            | 45/50 | 19p2, 21, 23p2 |
 | 2019          | -             | 0/0   |                |
 | 2018          | Rust          | 26/26 |                |
-| 2017          | -             | 0/0   |                |
+| 2017          | Haskell       | 0/0   |                |
 | 2016          | -             | 0/0   |                |
-| 2015          | C++           | 10/12 | 4              |
+| 2015          | -             | 0/0   |                |
 
-*Last Updated: Dec. 25, 2021 at ~02:00 AM (PST)*
+*Last Updated: Apr. 30, 2022 at ~09:40 PM (PST)*
 
 ## More Information
 I heard about Advent of Code from a [friend](https://github.com/icicl) in 2018, but only really got into it in 2020 (consequently, I've been doing the 2015-2019 puzzles in my free time for the past year or so). My goals are as follows:
