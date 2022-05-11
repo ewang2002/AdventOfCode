@@ -7,7 +7,7 @@ pub struct Day04 {
     max: usize,
 }
 
-// https://adventofcode.com/2019/day/3
+// https://adventofcode.com/2019/day/4
 impl AoCProblem<usize, usize> for Day04 {
     fn prepare(input: Vec<String>) -> Self {
         let (min, max) = input[0].split_once('-').unwrap();

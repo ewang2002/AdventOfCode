@@ -32,7 +32,7 @@ fn main() {
     let mut start = Instant::now();
 
     // Change this to the correct day!
-    let mut solver = prepare_day!(Day04);
+    let mut solver = prepare_day!(Day05);
     let in_t = start.elapsed();
 
     // Execution begins

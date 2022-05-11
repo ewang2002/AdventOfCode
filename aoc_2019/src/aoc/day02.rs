@@ -1,32 +1,29 @@
 use crate::{aoc::aoc_problem::AoCProblem, intcode::IntCodeComputer};
+use crate::intcode::parse_intcode;
 
 pub struct Day02 {
-    opcodes: Vec<usize>,
+    opcodes: Vec<isize>,
 }
 
 // https://adventofcode.com/2019/day/2
-impl AoCProblem<usize, usize> for Day02 {
+impl AoCProblem<isize, isize> for Day02 {
     fn prepare(input: Vec<String>) -> Self {
         Self {
-            opcodes: input[0]
-                .split(',')
-                .into_iter()
-                .map(|x| x.parse::<usize>().unwrap())
-                .collect(),
+            opcodes: parse_intcode(&input[0])
         }
     }
 
-    fn part1(&mut self) -> usize {
+    fn part1(&mut self) -> isize {
         let mut opcodes = self.opcodes.clone();
         opcodes[1] = 12;
         opcodes[2] = 2;
-        let mut computer = IntCodeComputer::new(&opcodes);
+        let mut computer = IntCodeComputer::new(&opcodes, None);
         computer.run();
         computer[0]
     }
 
-    fn part2(&mut self) -> usize {
-        let mut computer = IntCodeComputer::new(&self.opcodes);
+    fn part2(&mut self) -> isize {
+        let mut computer = IntCodeComputer::new(&self.opcodes, None);
         for noun in 0..100 {
             for verb in 0..100 {
                 computer[1] = noun;
