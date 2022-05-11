@@ -14,8 +14,8 @@ pub struct Day03 {
 impl AoCProblem<usize, usize> for Day03 {
     fn prepare(input: Vec<String>) -> Self {
         Self {
-            first_wire: input[0].split(",").map(|x| WireComponent::new(x)).collect(),
-            second_wire: input[1].split(",").map(|x| WireComponent::new(x)).collect(),
+            first_wire: input[0].split(',').map(WireComponent::new).collect(),
+            second_wire: input[1].split(',').map(WireComponent::new).collect(),
         }
     }
 

@@ -117,52 +117,47 @@ impl IntCodeComputer {
             // 1 argument needed
             let v1 = self.get_value(1, p1);
             if num_args == 1 {
-                self.ins_pointer += match opcode {
+                match opcode {
                     INPUT => {
                         let input = self.stdin.pop_front().unwrap();
-                        self.set_value(1, input)
+                        self.set_value(1, input);
                     },
-                    OUTPUT => {
-                        self.stdout.push(v1);
-                        2
-                    },
+                    OUTPUT => self.stdout.push(v1),
                     _ => panic!("Invalid or unknown opcode {}", opcode),
                 };
 
+                self.ins_pointer += 2;
                 continue;
             }
 
             // 2 arguments needed
             let v2 = self.get_value(2, p2);
             if num_args == 2 {
-                self.ins_pointer += match opcode {
+                match opcode {
                     JMP_IF_TRUE => {
                         if v1 != 0 {
                             self.ins_pointer = v2 as usize;
                             continue;
                         }
-
-                        // Increment the pointer by 3 if we didn't change anything
-                        3
                     },
                     JMP_IF_FALSE => {
                         if v1 == 0 {
                             self.ins_pointer = v2 as usize;
                             continue;
                         }
-
-                        // Increment the pointer by 3 if we didn't change anything
-                        3
                     },
                     _ => panic!("Invalid or unknown opcode {}", opcode),
                 };
 
+                self.ins_pointer += 3;
                 continue;
             }
 
-            // 3 arguments needed
+            // 3 arguments needed, note that the third argument will implicitly be
+            // used by `set_value`, since the third argument tells us where to put
+            // the result of the operation.
             if num_args == 3 {
-                self.ins_pointer += match opcode {
+                match opcode {
                     ADD => self.set_value(3, v1 + v2),
                     MULTIPLY => self.set_value(3, v1 * v2),
                     LESS_THAN => {
@@ -174,6 +169,7 @@ impl IntCodeComputer {
                     _ => panic!("Invalid or unknown opcode {}", opcode),
                 };
 
+                self.ins_pointer += 4;
                 continue;
             }
 
@@ -218,14 +214,10 @@ impl IntCodeComputer {
     /// # Parameters
     /// - `offset`: The offset of the parameter, from the instruction pointer.
     /// - `new_val`: The new value.
-    ///
-    /// # Returns
-    /// The number of times to increment the instruction pointer. Always `offset + 1`.
-    fn set_value(&mut self, offset: usize, new_val: isize) -> usize {
+    fn set_value(&mut self, offset: usize, new_val: isize) {
         // Parameters that an instruction writes to will never be in immediate mode.
         let idx = self.curr_prgm[self.ins_pointer + offset] as usize;
         self.curr_prgm[idx] = new_val;
-        offset + 1
     }
 }
 
