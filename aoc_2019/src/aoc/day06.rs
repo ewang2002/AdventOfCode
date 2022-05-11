@@ -65,7 +65,7 @@ impl AoCProblem<usize, usize> for Day06 {
                 break;
             }
 
-            for neighbor in graph.get(key).unwrap_or_else(|| &default) {
+            for neighbor in graph.get(key).unwrap_or(&default) {
                 if explored.contains_key(neighbor.as_str()) {
                     continue;
                 }
@@ -87,8 +87,8 @@ fn calculate_paths(graph: &HashMap<String, Vec<String>>, planet: &str, height: u
             amt += calculate_paths(graph, neighbor, height + 1) + height + 1;
         }
 
-        return amt;
+        amt
+    } else {
+        0
     }
-
-    return 0;
 }
