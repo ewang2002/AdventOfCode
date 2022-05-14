@@ -285,7 +285,7 @@ fn interpret_opcode(raw_opcode: isize) -> (isize, ModeType, ModeType, ModeType) 
 ///
 /// # Returns
 /// The digits.
-fn get_digits(mut num: isize) -> Vec<isize> {
+pub fn get_digits(mut num: isize) -> Vec<isize> {
     let mut digits = Vec::new();
     if num == 0 {
         digits.push(0);
