@@ -32,10 +32,11 @@ impl AoCProblem<isize, isize> for Day07 {
                     for d in 0..=4 {
                         for e in 0..=4 {
                             computers.iter_mut().for_each(|x| x.reset());
-                            let digits = match valid_setting(e + d * 10 + c * 100 + b * 1000 + a * 10000) {
-                                Some(d) => d,
-                                None => continue
-                            };
+                            let digits =
+                                match valid_setting(e + d * 10 + c * 100 + b * 1000 + a * 10000) {
+                                    Some(d) => d,
+                                    None => continue,
+                                };
 
                             computers[0].input_to_stdin(digits[0]);
                             computers[0].input_to_stdin(0);
@@ -43,8 +44,9 @@ impl AoCProblem<isize, isize> for Day07 {
 
                             for i in 1..5 {
                                 computers[i].input_to_stdin(digits[i]);
-                                computers[i]
-                                    .input_to_stdin(*computers[i - 1].view_stdout().last().expect("no stdout"));
+                                computers[i].input_to_stdin(
+                                    *computers[i - 1].view_stdout().last().expect("no stdout"),
+                                );
                                 computers[i].run_until_completion();
                             }
 
