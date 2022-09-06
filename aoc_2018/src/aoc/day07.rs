@@ -161,14 +161,14 @@ pub fn part2(ins: &[Step], base_letters: &HashSet<&String>) -> usize {
         }
 
         // And then start working.
-        for i in 0..workers.len() {
-            if !workers[i].has_assigned_job() {
+        for worker in &mut workers {
+            if !worker.has_assigned_job() {
                 continue;
             }
 
-            let is_done = workers[i].work();
+            let is_done = worker.work();
             if is_done {
-                let completed_job = workers[i].return_job_and_reset().unwrap();
+                let completed_job = worker.return_job_and_reset().unwrap();
                 assert_ne!(completed_job, EMPTY_STR);
 
                 // Remove any instructions that we've essentially done, and adds more instructions

@@ -29,8 +29,8 @@ pub fn part1(init_state: &str, plant_notes: &HashMap<String, String>) -> i64 {
 
     let mut sum = 0;
     let bytes = curr_state.bytes().collect::<Vec<_>>();
-    for i in 0..bytes.len() {
-        sum += if bytes[i] == b'#' {
+    for (i, byte) in bytes.iter().enumerate() {
+        sum += if *byte == b'#' {
             (i as i64) - init_plant_idx
         } else {
             0
@@ -78,7 +78,7 @@ pub fn part2(init_state: &str, plant_notes: &HashMap<String, String>) -> i64 {
 
     let mut sum = 0;
     let bytes = curr_state.bytes().collect::<Vec<_>>();
-    for i in 0..bytes.len() {
+    for (i, b) in bytes.iter().enumerate() {
         // Here, we note that 50_000_000_000 is the number of generations that we need to find the
         // sum of the numbers of the plants for. However, we've already gone through
         // `generation_count` generations (as reflected by `curr_state`). So, we need to subtract
@@ -121,7 +121,7 @@ pub fn part2(init_state: &str, plant_notes: &HashMap<String, String>) -> i64 {
         //                   Sum = 38   ( = Generation 12's Value)
         //
         // We can apply the same idea here.
-        sum += match bytes[i] {
+        sum += match b {
             b'#' => (i as i64) - init_plant_idx + (50_000_000_000 - generation_count),
             _ => 0,
         };
@@ -158,6 +158,7 @@ fn find_first_last_char(bytes: &[u8], byte_to_check: u8) -> (i32, i32) {
 /// # Returns
 /// - A tuple where the first element is the new state and the second element is the new initial
 /// index.
+#[allow(clippy::same_item_push)]
 fn run_one_generation(
     init_state: String,
     init_idx: i64,

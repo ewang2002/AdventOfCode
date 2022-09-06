@@ -26,13 +26,13 @@ pub fn execute(input: &[String]) -> (String, String) {
 
     let mut track_system: Vec<Vec<Track>> = vec![];
     let mut active_carts: Vec<Cart> = vec![];
-    for y in 0..char_input.len() {
+    for (y, v) in char_input.iter().enumerate() {
         let mut row_track: Vec<Track> = vec![];
-        for x in 0..char_input[y].len() {
-            let track = Track::new(char_input[y][x], x, y);
-            match char_input[y][x] {
+        for (x, c) in v.iter().enumerate() {
+            let track = Track::new(*c, x, y);
+            match *c {
                 CART_UP | CART_DOWN | CART_RIGHT | CART_LEFT => {
-                    active_carts.push((char_input[y][x], 0, x, y));
+                    active_carts.push((*c, 0, x, y));
                 }
                 _ => {}
             }
@@ -157,28 +157,6 @@ pub fn part2(track_system: &[Vec<Track>], active_carts: &[Cart]) -> String {
     return format!("{},{}", all_active_carts[0].2, all_active_carts[0].3);
 }
 
-/// Prints the track out. Useful for debugging.
-///
-/// # Parameters
-/// - `track`: The track.
-/// - `carts`: The carts.
-#[allow(dead_code)]
-fn print_track(track: &[Vec<Track>], carts: &[Cart]) {
-    for y in 0..track.len() {
-        for x in 0..track[y].len() {
-            let res = carts.iter().find(|r| (**r).2 == x && (**r).3 == y);
-            match res {
-                Some(c) => print!("{}", (*c).0),
-                None => print!("{}", track[y][x].raw_track_type),
-            };
-        }
-
-        println!();
-    }
-
-    println!();
-}
-
 pub struct Track {
     raw_track_type: char,
     x_pos: usize,
@@ -221,23 +199,14 @@ impl Display for Track {
 ///
 /// # Parameters
 /// - `all_active_carts`: All active carts.
-fn sort_carts_by_row_col(all_active_carts: &mut Vec<Cart>) {
+fn sort_carts_by_row_col(all_active_carts: &mut [Cart]) {
     all_active_carts.sort_by(|cart_a, cart_b| {
         let (_, _, ax, ay) = *cart_a;
         let (_, _, bx, by) = *cart_b;
-        if ax < bx {
-            return Ordering::Less;
-        } else if ax > bx {
-            return Ordering::Greater;
+        match ax.cmp(&bx) {
+            Ordering::Equal => ay.cmp(&by),
+            o => o,
         }
-
-        if ay < by {
-            return Ordering::Less;
-        } else if ay > by {
-            return Ordering::Greater;
-        }
-
-        Ordering::Equal
     })
 }
 

@@ -44,9 +44,9 @@ pub fn part2(guard_most_occurring_min: &HashMap<u32, [usize; 60]>) -> usize {
     let mut guard_id: u32 = 0;
 
     for (guard, time_table) in guard_most_occurring_min {
-        for j in 0..time_table.len() {
-            if time_table[j] > occurrences {
-                occurrences = time_table[j];
+        for (j, item) in time_table.iter().enumerate() {
+            if *item > occurrences {
+                occurrences = *item;
                 minute_most_occurring = j;
                 guard_id = *guard;
             }
@@ -123,7 +123,7 @@ fn get_guards_and_events(input: &[String]) -> (Vec<Event>, HashSet<u32>) {
         ))
     }
 
-    date_event.sort_by(|a, b| a.cmp(b));
+    date_event.sort();
 
     // Populate events vector
     let mut events: Vec<Event> = Vec::new();

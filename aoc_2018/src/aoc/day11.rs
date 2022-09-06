@@ -117,20 +117,6 @@ fn construct_grid(serial_number: i32) -> PowerGrid {
     power_grid
 }
 
-/// Prints the power grid out.
-///
-/// # Parameters
-/// - `grid`: The grid to print out.
-#[allow(dead_code)]
-fn print_power_grid(grid: &PowerGrid) {
-    for x in 0..grid.len() {
-        for y in 0..grid[x].len() {
-            print!("{}\t", grid[x][y]);
-        }
-        println!();
-    }
-}
-
 #[derive(Debug, Copy, Clone)]
 struct BoxedRegion {
     top_left_x: usize,
@@ -154,6 +140,7 @@ impl BoxedRegion {
     ///
     /// # Returns
     /// - The new `BoxedRegion` structure.
+    #[allow(clippy::needless_range_loop)]
     pub fn new(
         top_left_x: usize,
         top_left_y: usize,
@@ -184,6 +171,7 @@ impl BoxedRegion {
     ///
     /// # Parameters
     /// - `grid`: The power grid.
+    #[allow(clippy::needless_range_loop)]
     pub fn add_one(&mut self, grid: &PowerGrid) {
         self.bottom_right_x += 1;
         self.bottom_right_y += 1;

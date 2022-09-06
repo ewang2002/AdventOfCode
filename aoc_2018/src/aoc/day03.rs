@@ -39,11 +39,11 @@ fn get_claims_from_input(input: &[String]) -> Vec<Claim> {
         .iter()
         .map(|x| {
             let fixed_str = x
-                .replace("#", "")
+                .replace('#', "")
                 .replace(" @ ", " ")
-                .replace(":", "")
-                .replace("x", " ")
-                .replace(",", " ");
+                .replace(':', "")
+                .replace('x', " ")
+                .replace(',', " ");
 
             let arr: Vec<&str> = fixed_str.split(' ').collect();
             Claim {

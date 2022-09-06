@@ -18,10 +18,7 @@ pub fn execute(input: &[String]) -> (usize, usize) {
 
 pub fn part1(num_players: usize, last_marble: usize) -> usize {
     let mut marbles: Vec<usize> = vec![0, 1];
-    let mut players: Vec<usize> = vec![];
-    for _ in 0..num_players {
-        players.push(0);
-    }
+    let mut players: Vec<usize> = vec![0; num_players];
 
     // zero-indexed
     let mut cur_marble_idx: i32 = 1;

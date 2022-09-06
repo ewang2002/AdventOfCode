@@ -12,7 +12,7 @@ pub fn execute(input: &[String]) -> (String, u64) {
         .map(|x| {
             x.replace("position=<", "")
                 .replace("> velocity=<", ", ")
-                .replace(">", "")
+                .replace('>', "")
         })
         .map(|x| {
             x.split(',')
@@ -128,7 +128,7 @@ pub fn part2(min_sec: u64) -> u64 {
 ///
 /// # Notes
 /// - Should we be using `Fn` or `FnMut` here?
-fn apply_to_all_pts<F>(pts: &mut Vec<Point>, func: F)
+fn apply_to_all_pts<F>(pts: &mut [Point], func: F)
 where
     F: Fn(&mut Point),
 {
