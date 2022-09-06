@@ -15,7 +15,7 @@ impl AoCProblem<isize, isize> for Day05 {
 
     fn part1(&mut self) -> isize {
         let mut computer = IntCodeComputer::new(&self.opcodes, Some(vec![1]));
-        computer.run();
+        computer.run_until_completion();
         let len_of_out = computer.view_stdout().len();
         assert!(computer.view_stdout()[..len_of_out - 1].iter().all(|x| *x == 0));
         *computer.view_stdout().last().unwrap()
@@ -23,7 +23,7 @@ impl AoCProblem<isize, isize> for Day05 {
 
     fn part2(&mut self) -> isize {
         let mut computer = IntCodeComputer::new(&self.opcodes, Some(vec![5]));
-        computer.run();
+        computer.run_until_completion();
         assert_eq!(computer.view_stdout().len(), 1);
         *computer.view_stdout().last().unwrap()
     }

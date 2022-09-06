@@ -18,7 +18,7 @@ impl AoCProblem<isize, isize> for Day02 {
         opcodes[1] = 12;
         opcodes[2] = 2;
         let mut computer = IntCodeComputer::new(&opcodes, None);
-        computer.run();
+        computer.run_until_completion();
         computer[0]
     }
 
@@ -29,7 +29,7 @@ impl AoCProblem<isize, isize> for Day02 {
                 computer[1] = noun;
                 computer[2] = verb;
 
-                computer.run();
+                computer.run_until_completion();
                 if computer[0] == 19690720 {
                     return 100 * noun + verb;
                 }

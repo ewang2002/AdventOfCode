@@ -44,6 +44,8 @@ pub struct IntCodeComputer {
     stdout: Vec<isize>,
     /// The input for opcode 3.
     stdin: VecDeque<isize>,
+    /// Whether the computer is halted.
+    halted: bool,
 }
 
 impl IntCodeComputer {
@@ -65,7 +67,8 @@ impl IntCodeComputer {
             stdin: match input {
                 Some(v) => VecDeque::from(v),
                 None => VecDeque::new()
-            }
+            },
+            halted: false,
         }
     }
 
@@ -84,6 +87,9 @@ impl IntCodeComputer {
         for i in 0..self.len {
             self.curr_prgm[i] = self.original[i];
         }
+        self.stdin.clear();
+        self.stdout.clear();
+        self.halted = false;
     }
 
     /// Gets an immutable view into the current program.
@@ -104,8 +110,28 @@ impl IntCodeComputer {
         &self.stdout
     }
 
-    /// Runs the program.
-    pub fn run(&mut self) {
+    /// Runs the program until the next HALT instruction or an output is produced,
+    /// whichever one occurs first. This won't return anything; you will need to get
+    /// the last output yourself.
+    pub fn run_until_output(&mut self) {
+        self._run(true)
+    }
+
+    /// Runs the program until the next HALT instruction or the program pointer
+    /// points to the end of the program, whichever occurs first.
+    pub fn run_until_completion(&mut self) {
+        self._run(false);
+    }
+
+    /// Whether the computer has halted.
+    /// 
+    /// # Returns
+    /// `true` if the computer has halted and `false` otherwise.
+    pub fn has_halted(&self) -> bool {
+        self.halted
+    }
+
+    fn _run(&mut self, quit_on_output: bool) {
         while self.ins_pointer < self.curr_prgm.len() {
             let (opcode, p1, p2, _) = interpret_opcode(self.curr_prgm[self.ins_pointer]);
             if opcode == HALT {
@@ -122,7 +148,13 @@ impl IntCodeComputer {
                         let input = self.stdin.pop_front().unwrap();
                         self.set_value(1, input);
                     },
-                    OUTPUT => self.stdout.push(v1),
+                    OUTPUT => {
+                        self.stdout.push(v1);
+                        if quit_on_output {
+                            self.ins_pointer += 2;
+                            return;
+                        }
+                    },
                     _ => panic!("Invalid or unknown opcode {}", opcode),
                 };
 
@@ -176,6 +208,8 @@ impl IntCodeComputer {
             // Unsupported opcode
             panic!("Unsupported opcode {}", opcode);
         }
+
+        self.halted = true;
     }
 
     /// Gets the value at the specified offset, for the given mode type.
@@ -348,7 +382,7 @@ mod tests {
     pub fn intcode2_test_1() {
         let program = parse_intcode("1,0,0,0,99");
         let mut c = IntCodeComputer::new(&program, None);
-        c.run();
+        c.run_until_completion();
         assert_eq!([2, 0, 0, 0, 99].as_slice(), &c.curr_prgm);
     }
 
@@ -356,7 +390,7 @@ mod tests {
     pub fn intcode2_test_2() {
         let program = parse_intcode("2,3,0,3,99");
         let mut c = IntCodeComputer::new(&program, None);
-        c.run();
+        c.run_until_completion();
         assert_eq!([2, 3, 0, 6, 99].as_slice(), &c.curr_prgm);
     }
 
@@ -364,7 +398,7 @@ mod tests {
     pub fn intcode2_test_3() {
         let program = parse_intcode("2,4,4,5,99,0");
         let mut c = IntCodeComputer::new(&program, None);
-        c.run();
+        c.run_until_completion();
         assert_eq!([2, 4, 4, 5, 99, 9801].as_slice(), &c.curr_prgm);
     }
 
@@ -372,7 +406,7 @@ mod tests {
     pub fn intcode2_test_4() {
         let program = parse_intcode("1,1,1,4,99,5,6,0,99");
         let mut c = IntCodeComputer::new(&program, None);
-        c.run();
+        c.run_until_completion();
         assert_eq!([30, 1, 1, 4, 2, 5, 6, 0, 99].as_slice(), c.curr_prgm);
     }
 
@@ -380,7 +414,7 @@ mod tests {
     pub fn intcode5_test_multiply_mixed() {
         let program = parse_intcode("1002,4,3,4,33");
         let mut c = IntCodeComputer::new(&program, None);
-        c.run();
+        c.run_until_completion();
         assert_eq!([1002, 4, 3, 4, 99].as_slice(), c.curr_prgm);
     }
 
@@ -388,7 +422,7 @@ mod tests {
     pub fn intcode5_test_negative() {
         let program = parse_intcode("1101,100,-1,4,0");
         let mut c = IntCodeComputer::new(&program, None);
-        c.run();
+        c.run_until_completion();
         assert_eq!([1101, 100, -1, 4, 99].as_slice(), c.curr_prgm);
     }
 
@@ -398,7 +432,7 @@ mod tests {
         let mut c = IntCodeComputer::new(&program, None);
 
         c.input_to_stdin(15);
-        c.run();
+        c.run_until_completion();
         assert!(!c.view_stdout().is_empty());
         assert_eq!(15, c.view_stdout()[0]);
     }
@@ -496,7 +530,7 @@ mod tests {
     fn test_stdin_stdout_intcode_helper(c: &mut IntCodeComputer, input: isize, expected: isize) {
         c.reset();
         c.input_to_stdin(input);
-        c.run();
+        c.run_until_completion();
         assert!(!c.view_stdout().is_empty());
         assert_eq!(expected, *c.view_stdout().last().unwrap());
     }
