@@ -1,5 +1,5 @@
-use crate::{aoc::aoc_problem::AoCProblem, intcode::IntCodeComputer};
 use crate::intcode::parse_intcode;
+use crate::{aoc::aoc_problem::AoCProblem, intcode::IntCodeComputer};
 
 pub struct Day02 {
     opcodes: Vec<isize>,
@@ -9,7 +9,7 @@ pub struct Day02 {
 impl AoCProblem<isize, isize> for Day02 {
     fn prepare(input: Vec<String>) -> Self {
         Self {
-            opcodes: parse_intcode(&input[0])
+            opcodes: parse_intcode(&input[0]),
         }
     }
 

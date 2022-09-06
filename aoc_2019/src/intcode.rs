@@ -66,7 +66,7 @@ impl IntCodeComputer {
             stdout: vec![],
             stdin: match input {
                 Some(v) => VecDeque::from(v),
-                None => VecDeque::new()
+                None => VecDeque::new(),
             },
             halted: false,
         }
@@ -124,7 +124,7 @@ impl IntCodeComputer {
     }
 
     /// Whether the computer has halted.
-    /// 
+    ///
     /// # Returns
     /// `true` if the computer has halted and `false` otherwise.
     pub fn has_halted(&self) -> bool {
@@ -147,14 +147,14 @@ impl IntCodeComputer {
                     INPUT => {
                         let input = self.stdin.pop_front().unwrap();
                         self.set_value(1, input);
-                    },
+                    }
                     OUTPUT => {
                         self.stdout.push(v1);
                         if quit_on_output {
                             self.ins_pointer += 2;
                             return;
                         }
-                    },
+                    }
                     _ => panic!("Invalid or unknown opcode {}", opcode),
                 };
 
@@ -171,13 +171,13 @@ impl IntCodeComputer {
                             self.ins_pointer = v2 as usize;
                             continue;
                         }
-                    },
+                    }
                     JMP_IF_FALSE => {
                         if v1 == 0 {
                             self.ins_pointer = v2 as usize;
                             continue;
                         }
-                    },
+                    }
                     _ => panic!("Invalid or unknown opcode {}", opcode),
                 };
 
@@ -192,12 +192,8 @@ impl IntCodeComputer {
                 match opcode {
                     ADD => self.set_value(3, v1 + v2),
                     MULTIPLY => self.set_value(3, v1 * v2),
-                    LESS_THAN => {
-                        self.set_value(3, if v1 < v2 { 1 } else { 0 })
-                    },
-                    EQUALS => {
-                        self.set_value(3, if v1 == v2 { 1 } else { 0 })
-                    },
+                    LESS_THAN => self.set_value(3, if v1 < v2 { 1 } else { 0 }),
+                    EQUALS => self.set_value(3, if v1 == v2 { 1 } else { 0 }),
                     _ => panic!("Invalid or unknown opcode {}", opcode),
                 };
 
@@ -281,7 +277,7 @@ fn get_args_needed(opcode: isize) -> usize {
         INPUT | OUTPUT => 1,
         JMP_IF_TRUE | JMP_IF_FALSE => 2,
         ADD | MULTIPLY | LESS_THAN | EQUALS => 3,
-        _ => panic!("invalid opcode {}", opcode)
+        _ => panic!("invalid opcode {}", opcode),
     }
 }
 
@@ -507,9 +503,11 @@ mod tests {
 
     #[test]
     pub fn intcode5_test_complex() {
-        let program = parse_intcode("3,21,1008,21,8,20,1005,20,22,107,8,21,20,\
+        let program = parse_intcode(
+            "3,21,1008,21,8,20,1005,20,22,107,8,21,20,\
         1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,\
-        1,20,4,20,1105,1,46,98,99");
+        1,20,4,20,1105,1,46,98,99",
+        );
         let mut c = IntCodeComputer::new(&program, None);
 
         test_stdin_stdout_intcode_helper(&mut c, -5, 999);

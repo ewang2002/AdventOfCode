@@ -1,6 +1,6 @@
 use std::{
     cmp::Reverse,
-    collections::{BinaryHeap, HashSet, HashMap},
+    collections::{BinaryHeap, HashMap, HashSet},
 };
 
 use crate::aoc::aoc_problem::AoCProblem;
@@ -76,7 +76,7 @@ impl AoCProblem<usize, usize> for Day03 {
                 curr_x += dx;
                 curr_y += dy;
                 i += 1;
-                steps += 1; 
+                steps += 1;
                 map.entry((curr_x, curr_y)).or_insert(steps);
             }
         }
@@ -84,7 +84,7 @@ impl AoCProblem<usize, usize> for Day03 {
         // For wire 2
         curr_x = 0;
         curr_y = 0;
-        steps = 0; 
+        steps = 0;
         let mut heap = BinaryHeap::new();
         for wire in &self.second_wire {
             let (dx, dy, max) = get_dir(wire);
@@ -125,7 +125,6 @@ impl WireComponent {
         }
     }
 }
-
 
 fn get_dir(wire_comp: &WireComponent) -> (i32, i32, i64) {
     let mut dx = 0;
