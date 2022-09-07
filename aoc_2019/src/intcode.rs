@@ -152,16 +152,6 @@ impl IntCodeComputer {
 
             // 1 argument needed
             let v1 = self.get_value(1, p1);
-            println!(
-                "{} \t {} \t {} \t {} \t {} \t {} \t {:?}",
-                self.ins_pointer,
-                self.curr_prgm[self.ins_pointer],
-                self.curr_prgm[self.ins_pointer + 1],
-                self.relative_base,
-                v1,
-                opcode,
-                p1
-            );
 
             if num_args == 1 {
                 match opcode {
@@ -290,7 +280,7 @@ impl IntCodeComputer {
         let idx = match mode_type {
             ModeType::Immediate => panic!("immediate mode not supported in setting."),
             ModeType::Position => self.curr_prgm[self.ins_pointer + offset],
-            ModeType::Relative => self.curr_prgm[(self.relative_base as usize) + offset],
+            ModeType::Relative => self.relative_base + self.curr_prgm[self.ins_pointer + offset],
         } as usize;
         if idx >= self.len {
             self.curr_prgm.resize(idx + 1, 0);
@@ -305,6 +295,7 @@ impl IntCodeComputer {
     ///
     /// # Returns
     /// The current program.
+    #[allow(dead_code)]
     pub fn get_current_program(&self) -> &[isize] {
         &self.curr_prgm[0..self.len]
     }
