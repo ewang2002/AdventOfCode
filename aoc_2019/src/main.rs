@@ -28,11 +28,12 @@ macro_rules! prepare_day {
 }
 
 fn main() {
+    std::env::set_var("RUST_BACKTRACE", "1");
     // Prepare to solve
     let mut start = Instant::now();
 
     // Change this to the correct day!
-    let mut solver = prepare_day!(Day08);
+    let mut solver = prepare_day!(Day09);
     let in_t = start.elapsed();
 
     // Execution begins
