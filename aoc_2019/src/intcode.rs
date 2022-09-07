@@ -9,6 +9,7 @@ const JMP_IF_TRUE: isize = 5;
 const JMP_IF_FALSE: isize = 6;
 const LESS_THAN: isize = 7;
 const EQUALS: isize = 8;
+const RELATIVE: isize = 9;
 const HALT: isize = 99;
 
 #[derive(Eq, PartialEq, Copy, Clone, Debug)]
@@ -19,6 +20,8 @@ enum ModeType {
     /// Causes the parameter to be interpreted as a position. For example, if the parameter is 50,
     /// its value is the value stored at address 50 in memory.
     Position,
+    /// Causes the parameter to be interpreted relative to some relative base.  
+    Relative,
 }
 
 impl From<isize> for ModeType {
@@ -26,6 +29,7 @@ impl From<isize> for ModeType {
         match val {
             0 => Self::Position,
             1 => Self::Immediate,
+            2 => Self::Relative,
             _ => panic!("invalid value {} given", val),
         }
     }
@@ -38,7 +42,7 @@ pub struct IntCodeComputer {
     curr_prgm: Vec<isize>,
     /// The instruction pointer.
     ins_pointer: usize,
-    /// The length of the opcodes.
+    /// The length of the program.
     len: usize,
     /// The output from opcode 4.
     stdout: Vec<isize>,
@@ -46,6 +50,8 @@ pub struct IntCodeComputer {
     stdin: VecDeque<isize>,
     /// Whether the computer is halted.
     halted: bool,
+    /// The relative base.
+    relative_base: isize,
 }
 
 impl IntCodeComputer {
@@ -69,6 +75,7 @@ impl IntCodeComputer {
                 None => VecDeque::new(),
             },
             halted: false,
+            relative_base: 0,
         }
     }
 
@@ -76,7 +83,6 @@ impl IntCodeComputer {
     ///
     /// # Parameters
     /// - `input`: The input.
-    #[allow(dead_code)]
     pub fn input_to_stdin(&mut self, input: isize) {
         self.stdin.push_back(input);
     }
@@ -84,7 +90,8 @@ impl IntCodeComputer {
     /// Resets the program to the default.
     pub fn reset(&mut self) {
         self.ins_pointer = 0;
-        for i in 0..self.len {
+        self.curr_prgm.resize(self.original.len(), 0);
+        for i in 0..self.original.len() {
             self.curr_prgm[i] = self.original[i];
         }
         self.stdin.clear();
@@ -132,8 +139,11 @@ impl IntCodeComputer {
     }
 
     fn _run(&mut self, quit_on_output: bool) {
-        while self.ins_pointer < self.curr_prgm.len() {
-            let (opcode, p1, p2, _) = interpret_opcode(self.curr_prgm[self.ins_pointer]);
+        while self.ins_pointer < self.len {
+            // p1 is only valid if the num of args is 1
+            // p1+p2 are only valid if the num of args is 2
+            // p1+p2+p3 are only valid if the num of args is 3
+            let (opcode, p1, p2, p3) = interpret_opcode(self.curr_prgm[self.ins_pointer]);
             if opcode == HALT {
                 break;
             }
@@ -142,11 +152,22 @@ impl IntCodeComputer {
 
             // 1 argument needed
             let v1 = self.get_value(1, p1);
+            println!(
+                "{} \t {} \t {} \t {} \t {} \t {} \t {:?}",
+                self.ins_pointer,
+                self.curr_prgm[self.ins_pointer],
+                self.curr_prgm[self.ins_pointer + 1],
+                self.relative_base,
+                v1,
+                opcode,
+                p1
+            );
+
             if num_args == 1 {
                 match opcode {
                     INPUT => {
-                        let input = self.stdin.pop_front().unwrap();
-                        self.set_value(1, input);
+                        let input = self.stdin.pop_front().expect("no input available!");
+                        self.set_value(1, input, p1);
                     }
                     OUTPUT => {
                         self.stdout.push(v1);
@@ -154,6 +175,9 @@ impl IntCodeComputer {
                             self.ins_pointer += 2;
                             return;
                         }
+                    }
+                    RELATIVE => {
+                        self.relative_base += self.get_value(1, p1);
                     }
                     _ => panic!("Invalid or unknown opcode {}", opcode),
                 };
@@ -190,10 +214,10 @@ impl IntCodeComputer {
             // the result of the operation.
             if num_args == 3 {
                 match opcode {
-                    ADD => self.set_value(3, v1 + v2),
-                    MULTIPLY => self.set_value(3, v1 * v2),
-                    LESS_THAN => self.set_value(3, if v1 < v2 { 1 } else { 0 }),
-                    EQUALS => self.set_value(3, if v1 == v2 { 1 } else { 0 }),
+                    ADD => self.set_value(3, v1 + v2, p3),
+                    MULTIPLY => self.set_value(3, v1 * v2, p3),
+                    LESS_THAN => self.set_value(3, if v1 < v2 { 1 } else { 0 }, p3),
+                    EQUALS => self.set_value(3, if v1 == v2 { 1 } else { 0 }, p3),
                     _ => panic!("Invalid or unknown opcode {}", opcode),
                 };
 
@@ -210,18 +234,34 @@ impl IntCodeComputer {
 
     /// Gets the value at the specified offset, for the given mode type.
     ///
+    /// If the offset results in an out of bounds error, this returns `0` instead.
+    ///
     /// # Parameters
     /// - `offset`: The offset of the parameter, from the instruction pointer.
     /// - `mode_type`: The mode type for this parameter.
     ///
     /// # Returns
-    /// The value.
+    /// The value, or `0` if the index is not valid.
     fn get_value(&self, offset: usize, mode_type: ModeType) -> isize {
         match mode_type {
-            ModeType::Immediate => self.curr_prgm[self.ins_pointer + offset],
-            ModeType::Position => {
-                self.curr_prgm[self.curr_prgm[self.ins_pointer + offset] as usize]
-            }
+            ModeType::Immediate => *self.curr_prgm.get(self.ins_pointer + offset).unwrap_or(&0),
+            // For position, the inner curr_prgm.get(...) gives us the address, and then the
+            // outer curr_prgm.get(...) uses the address to get the value
+            ModeType::Position => *self
+                .curr_prgm
+                .get(*self.curr_prgm.get(self.ins_pointer + offset).unwrap_or(&0) as usize)
+                .unwrap_or(&0),
+            // For relative, the inner curr_prgm.get(...) gives us the address, and then adding
+            // the relative base gives us an "offset" of that address. Then, the outer
+            // curr_prgm.get(...) uses the address + relative base to get the value
+            ModeType::Relative => *self
+                .curr_prgm
+                .get(
+                    (self.relative_base
+                        + *self.curr_prgm.get(self.ins_pointer + offset).unwrap_or(&0))
+                        as usize,
+                )
+                .unwrap_or(&0),
         }
     }
 
@@ -244,10 +284,29 @@ impl IntCodeComputer {
     /// # Parameters
     /// - `offset`: The offset of the parameter, from the instruction pointer.
     /// - `new_val`: The new value.
-    fn set_value(&mut self, offset: usize, new_val: isize) {
+    /// - `mode_type`: The mode type. Note that giving immediate mode will result in a panic.
+    fn set_value(&mut self, offset: usize, new_val: isize, mode_type: ModeType) {
         // Parameters that an instruction writes to will never be in immediate mode.
-        let idx = self.curr_prgm[self.ins_pointer + offset] as usize;
+        let idx = match mode_type {
+            ModeType::Immediate => panic!("immediate mode not supported in setting."),
+            ModeType::Position => self.curr_prgm[self.ins_pointer + offset],
+            ModeType::Relative => self.curr_prgm[(self.relative_base as usize) + offset],
+        } as usize;
+        if idx >= self.len {
+            self.curr_prgm.resize(idx + 1, 0);
+            self.halted = false;
+            self.len = idx + 1;
+        }
+
         self.curr_prgm[idx] = new_val;
+    }
+
+    /// Gets the current program.
+    ///
+    /// # Returns
+    /// The current program.
+    pub fn get_current_program(&self) -> &[isize] {
+        &self.curr_prgm[0..self.len]
     }
 }
 
@@ -274,7 +333,7 @@ impl IndexMut<usize> for IntCodeComputer {
 /// The number of arguments needed.
 fn get_args_needed(opcode: isize) -> usize {
     match opcode {
-        INPUT | OUTPUT => 1,
+        INPUT | OUTPUT | RELATIVE => 1,
         JMP_IF_TRUE | JMP_IF_FALSE => 2,
         ADD | MULTIPLY | LESS_THAN | EQUALS => 3,
         _ => panic!("invalid opcode {}", opcode),
@@ -379,7 +438,7 @@ mod tests {
         let program = parse_intcode("1,0,0,0,99");
         let mut c = IntCodeComputer::new(&program, None);
         c.run_until_completion();
-        assert_eq!([2, 0, 0, 0, 99].as_slice(), &c.curr_prgm);
+        assert_eq!([2, 0, 0, 0, 99].as_slice(), c.get_current_program());
     }
 
     #[test]
@@ -387,7 +446,7 @@ mod tests {
         let program = parse_intcode("2,3,0,3,99");
         let mut c = IntCodeComputer::new(&program, None);
         c.run_until_completion();
-        assert_eq!([2, 3, 0, 6, 99].as_slice(), &c.curr_prgm);
+        assert_eq!([2, 3, 0, 6, 99].as_slice(), c.get_current_program());
     }
 
     #[test]
@@ -395,7 +454,7 @@ mod tests {
         let program = parse_intcode("2,4,4,5,99,0");
         let mut c = IntCodeComputer::new(&program, None);
         c.run_until_completion();
-        assert_eq!([2, 4, 4, 5, 99, 9801].as_slice(), &c.curr_prgm);
+        assert_eq!([2, 4, 4, 5, 99, 9801].as_slice(), c.get_current_program());
     }
 
     #[test]
@@ -403,7 +462,10 @@ mod tests {
         let program = parse_intcode("1,1,1,4,99,5,6,0,99");
         let mut c = IntCodeComputer::new(&program, None);
         c.run_until_completion();
-        assert_eq!([30, 1, 1, 4, 2, 5, 6, 0, 99].as_slice(), c.curr_prgm);
+        assert_eq!(
+            [30, 1, 1, 4, 2, 5, 6, 0, 99].as_slice(),
+            c.get_current_program()
+        );
     }
 
     #[test]
@@ -411,7 +473,7 @@ mod tests {
         let program = parse_intcode("1002,4,3,4,33");
         let mut c = IntCodeComputer::new(&program, None);
         c.run_until_completion();
-        assert_eq!([1002, 4, 3, 4, 99].as_slice(), c.curr_prgm);
+        assert_eq!([1002, 4, 3, 4, 99].as_slice(), c.get_current_program());
     }
 
     #[test]
@@ -419,7 +481,7 @@ mod tests {
         let program = parse_intcode("1101,100,-1,4,0");
         let mut c = IntCodeComputer::new(&program, None);
         c.run_until_completion();
-        assert_eq!([1101, 100, -1, 4, 99].as_slice(), c.curr_prgm);
+        assert_eq!([1101, 100, -1, 4, 99].as_slice(), c.get_current_program());
     }
 
     #[test]
@@ -519,6 +581,43 @@ mod tests {
         test_stdin_stdout_intcode_helper(&mut c, 99, 1001);
     }
 
+    #[test]
+    pub fn intcode9_test_relative_basic() {
+        let program = parse_intcode("109,19");
+        let mut c = IntCodeComputer::new(&program, None);
+        c.relative_base = 2000;
+        c.run_until_completion();
+        assert_eq!(2019, c.relative_base);
+        assert!(c.has_halted());
+    }
+
+    #[test]
+    pub fn intcode9_test_relative_ex1() {
+        let program = parse_intcode("109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99");
+        let mut c = IntCodeComputer::new(&program, None);
+        c.run_until_completion();
+        assert_eq!(program, c.view_stdout());
+        assert!(c.has_halted());
+    }
+
+    #[test]
+    pub fn intcode9_test_relative_ex2() {
+        let program = parse_intcode("1102,34915192,34915192,7,4,7,99,0");
+        let mut c = IntCodeComputer::new(&program, None);
+        c.run_until_completion();
+        assert_eq!(16, c.view_stdout().last().unwrap().to_string().len());
+        assert!(c.has_halted());
+    }
+
+    #[test]
+    pub fn intcode9_test_relative_ex3() {
+        let program = parse_intcode("104,1125899906842624,99");
+        let mut c = IntCodeComputer::new(&program, None);
+        c.run_until_completion();
+        assert_eq!(1125899906842624, *c.view_stdout().last().unwrap());
+        assert!(c.has_halted());
+    }
+
     /// Helps test standard input/output of the Intcode computer.
     ///
     /// # Parameters
@@ -531,5 +630,6 @@ mod tests {
         c.run_until_completion();
         assert!(!c.view_stdout().is_empty());
         assert_eq!(expected, *c.view_stdout().last().unwrap());
+        assert!(c.has_halted());
     }
 }
