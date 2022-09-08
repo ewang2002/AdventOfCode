@@ -5,7 +5,7 @@ pub struct Day09 {
     program: Vec<isize>,
 }
 
-// https://adventofcode.com/2019/day/7
+// https://adventofcode.com/2019/day/9
 impl AoCProblem<isize, isize> for Day09 {
     fn prepare(input: Vec<String>) -> Self {
         Self {

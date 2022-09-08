@@ -15,7 +15,10 @@ A ✔️ means that I completed the problem. An ❌ means that I saw the problem
 | 03  | ✔️     | ✔️     | 
 | 04  | ✔️     | ✔️     | 
 | 05  | ✔️     | ✔️     | 
-| 05  | ✔️     | ✔️     | 
+| 06  | ✔️     | ✔️     | 
+| 07  | ✔️     | ✔️     | 
+| 08  | ✔️     | ✔️     | 
+| 09  | ✔️     | ✔️     | 
 
 ## Note
 I'm doing this Advent of Code so I can learn more about the Rust programming language (especially since I'm new to the language). Feedback on how I can improve my code (either logically or idiomatically) will be great.
