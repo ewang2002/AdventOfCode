@@ -55,7 +55,7 @@ mod day{0:d2};
 pub use day{0:d2}::Day{0:d2};
 '@
 
-Add-Content -Path "src/aoc/mod.rs" -Value ([string]::Format($mod_append_str, $day) + "`n")
+Add-Content -Path "src/aoc/mod.rs" -Value ([string]::Format($mod_append_str, $day))
 if (!$?) {
     Write-Warning ([string]::Format("Failed to append to file 'mod.rs'"))
     exit 1
