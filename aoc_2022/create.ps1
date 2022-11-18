@@ -127,12 +127,12 @@ pub fn run(day: u32) -> RunResult {{
 
     // Part 1
     start = Instant::now();
-    println!("Part 1 Solution: {}", solver.part1());
+    println!("Part 1 Solution: {{}}", solver.part1());
     let p1_t = start.elapsed();
 
     // Part 2
     start = Instant::now();
-    println!("Part 2 Solution: {}", solver.part2());
+    println!("Part 2 Solution: {{}}", solver.part2());
     let p2_t = start.elapsed();
 
     // Execution ends, display time statistics.
