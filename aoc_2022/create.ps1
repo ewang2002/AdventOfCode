@@ -118,7 +118,7 @@ pub fn run(day: u32) -> RunResult {{
 
     let content = input_str.lines().collect::<Vec<_>>();
 
-    let mut aoc_problem: Box<dyn AoCProblem<_, _>> = match day {{
+    let mut solver: Box<dyn AoCProblem<_, _>> = match day {{
         {0}
         _ => return RunResult::ProblemNotFound(day),
     }};
@@ -127,12 +127,12 @@ pub fn run(day: u32) -> RunResult {{
 
     // Part 1
     start = Instant::now();
-    aoc_problem.part1();
+    println!("Part 1 Solution: {}", solver.part1());
     let p1_t = start.elapsed();
 
     // Part 2
     start = Instant::now();
-    aoc_problem.part2();
+    println!("Part 2 Solution: {}", solver.part2());
     let p2_t = start.elapsed();
 
     // Execution ends, display time statistics.
