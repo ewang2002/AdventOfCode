@@ -27,7 +27,7 @@ pub struct Day{0:d2} {{
 
 impl AoCProblem<usize, usize> for Day{0:d2} {{
     fn prepare(input: Vec<&str>) -> Self {{
-        Self
+        Self {{}}
     }}
 
     fn part1(&mut self) -> usize {{
