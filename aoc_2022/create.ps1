@@ -26,7 +26,7 @@ pub struct Day{0:d2} {{
 }}
 
 impl AoCProblem<usize, usize> for Day{0:d2} {{
-    fn prepare(input: Vec<&str>) -> Self {{
+    fn prepare(input: &str) -> Self {{
         Self {{}}
     }}
 
@@ -84,7 +84,7 @@ foreach ($file in $files) {
     if ($file.Name -match "day(\d{2})\.rs") {
         # Get the number
         $num = [int]::Parse($Matches[1])
-        $run_enum_base += [string]::Format("        {0} => Box::new(aoc::Day{0:d2}::prepare(content)),`n", $num)
+        $run_enum_base += [string]::Format("        {0} => Box::new(aoc::Day{0:d2}::prepare(&input_str)),`n", $num)
     }
 }
 
@@ -122,8 +122,6 @@ pub fn run(day: u32, test_case: Option<u32>) -> RunResult {{
         Ok(o) => o,
         Err(_) => return RunResult::InputFileNotValid(input_file),
     }};
-
-    let content = input_str.lines().collect::<Vec<_>>();
 
     let mut solver: Box<dyn AoCProblem<_, _>> = match day {{
         {0}

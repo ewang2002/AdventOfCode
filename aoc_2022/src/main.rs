@@ -7,7 +7,7 @@ mod run;
 /// Main function.
 fn main() {
     let args = env::args().skip(1).take(2).collect::<Vec<_>>();
-    if args.len() == 0 {
+    if args.is_empty() {
         println!("Usage: ./aoc_2022 <day> [test]");
         println!("\twhere <day> is an integer in [0, 25].");
         println!("\tand [test] is optionally a positive integer.");

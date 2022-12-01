@@ -14,7 +14,7 @@ where
     ///
     /// # Returns
     /// - The `AoCProblem`.
-    fn prepare(input: Vec<&str>) -> Self
+    fn prepare(input: &str) -> Self
     where
         Self: Sized;
 

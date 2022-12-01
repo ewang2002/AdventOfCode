@@ -6,8 +6,8 @@ pub struct Day00 {
 
 // Testing
 impl AoCProblem<usize, usize> for Day00 {
-    fn prepare(input: Vec<&str>) -> Self {
-        let num = input[0].parse().unwrap();
+    fn prepare(input: &str) -> Self {
+        let num = input.parse().unwrap();
         Self { num }
     }
 

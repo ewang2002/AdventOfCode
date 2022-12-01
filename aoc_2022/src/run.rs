@@ -31,10 +31,8 @@ pub fn run(day: u32, test_case: Option<u32>) -> RunResult {
         Err(_) => return RunResult::InputFileNotValid(input_file),
     };
 
-    let content = input_str.lines().collect::<Vec<_>>();
-
     let mut solver: Box<dyn AoCProblem<_, _>> = match day {
-        0 => Box::new(aoc::Day00::prepare(content)),
+        0 => Box::new(aoc::Day00::prepare(&input_str)),
         _ => return RunResult::ProblemNotFound(day),
     };
 
