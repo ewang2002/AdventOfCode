@@ -6,23 +6,31 @@ mod run;
 
 /// Main function.
 fn main() {
-    let args = env::args().collect::<Vec<_>>();
-    if args.len() == 1 {
-        println!("Usage: ./aoc_2022 <day>");
+    let args = env::args().skip(1).take(2).collect::<Vec<_>>();
+    if args.len() == 0 {
+        println!("Usage: ./aoc_2022 <day> [test]");
         println!("\twhere <day> is an integer in [0, 25].");
+        println!("\tand [test] is optionally a positive integer.");
         return;
     }
 
-    let day_to_use = match args.last().unwrap().parse::<u32>() {
+    let day_to_use = match args[0].parse::<u32>() {
         Ok(o) if o <= 25 => o,
         _ => {
-            println!("Usage: ./aoc_2022 <day>");
+            println!("Usage: ./aoc_2022 <day> [test]");
             println!("\twhere <day> is an integer in [0, 25].");
+            println!("\tand [test] is optionally a positive integer.");
             return;
         }
     };
 
-    match run(day_to_use) {
+    let test_case = if args.len() == 2 {
+        args[1].parse::<u32>().ok()
+    } else {
+        None
+    };
+
+    match run(day_to_use, test_case) {
         RunResult::InputFileNotFound(f) => {
             eprintln!("[Error] The input file, {:?}, was not found.", f);
         }
