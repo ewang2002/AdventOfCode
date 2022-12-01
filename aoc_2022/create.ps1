@@ -96,16 +96,23 @@ use crate::*;
 
 use crate::aoc::{{self, AoCProblem}};
 
-/// Runs the specified day.
+/// Runs your solution to specified day.
 ///
 /// # Parameters
 /// - `day`: The day to run. This should be in the range [0, 25].
+/// - `test_case`: The test case to run, if any. If `None`, then the
+/// solution file is executed.
 ///
 /// # Returns
 /// A result representing whether the execution was successful or not.
-pub fn run(day: u32) -> RunResult {{
+pub fn run(day: u32, test_case: Option<u32>) -> RunResult {{
     // Look for input file.
-    let input_file = Path::new("input").join(format!("day{{:02}}.txt", day));
+    let input_file = Path::new("input").join(if let Some(t) = test_case {{
+        format!("day{{:02}}_test{{}}.txt", day, t)
+    }} else {{
+        format!("day{{:02}}.txt", day)
+    }});
+
     if !input_file.exists() {{
         return RunResult::InputFileNotFound(input_file);
     }}
@@ -137,6 +144,10 @@ pub fn run(day: u32) -> RunResult {{
 
     // Execution ends, display time statistics.
     println!();
+    match test_case {{
+        Some(t) => println!("[!] Running Code for Test Case {{}}.", t),
+        None => println!("[.] Running Code for Solution."),
+    }}
     println!("Input Parse : \t{{}} ms.", input_time.as_millis());
     println!("Part 1 Time : \t{{}} ms.", p1_t.as_millis());
     println!("Part 2 Time : \t{{}} ms.", p2_t.as_millis());
