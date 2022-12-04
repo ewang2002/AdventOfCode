@@ -7,6 +7,8 @@ pub struct Day04 {
 
 impl AoCProblem<usize, usize> for Day04 {
     fn prepare(input: &str) -> Self {
+        // Most sane way of parsing, totally couldn't have made it simpler by
+        // using multiple lines.
         Self {
             assignments: input
                 .lines()
@@ -30,64 +32,42 @@ impl AoCProblem<usize, usize> for Day04 {
     }
 
     fn part1(&mut self) -> usize {
-        let mut overlapping_pairs = 0;
-        for (l_min, l_max, r_min, r_max) in &self.assignments {
-            // Case 1
-            // l    .234567.
-            // r    ...45...
-            if l_min <= r_min && r_max <= l_max {
-                overlapping_pairs += 1;
-                continue;
-            }
-
-            // Case 2
-            // l    ...45...
-            // r    .234567.
-            if r_min <= l_min && l_max <= r_max {
-                overlapping_pairs += 1;
-                continue;
-            }
-        }
-
-        overlapping_pairs
+        self.assignments
+            .iter()
+            .filter(|(l_min, l_max, r_min, r_max)| {
+                // Left conditional:
+                // l    .234567.
+                // r    ...45...
+                (l_min <= r_min && r_max <= l_max)
+                    // Right conditional:
+                    // l    ...45...
+                    // r    .234567.
+                    || (r_min <= l_min && l_max <= r_max)
+            })
+            .count()
     }
 
     fn part2(&mut self) -> usize {
-        let mut overlapping_pairs = 0;
-        for (l_min, l_max, r_min, r_max) in &self.assignments {
-            // Case 1
-            // l    .234567.
-            // r    ...45...
-            if l_min <= r_min && r_max <= l_max {
-                overlapping_pairs += 1;
-                continue;
-            }
-
-            // Case 2
-            // l    ...45...
-            // r    .234567.
-            if r_min <= l_min && l_max <= r_max {
-                overlapping_pairs += 1;
-                continue;
-            }
-
-            // Case 3
-            // l    .234567.
-            // r    ..345678
-            if l_min <= r_min && l_max <= r_max && r_min <= l_max {
-                overlapping_pairs += 1;
-                continue;
-            }
-
-            // Case 4
-            // l    ..345678
-            // r    .234567.
-            if r_min <= l_min && r_max <= l_max && l_min <= r_max {
-                overlapping_pairs += 1;
-                continue;
-            }
-        }
-
-        overlapping_pairs
+        self.assignments
+            .iter()
+            .filter(|(l_min, l_max, r_min, r_max)| {
+                // Case 1
+                // l    .234567.
+                // r    ...45...
+                (l_min <= r_min && r_max <= l_max)
+                    // Case 2
+                    // l    ...45...
+                    // r    .234567.
+                    || (r_min <= l_min && l_max <= r_max)
+                    // Case 3
+                    // l    .234567.
+                    // r    ..345678
+                    || (l_min <= r_min && l_max <= r_max && r_min <= l_max)
+                    // Case 4
+                    // l    ..345678
+                    // r    .234567.
+                    || (r_min <= l_min && r_max <= l_max && l_min <= r_max)
+            })
+            .count()
     }
 }
