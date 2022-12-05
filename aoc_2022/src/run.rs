@@ -31,8 +31,7 @@ pub fn run(day: u32, test_case: Option<u32>) -> RunResult {
         Err(_) => return RunResult::InputFileNotValid(input_file),
     };
 
-    let mut solver: Box<dyn AoCProblem<_, _>> = match day {
-        0 => Box::new(aoc::Day00::prepare(&input_str)),
+    let mut solver: Box<dyn AoCProblem> = match day {
         1 => Box::new(aoc::Day01::prepare(&input_str)),
         2 => Box::new(aoc::Day02::prepare(&input_str)),
         3 => Box::new(aoc::Day03::prepare(&input_str)),

@@ -1,11 +1,11 @@
-﻿use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 pub struct Day04 {
     // (left pair min, left pair max, right pair min, right pair max)
     assignments: Vec<(usize, usize, usize, usize)>,
 }
 
-impl AoCProblem<usize, usize> for Day04 {
+impl AoCProblem for Day04 {
     fn prepare(input: &str) -> Self {
         // Most sane way of parsing, totally couldn't have made it simpler by
         // using multiple lines.
@@ -31,7 +31,7 @@ impl AoCProblem<usize, usize> for Day04 {
         }
     }
 
-    fn part1(&mut self) -> usize {
+    fn part1(&mut self) -> Solution {
         self.assignments
             .iter()
             .filter(|(l_min, l_max, r_min, r_max)| {
@@ -45,9 +45,10 @@ impl AoCProblem<usize, usize> for Day04 {
                     || (r_min <= l_min && l_max <= r_max)
             })
             .count()
+            .into()
     }
 
-    fn part2(&mut self) -> usize {
+    fn part2(&mut self) -> Solution {
         self.assignments
             .iter()
             .filter(|(l_min, l_max, r_min, r_max)| {
@@ -69,5 +70,6 @@ impl AoCProblem<usize, usize> for Day04 {
                     || (r_min <= l_min && r_max <= l_max && l_min <= r_max)
             })
             .count()
+            .into()
     }
 }

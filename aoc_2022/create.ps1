@@ -19,23 +19,23 @@ if (Test-Path -Path $new_prob_file_name) {
 #                       Create the problem file                                       #
 # =================================================================================== #
 $base_problem_str = @'
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{{AoCProblem, Solution}};
 
 pub struct Day{0:d2} {{
     // fields here
 }}
 
-impl AoCProblem<usize, usize> for Day{0:d2} {{
+impl AoCProblem for Day{0:d2} {{
     fn prepare(input: &str) -> Self {{
         Self {{}}
     }}
 
-    fn part1(&mut self) -> usize {{
-        0
+    fn part1(&mut self) -> Solution {{
+        0.into()
     }}
 
-    fn part2(&mut self) -> usize {{
-        0
+    fn part2(&mut self) -> Solution {{
+        0.into()
     }}
 }}
 '@
@@ -123,7 +123,7 @@ pub fn run(day: u32, test_case: Option<u32>) -> RunResult {{
         Err(_) => return RunResult::InputFileNotValid(input_file),
     }};
 
-    let mut solver: Box<dyn AoCProblem<_, _>> = match day {{
+    let mut solver: Box<dyn AoCProblem> = match day {{
         {0}
         _ => return RunResult::ProblemNotFound(day),
     }};

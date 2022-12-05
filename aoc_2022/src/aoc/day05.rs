@@ -1,13 +1,13 @@
 ﻿use std::collections::VecDeque;
 
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 pub struct Day05 {
     stacks: [VecDeque<char>; 9],
     rearrangements: Vec<(usize, usize, usize)>,
 }
 
-impl AoCProblem<usize, usize> for Day05 {
+impl AoCProblem for Day05 {
     fn prepare(input: &str) -> Self {
         let chunks = input.split("\r\n\r\n").collect::<Vec<_>>();
         // chunks[0] => stack arrangement
@@ -65,7 +65,7 @@ impl AoCProblem<usize, usize> for Day05 {
         }
     }
 
-    fn part1(&mut self) -> usize {
+    fn part1(&mut self) -> Solution {
         let mut arrangements = self.stacks.clone();
         for (mut move_amt, from_stack, to_stack) in &self.rearrangements {
             while move_amt > 0 {
@@ -82,11 +82,10 @@ impl AoCProblem<usize, usize> for Day05 {
             }
         }
 
-        println!("{}", s);
-        0
+        s.into()
     }
 
-    fn part2(&mut self) -> usize {
+    fn part2(&mut self) -> Solution {
         let mut arrangements = self.stacks.clone();
         let mut temp = vec![];
         for (mut move_amt, from_stack, to_stack) in &self.rearrangements {
@@ -110,7 +109,6 @@ impl AoCProblem<usize, usize> for Day05 {
             }
         }
 
-        println!("{}", s);
-        0
+        s.into()
     }
 }

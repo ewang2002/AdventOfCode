@@ -1,10 +1,10 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 pub struct Day01 {
     grouped_calories: Vec<usize>,
 }
 
-impl AoCProblem<usize, usize> for Day01 {
+impl AoCProblem for Day01 {
     fn prepare(input: &str) -> Self {
         let mut grouped_calories: Vec<usize> = input
             .split("\r\n\r\n")
@@ -15,11 +15,11 @@ impl AoCProblem<usize, usize> for Day01 {
         Self { grouped_calories }
     }
 
-    fn part1(&mut self) -> usize {
-        *self.grouped_calories.iter().max().unwrap()
+    fn part1(&mut self) -> Solution {
+        self.grouped_calories.iter().max().unwrap().into()
     }
 
-    fn part2(&mut self) -> usize {
-        self.grouped_calories.iter().take(3).sum()
+    fn part2(&mut self) -> Solution {
+        self.grouped_calories.iter().take(3).sum::<usize>().into()
     }
 }

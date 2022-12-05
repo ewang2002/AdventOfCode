@@ -1,19 +1,19 @@
 use std::collections::HashSet;
 
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 pub struct Day03 {
     rucksacks: Vec<Vec<char>>,
 }
 
-impl AoCProblem<usize, usize> for Day03 {
+impl AoCProblem for Day03 {
     fn prepare(input: &str) -> Self {
         Self {
             rucksacks: input.lines().map(|line| line.chars().collect()).collect(),
         }
     }
 
-    fn part1(&mut self) -> usize {
+    fn part1(&mut self) -> Solution {
         let mut priorities = 0;
         for r in &self.rucksacks {
             let comp_a: HashSet<_> = HashSet::from_iter(r[..r.len() / 2].iter().cloned());
@@ -26,10 +26,10 @@ impl AoCProblem<usize, usize> for Day03 {
             priorities += calculate_priority(*res.into_iter().next().unwrap());
         }
 
-        priorities
+        priorities.into()
     }
 
-    fn part2(&mut self) -> usize {
+    fn part2(&mut self) -> Solution {
         let mut priorities = 0;
         for group in self.rucksacks.chunks(3) {
             let mut unique_elements: HashSet<_> = HashSet::from_iter(group[0].iter().cloned());
@@ -51,7 +51,7 @@ impl AoCProblem<usize, usize> for Day03 {
             priorities += calculate_priority(unique_elements.into_iter().next().unwrap());
         }
 
-        priorities
+        priorities.into()
     }
 }
 

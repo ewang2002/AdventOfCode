@@ -1,4 +1,4 @@
-﻿use crate::aoc::aoc_problem::AoCProblem;
+﻿use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 const O_ROCK: char = 'A';
 const O_PAPER: char = 'B';
@@ -24,7 +24,7 @@ pub struct Day02 {
     guide: Vec<Vec<char>>,
 }
 
-impl AoCProblem<usize, usize> for Day02 {
+impl AoCProblem for Day02 {
     fn prepare(input: &str) -> Self {
         Self {
             guide: input
@@ -34,7 +34,7 @@ impl AoCProblem<usize, usize> for Day02 {
         }
     }
 
-    fn part1(&mut self) -> usize {
+    fn part1(&mut self) -> Solution {
         let mut points = 0;
         for guide in &self.guide {
             // (Opponent Picks, You Pick)
@@ -55,10 +55,10 @@ impl AoCProblem<usize, usize> for Day02 {
             };
         }
 
-        points
+        points.into()
     }
 
-    fn part2(&mut self) -> usize {
+    fn part2(&mut self) -> Solution {
         let mut points = 0;
         for guide in &self.guide {
             // (Opponent Picks, Desired Outcome)
@@ -79,6 +79,6 @@ impl AoCProblem<usize, usize> for Day02 {
             };
         }
 
-        points
+        points.into()
     }
 }
