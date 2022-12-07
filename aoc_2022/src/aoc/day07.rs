@@ -14,7 +14,7 @@ pub struct Day07 {
 impl AoCProblem for Day07 {
     fn prepare(input: &str) -> Self {
         let mut map: HashMap<String, HashMap<String, usize>> = HashMap::new();
-        let mut curr_path: Vec<String> = vec![];
+        let mut curr_path: Vec<&str> = vec![];
 
         let all_lines: Vec<&str> = input.lines().skip(1).collect();
         let mut i: usize = 0;
@@ -30,7 +30,7 @@ impl AoCProblem for Day07 {
                             curr_path = vec![];
                         }
                         _ => {
-                            curr_path.push(line[5..].to_owned());
+                            curr_path.push(&line[5..]);
                         }
                     }
 
@@ -91,10 +91,10 @@ impl AoCProblem for Day07 {
 }
 
 /// Computes the size of all directories.
-/// 
+///
 /// # Parameters
 /// - `dir_map`: The directory map.
-/// 
+///
 /// # Returns
 /// A map where the key is the directory and the value is the size of all children items.
 fn compute_total_size(dir_map: &HashMap<String, HashMap<String, usize>>) -> HashMap<String, usize> {
@@ -104,13 +104,13 @@ fn compute_total_size(dir_map: &HashMap<String, HashMap<String, usize>>) -> Hash
 }
 
 /// Computes the size of a directory. This is a helper recursive function.
-/// 
+///
 /// # Parameters
 /// - `dir_map`: The directory map.
 /// - `map`: The return map (for the function that called this function).
 /// - `curr_path`: The current path to consider.
 /// - `num_slashes`: The number of slashes to consider when computing the sizes.
-/// 
+///
 /// # Returns
 /// The total size of the given directory.
 fn compute_helper(
@@ -132,7 +132,7 @@ fn compute_helper(
 
     // Base Case: no more directories to consider.
     if dirs_to_consider.is_empty() {
-        map.insert(curr_path.clone(), all_files);
+        map.insert(curr_path, all_files);
         return all_files;
     }
 
@@ -142,6 +142,6 @@ fn compute_helper(
         .map(|d| compute_helper(dir_map, map, d.to_string(), num_slashes + 1))
         .sum::<usize>();
 
-    map.insert(curr_path.clone(), size_child_dirs + all_files);
+    map.insert(curr_path, size_child_dirs + all_files);
     size_child_dirs + all_files
 }
