@@ -22,15 +22,7 @@ impl AoCProblem for Day08 {
     }
 
     fn part1(&mut self) -> Solution {
-        let mut num_visible = 0;
-        // How many of these elements are on the edge?
-        for (i, row) in self.tree_grid.iter().enumerate() {
-            if i == 0 || i == self.tree_grid.len() - 1 {
-                num_visible += row.len()
-            } else {
-                num_visible += 2;
-            }
-        }
+        let mut num_visible = 2 * self.tree_grid.len() + 2 * self.tree_grid[0].len() - 4;
 
         // How many of these elements in the interior are visible?
         for i in 1..self.tree_grid.len() - 1 {
@@ -92,7 +84,7 @@ impl AoCProblem for Day08 {
     }
 
     fn part2(&mut self) -> Solution {
-        let mut best_score = 0;
+        let mut best_score = 2 * self.tree_grid.len() + 2 * self.tree_grid[0].len() - 4;
 
         // How many of these elements in the interior are visible?
         for i in 1..self.tree_grid.len() - 1 {
