@@ -37,19 +37,7 @@ impl AoCProblem for Day09 {
 
     fn part2(&mut self) -> Solution {
         let mut visited: HashSet<(isize, isize)> = HashSet::new();
-        let mut points = vec![
-            Point { x: 0, y: 0 },
-            Point { x: 0, y: 0 },
-            Point { x: 0, y: 0 },
-            Point { x: 0, y: 0 },
-            Point { x: 0, y: 0 },
-            Point { x: 0, y: 0 },
-            Point { x: 0, y: 0 },
-            Point { x: 0, y: 0 },
-            Point { x: 0, y: 0 },
-            Point { x: 0, y: 0 },
-        ];
-
+        let mut points = vec![Point { x: 0, y: 0 }; 10];
         for (dir, amt) in &self.motions {
             let mut to_process = *amt;
             while to_process > 0 {
@@ -89,6 +77,7 @@ impl AsRef<Direction> for Direction {
     }
 }
 
+#[derive(Clone)]
 struct Point {
     x: isize,
     y: isize,
