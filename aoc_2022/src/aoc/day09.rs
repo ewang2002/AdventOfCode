@@ -21,7 +21,7 @@ impl AoCProblem for Day09 {
 
     fn part1(&mut self) -> Solution {
         let mut visited: HashSet<(isize, isize)> = HashSet::new();
-        let mut points = vec![Point { x: 0, y: 0 }, Point { x: 0, y: 0 }];
+        let mut points = vec![Point { x: 0, y: 0 }; 2];
 
         for (dir, amt) in &self.motions {
             let mut to_process = *amt;
@@ -93,18 +93,32 @@ struct Point {
 ///
 /// # Returns
 /// A `bool` value indicating if the points are touching each other.
+#[inline(always)]
 fn are_points_touching(p1: &Point, p2: &Point) -> bool {
     let Point { x: x1, y: y1 } = p1;
     let Point { x: x2, y: y2 } = p2;
-    for dx in -1..=1 {
-        for dy in -1..=1 {
-            if *x1 + dx == *x2 && *y1 + dy == *y2 {
-                return true;
-            }
-        }
-    }
-
-    false
+    // If any component of the two points (so the x or y component)
+    // have a difference that is 2 or greater, then that means that
+    // component isn't touching and thus the points themselves are
+    // not touching. For example, points (0, 0) and (1, 1) are
+    // touching because both components are less than 2:
+    //
+    //                  |
+    //                  |P
+    //            ------P-----
+    //                  |
+    //                  |
+    //
+    // But points (0, 0) and (1, 2) are not touching because the y
+    // component is 2 or more.
+    //
+    //                  |
+    //                  | P
+    //            ------P-----
+    //                  |
+    //                  |
+    //
+    (*x1 - *x2).abs() <= 1 && (*y1 - *y2).abs() <= 1
 }
 
 /// Moves the head one unit in the specified direction and then moves the remaining
@@ -124,47 +138,47 @@ fn move_tail_unit_len(points: &mut [Point], dir: impl AsRef<Direction>) {
     }
 
     for i in 0..points.len() - 1 {
-        let window = &mut points[i..i + 2];
+        let head_x = points[i].x;
+        let head_y = points[i].y;
+        let tail_x = points[i + 1].x;
+        let tail_y = points[i + 1].y;
 
-        let head_x = window[0].x;
-        let head_y = window[0].y;
-        let mut tail_x = window[1].x;
-        let mut tail_y = window[1].y;
-
-        if are_points_touching(&window[0], &window[1]) {
+        if are_points_touching(&points[i], &points[i + 1]) {
             continue;
         }
 
-        // Are they in the same "level" (row- or column-wise)?
-        if head_x == tail_x {
-            tail_y += if head_y > tail_y { 1 } else { -1 };
-        } else if head_y == tail_y {
-            tail_x += if head_x > tail_x { 1 } else { -1 };
-        } else {
-            // Otherwise, we need to "push" the tail so it's
-            // on the same level as the head.
-            'm: for dx in -1..=1 {
-                for dy in -1..=1 {
-                    if dx == 0 || dy == 0 {
-                        continue;
-                    }
-
-                    if are_points_touching(
-                        &window[0],
-                        &Point {
-                            x: tail_x + dx,
-                            y: tail_y + dy,
-                        },
-                    ) {
-                        tail_x += dx;
-                        tail_y += dy;
-                        break 'm;
-                    }
-                }
-            }
-        }
-
-        window[1].x = tail_x;
-        window[1].y = tail_y;
+        // Here, we assume the points are not touching. Recall that the
+        // signum method returns
+        // - 1 if the number is positive
+        // - 0 if the number is zero
+        // - -1 if the number is negative
+        //
+        // There are two cases that we need to account for when we need to
+        // get the points to touch.
+        //
+        // CASE 1: "If the head is ever two steps directly up, down, left,
+        // or right from the tail, the tail must also move one step in that
+        // direction so it remains close enough." In this case, we just need
+        // to add ONE to the corresponding component so that both the head and
+        // tail are touching. We note that, WLOG, if the x-component of the
+        // head and tail are the same, the difference of that component will be
+        // 0 so 0.signum() will give us 0 (meaning no change when we add to the
+        // component). Otherwise, we'll get 1 or -1, which is the correct offset
+        // to add to one of the tail's components.
+        //
+        // CASE 2: "if the head and tail aren't touching and aren't in the
+        // same row or column, the tail always moves one step diagonally to
+        // keep up." Here, we just need to add the correct offset to each component
+        // of the tail so the tail and head touches. In this case, we note that both
+        // components of both points will differ, so signum() will always return a
+        // non-zero integer.
+        //
+        // In essence, the point I'm making is that both cases above can be handled
+        // by the two statements below.
+        points[i + 1].x += (head_x - tail_x).signum();
+        points[i + 1].y += (head_y - tail_y).signum();
     }
 }
+
+// https://github.com/ewang2002/AdventOfCode/blob/ee27036e97f226a712a70d590eee92bbad5f9b90/aoc_2022/src/aoc/day09.rs
+// for the original implementation.
