@@ -1,7 +1,4 @@
-﻿use std::{
-    collections::HashSet,
-    fmt::{Debug, Display},
-};
+﻿use std::{collections::HashSet, fmt::Debug};
 
 use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
@@ -57,14 +54,11 @@ impl AoCProblem for Day09 {
             let mut to_process = *amt;
             while to_process > 0 {
                 move_tail_unit_len(&mut points, dir);
-                //println!("{:?}", points);
                 visited.insert((points[9].x, points[9].y));
                 to_process -= 1;
             }
-            //println!("======");
         }
 
-        //println!("{:?}", visited);
         visited.len().into()
     }
 }
@@ -100,26 +94,14 @@ struct Point {
     y: isize,
 }
 
-impl Debug for Point {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.to_string())
-    }
-}
-
-impl Display for Point {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_fmt(format_args!("({}, {})", self.x, self.y))
-    }
-}
-
 /// Checks if two points are "touching." Two points are touching if they
 /// are next to each other in some way (either vertically or horizontally
 /// or diagonally).
-/// 
+///
 /// # Parameters
 /// - `p1`: A reference to the first point.
 /// - `p2`: A reference to the second point.
-/// 
+///
 /// # Returns
 /// A `bool` value indicating if the points are touching each other.
 fn are_points_touching(p1: &Point, p2: &Point) -> bool {
@@ -138,7 +120,7 @@ fn are_points_touching(p1: &Point, p2: &Point) -> bool {
 
 /// Moves the head one unit in the specified direction and then moves the remaining
 /// points so that all points are still connected.
-/// 
+///
 /// # Parameters
 /// - `points`: The points. The first element should be the head and the last element
 ///             should be the tail.
