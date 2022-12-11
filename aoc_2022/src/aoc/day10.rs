@@ -43,40 +43,33 @@ impl AoCProblem for Day10 {
     }
 
     fn part2(&mut self) -> Solution {
-        let get_idx = |cycles: isize| {
-            (
-                ((cycles - 1) / 40) as usize,
-                ((cycles - 1) % 40) as usize,
-                (cycles - 1) % 40,
-            )
+        // Gets the index to be updated in the CRT. Note that the cycle
+        // position can be thought of as a one-based index, but when
+        // updating the CRT we need a zero-based index, hence the -1
+        // offset.
+        let get_idx = |cycles: usize| ((cycles - 1) / 40, (cycles - 1) % 40);
+
+        // Checks whether the given index is in the sprite range.
+        let is_in_sprite_range = |idx: usize, x: isize| {
+            idx == (x - 1) as usize || idx == x as usize || idx == (x + 1) as usize
         };
 
         // Draw a single pixel into the CRT during each cycle.
         let mut crt: [[char; 40]; 6] = [[' '; 40]; 6];
         let mut x = 1;
-        let mut amt_cycles = 0;
+        let mut amt_cycles: usize = 0;
         for instruction in &self.program {
             amt_cycles += 1;
-            let (row, col, icol) = get_idx(amt_cycles);
+            let (row, col) = get_idx(amt_cycles);
             if row == 6 {
                 break;
             }
 
-            crt[row][col] = if icol == x - 1 || icol == x || icol == x + 1 {
-                '#'
-            } else {
-                ' '
-            };
-
+            crt[row][col] = if is_in_sprite_range(col, x) { '#' } else { ' ' };
             if let Instruction::Addx(num) = instruction {
                 amt_cycles += 1;
-                let (row, col, icol) = get_idx(amt_cycles);
-                crt[row][col] = if icol == x - 1 || icol == x || icol == x + 1 {
-                    '#'
-                } else {
-                    ' '
-                };
-
+                let (row, col) = get_idx(amt_cycles);
+                crt[row][col] = if is_in_sprite_range(col, x) { '#' } else { ' ' };
                 x += num;
             }
         }
@@ -84,7 +77,7 @@ impl AoCProblem for Day10 {
         format!(
             "\n{}",
             crt.into_iter()
-                .map(|x| String::from_iter(x))
+                .map(String::from_iter)
                 .collect::<Vec<_>>()
                 .join("\n")
         )
