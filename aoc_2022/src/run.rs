@@ -41,6 +41,7 @@ pub fn run(day: u32, test_case: Option<u32>) -> RunResult {
         7 => Box::new(aoc::Day07::prepare(&input_str)),
         8 => Box::new(aoc::Day08::prepare(&input_str)),
         9 => Box::new(aoc::Day09::prepare(&input_str)),
+        10 => Box::new(aoc::Day10::prepare(&input_str)),
         _ => return RunResult::ProblemNotFound(day),
     };
 
