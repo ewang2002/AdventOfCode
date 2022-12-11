@@ -83,6 +83,7 @@ impl AoCProblem for Day11 {
 fn simulate_monkey_game(notes: &[Note], rounds: usize, div_worry_lvl_by: usize) -> usize {
     let mut num_inspections: Vec<usize> = vec![0; notes.len()];
     let mut monkeys: Vec<Vec<usize>> = notes.iter().map(|x| x.starting_items.clone()).collect();
+    // All of the numbers used when checking divisibility so happen to all be prime...
     let main_mod = notes.iter().fold(1, |old, new| old * new.test_div);
 
     for _ in 0..rounds {
@@ -123,8 +124,15 @@ struct Operation {
 }
 
 impl Operation {
-    pub fn to_fn(&self) -> Box<dyn Fn(usize) -> usize + '_> {
-        Box::new(|num| {
+    /// Converts the operation into a function that can be called.
+    ///
+    /// # Returns
+    /// The function.
+    pub fn to_fn(&self) -> impl Fn(usize) -> usize + '_ {
+        // Using Box<dyn Fn(usize) -> usize + '_> is slower by a bit due to
+        // runtime overhead. We can do this because both closures return *one*
+        // concrete type.
+        |num| {
             if self.is_add {
                 num + match self.by {
                     Some(u) => u,
@@ -136,6 +144,6 @@ impl Operation {
                     None => num,
                 }
             }
-        })
+        }
     }
 }
