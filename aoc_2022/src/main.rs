@@ -2,6 +2,7 @@ use run::run;
 use std::{env, path::PathBuf};
 
 mod aoc;
+pub mod helper;
 mod run;
 
 /// Main function.
