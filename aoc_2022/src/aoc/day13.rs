@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 pub struct Day13 {
@@ -33,7 +35,7 @@ impl AoCProblem for Day13 {
             num_valid_idx += match evaluate_pair(p1, p2) {
                 Decision::Correct => idx + 1,
                 Decision::Incorrect => 0,
-                Decision::None => 0,
+                _ => unreachable!("a decision should have been made."),
             };
         }
 
@@ -41,10 +43,43 @@ impl AoCProblem for Day13 {
     }
 
     fn part2(&mut self) -> Solution {
-        0.into()
+        let mut all_packets: Vec<_> = self.all_packets.iter().collect();
+        let div_packet_1 = vec![PacketComponent::List(vec![PacketComponent::Int(2)])];
+        let div_packet_2 = vec![PacketComponent::List(vec![PacketComponent::Int(6)])];
+
+        all_packets.push(&div_packet_1);
+        all_packets.push(&div_packet_2);
+
+        all_packets.sort_by(|a, b| match evaluate_pair(a, b) {
+            Decision::Correct => Ordering::Less,
+            Decision::Incorrect => Ordering::Greater,
+            _ => unreachable!("a decision should have been made."),
+        });
+
+        let idx_1 = all_packets
+            .iter()
+            .position(|p| p == &&div_packet_1)
+            .unwrap_or(0)
+            + 1;
+        let idx_2 = all_packets
+            .iter()
+            .position(|p| p == &&div_packet_2)
+            .unwrap_or(0)
+            + 1;
+        (idx_1 * idx_2).into()
     }
 }
 
+/// Evaluates a pair of packets, returning a decision on whether the ordering
+/// is correct or not.
+///
+/// # Parameters
+/// - `p1`: The first packet to compare.
+/// - `p2`: The second packet to compare against.
+///
+/// # Returns
+/// A decision. This is guaranteed to be `Correct` or `Incorrect` for the final
+/// recursive call.
 fn evaluate_pair(p1: &[PacketComponent], p2: &[PacketComponent]) -> Decision {
     let mut idx1 = 0;
     let mut idx2 = 0;
@@ -121,12 +156,20 @@ enum Decision {
     None,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum PacketComponent {
     Int(usize),
     List(Vec<PacketComponent>),
 }
 
+/// A function to parse a line of input, the packet, into a more
+/// convenient representation of the packet.
+///
+/// # Parameters
+/// - `packet`: The string which represents a packet.
+///
+/// # Returns
+/// A representation of the packet.
 pub fn parse_line(packet: &str) -> Vec<PacketComponent> {
     match parse_helper(&packet.chars().collect::<Vec<_>>(), &mut 1) {
         PacketComponent::List(l) => Vec::from_iter(l.into_iter()),
@@ -134,6 +177,15 @@ pub fn parse_line(packet: &str) -> Vec<PacketComponent> {
     }
 }
 
+/// A helper recursive function to parse the input into a packet
+/// component (either an integer or a list of integers.)
+///
+/// # Parameters
+/// - `packet`: The slice of characters representing a packet.
+/// - `idx`: The index of the slice that is currently being processed.
+///
+/// # Returns
+/// A component of the packet.
 fn parse_helper(packet: &[char], idx: &mut usize) -> PacketComponent {
     let mut final_vec: Vec<PacketComponent> = vec![];
     let mut val = 0;
