@@ -1,6 +1,9 @@
 use std::cmp::Ordering;
 
-use crate::aoc::aoc_problem::{AoCProblem, Solution};
+use crate::{
+    aoc::aoc_problem::{AoCProblem, Solution},
+    helper::TWO_NEWLINE,
+};
 
 pub struct Day13 {
     pairs: Vec<(Vec<PacketComponent>, Vec<PacketComponent>)>,
@@ -11,7 +14,7 @@ impl AoCProblem for Day13 {
     fn prepare(input: &str) -> Self {
         Self {
             pairs: input
-                .split("\n\n")
+                .split(TWO_NEWLINE)
                 .map(|p| {
                     let mut iterator = p.lines();
                     (

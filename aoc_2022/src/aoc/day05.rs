@@ -1,6 +1,9 @@
-﻿use std::collections::VecDeque;
+use std::collections::VecDeque;
 
-use crate::aoc::aoc_problem::{AoCProblem, Solution};
+use crate::{
+    aoc::aoc_problem::{AoCProblem, Solution},
+    helper::TWO_NEWLINE,
+};
 
 pub struct Day05 {
     stacks: [VecDeque<char>; 9],
@@ -9,7 +12,7 @@ pub struct Day05 {
 
 impl AoCProblem for Day05 {
     fn prepare(input: &str) -> Self {
-        let chunks = input.split("\r\n\r\n").collect::<Vec<_>>();
+        let chunks = input.split(TWO_NEWLINE).collect::<Vec<_>>();
         // chunks[0] => stack arrangement
         // chunks[1] => rearrangements
         let raw_arrangements = chunks[0]

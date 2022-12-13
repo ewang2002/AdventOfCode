@@ -1,4 +1,7 @@
-﻿use crate::aoc::aoc_problem::{AoCProblem, Solution};
+use crate::{
+    aoc::aoc_problem::{AoCProblem, Solution},
+    helper::TWO_NEWLINE,
+};
 
 pub struct Day11 {
     notes: Vec<Note>,
@@ -8,7 +11,7 @@ impl AoCProblem for Day11 {
     fn prepare(input: &str) -> Self {
         Self {
             notes: input
-                .split("\r\n\r\n")
+                .split(TWO_NEWLINE)
                 .map(|note| {
                     let mut iterator = note.lines().skip(1);
                     let starting_items: Vec<_> = iterator
