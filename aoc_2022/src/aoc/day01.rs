@@ -1,4 +1,7 @@
-use crate::aoc::aoc_problem::{AoCProblem, Solution};
+use crate::{
+    aoc::aoc_problem::{AoCProblem, Solution},
+    helper::TWO_NEWLINE,
+};
 
 pub struct Day01 {
     grouped_calories: Vec<usize>,
@@ -7,7 +10,7 @@ pub struct Day01 {
 impl AoCProblem for Day01 {
     fn prepare(input: &str) -> Self {
         let mut grouped_calories: Vec<usize> = input
-            .split("\r\n\r\n")
+            .split(TWO_NEWLINE)
             .map(|g| g.lines().map(|l| l.parse::<usize>().unwrap()).sum())
             .collect();
 
