@@ -117,11 +117,6 @@ impl AoCProblem for Day14 {
     fn part2(&mut self) -> Solution {
         let mut explored = self.initial_explored.clone();
         let min_y = self.min_y + 2;
-        // Approach: we'll have a set of all explored points. We'll put all
-        // rocks in our set of explored points. Then, we can just run through
-        // each rock until we find out how many rocks it takes for a rock to
-        // go into the void.
-
         let mut has_reached_starting_pt = false;
         let mut ct = 0;
         'main: loop {
