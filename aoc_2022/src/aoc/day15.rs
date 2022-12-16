@@ -1,9 +1,8 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
-const DIFF: [(isize, isize); 4] = [(-1, -1), (-1, 1), (1, 1), (1, -1)];
-
+// Lol, did someone say... *brute-force?*
 pub struct Day15 {
     sensors: Vec<Sensor>,
     raw_input: Vec<(isize, isize, isize, isize)>,
@@ -101,6 +100,43 @@ impl AoCProblem for Day15 {
     }
 
     fn part2(&mut self) -> Solution {
+        let mut dict: HashMap<(isize, isize), usize> = HashMap::new();
+        const DIFF: [(isize, isize); 4] = [(-1, -1), (-1, 1), (1, 1), (1, -1)];
+        const MAX_XY: isize = 4_000_000;
+
+        for sensor in &self.sensors {
+            let mut x = sensor.x + sensor.manhattan_distance + 1;
+            let mut y = sensor.y;
+            for (dx, dy) in DIFF {
+                let mut remaining = sensor.manhattan_distance + 1;
+                while remaining > 0 {
+                    if (0..=MAX_XY).contains(&x) && (0..=MAX_XY).contains(&y) {
+                        *dict.entry((x, y)).or_insert(0) += 1;
+                    }
+                    x += dx;
+                    y += dy;
+                    remaining -= 1;
+                }
+
+                if (0..=MAX_XY).contains(&x) && (0..=MAX_XY).contains(&y) {
+                    *dict.entry((x, y)).or_insert(0) += 1;
+                }
+            }
+        }
+
+        let high_pts = dict
+            .into_iter()
+            .filter(|(_, v)| *v >= 4)
+            .collect::<Vec<_>>();
+
+        for (pt, _) in &high_pts {
+            if self.sensors.iter().any(|x| x.is_in_sensor_range(*pt)) {
+                continue;
+            }
+
+            return (pt.0 * 4000000 + pt.1).into();
+        }
+
         0.into()
     }
 }
