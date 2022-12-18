@@ -1,4 +1,4 @@
-use std::{fs, path::Path, time::Instant};
+﻿use std::{fs, path::Path, time::Instant};
 
 use crate::*;
 
@@ -47,6 +47,7 @@ pub fn run(day: u32, test_case: Option<u32>) -> RunResult {
         13 => Box::new(aoc::Day13::prepare(&input_str)),
         14 => Box::new(aoc::Day14::prepare(&input_str)),
         15 => Box::new(aoc::Day15::prepare(&input_str)),
+        18 => Box::new(aoc::Day18::prepare(&input_str)),
         _ => return RunResult::ProblemNotFound(day),
     };
 
