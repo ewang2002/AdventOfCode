@@ -1,17 +1,36 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
+    [Alias('y')]
+    [string] 
+    $year,
+
+    [Parameter(Mandatory = $true)]
     [ValidateRange(0, 25)]
     [Alias('d')]
     [int] 
     $day
 )
 
+$aoc_folder = "aoc_" + $year
+if (!(Test-Path -Path $aoc_folder)) {
+    Write-Warning ([string]::Format("AOC folder '{0}' does not exist.", $aoc_folder))
+    exit 1
+}
+
+if (!(Test-Path -Path ($aoc_folder + "/Cargo.toml"))) {
+    Write-Warning ([string]::Format("AOC folder '{0}' is not a Cargo project.", $aoc_folder))
+    exit 1
+}
+
+Set-Location $aoc_folder
+
 # If the file already exists, don't write to it -- especially since we might have
 # made changes to the already existing file.
 $new_prob_file_name = [string]::Format("src/aoc/day{0:d2}.rs", $day)
 if (Test-Path -Path $new_prob_file_name) {
     Write-Warning ([string]::Format("File 'day{0:d2}.rs' already exists", $day))
+    Set-Location ..
     exit 1
 }
 
@@ -43,6 +62,7 @@ impl AoCProblem for Day{0:d2} {{
 [string]::Format($base_problem_str, $day) | Out-File -FilePath $new_prob_file_name -Encoding UTF8
 if (!$?) {
     Write-Warning ([string]::Format("Failed to write to file 'day{0:d2}.rs'", $day))
+    Set-Location ..
     exit 1
 }
 
@@ -58,6 +78,7 @@ pub use day{0:d2}::Day{0:d2};
 Add-Content -Path "src/aoc/mod.rs" -Value ([string]::Format($mod_append_str, $day))
 if (!$?) {
     Write-Warning ([string]::Format("Failed to append to file 'mod.rs'"))
+    Set-Location ..
     exit 1
 }
 
@@ -69,6 +90,7 @@ if (!(Test-Path -Path $input_name)) {
     New-Item -Path $input_name -ItemType File | Out-Null
     if (!$?) {
         Write-Warning ([string]::Format("Failed to create file 'day{0:d2}.txt'", $day))
+        Set-Location ..
         exit 1
     }
 }
@@ -163,6 +185,7 @@ pub fn run(day: u32, test_case: Option<u32>) -> RunResult {{
 [string]::Format($run_base, $run_enum_base.Trim()) | Out-File -FilePath "src/run.rs" -Encoding UTF8
 if (!$?) {
     Write-Warning "Unable to apply changes to 'run.rs'; please do so manually."
+    Set-Location ..
     exit 1
 }
 

@@ -1,10 +1,28 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
+    [Alias('y')]
+    [string] 
+    $year,
+
+    [Parameter(Mandatory = $true)]
     [Alias('d')]
     [int] 
     $day
 )
+
+$aoc_folder = "aoc_" + $year
+if (!(Test-Path -Path $aoc_folder)) {
+    Write-Warning ([string]::Format("AOC folder '{0}' does not exist.", $aoc_folder))
+    exit 1
+}
+
+if (!(Test-Path -Path ($aoc_folder + "/Cargo.toml"))) {
+    Write-Warning ([string]::Format("AOC folder '{0}' is not a Cargo project.", $aoc_folder))
+    exit 1
+}
+
+Set-Location $aoc_folder
 
 $base_name = [string]::Format("day{0:d2}", $day)
 $files = Get-ChildItem -Path "input" -Filter "*.txt"
@@ -34,6 +52,7 @@ foreach ($file in $files) {
 
 if (!$found_base_file) {
     Write-Warning "No base input file for day $day. Run ./create first."
+    Set-Location ..
     exit 1
 }
 
@@ -51,6 +70,7 @@ $new_file_name = [string]::Format("{0}_test{1:d}.txt", $base_name, $max + 1)
 New-Item -Path "input/$new_file_name" -ItemType File | Out-Null
 if (!$?) {
     Write-Warning ([string]::Format("Failed to create file '{0}'", $new_file_name))
+    Set-Location ..
     exit 1
 }
 
