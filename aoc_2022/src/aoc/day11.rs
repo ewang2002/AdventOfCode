@@ -8,7 +8,7 @@ pub struct Day11 {
 }
 
 impl AoCProblem for Day11 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         Self {
             notes: input
                 .split(TWO_NEWLINE)

@@ -8,7 +8,7 @@ pub struct Day01 {
 }
 
 impl AoCProblem for Day01 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         let mut grouped_calories: Vec<usize> = input
             .split(TWO_NEWLINE)
             .map(|g| g.lines().map(|l| l.parse::<usize>().unwrap()).sum())

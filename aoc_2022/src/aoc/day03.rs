@@ -7,7 +7,7 @@ pub struct Day03 {
 }
 
 impl AoCProblem for Day03 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         Self {
             rucksacks: input.lines().map(|line| line.chars().collect()).collect(),
         }

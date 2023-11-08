@@ -6,7 +6,7 @@ pub struct Day04 {
 }
 
 impl AoCProblem for Day04 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         // Most sane way of parsing, totally couldn't have made it simpler by
         // using multiple lines.
         Self {

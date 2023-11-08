@@ -25,7 +25,7 @@ pub struct Day02 {
 }
 
 impl AoCProblem for Day02 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         Self {
             guide: input
                 .lines()

@@ -11,7 +11,7 @@ pub trait AoCProblem {
     ///
     /// # Returns
     /// - The `AoCProblem`.
-    fn prepare(input: &str) -> Self
+    fn prepare(input: String) -> Self
     where
         Self: Sized;
 

@@ -11,7 +11,7 @@ pub struct Day05 {
 }
 
 impl AoCProblem for Day05 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         let chunks = input.split(TWO_NEWLINE).collect::<Vec<_>>();
         // chunks[0] => stack arrangement
         // chunks[1] => rearrangements

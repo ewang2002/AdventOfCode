@@ -12,7 +12,7 @@ pub struct Day07 {
 }
 
 impl AoCProblem for Day07 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         let mut map: HashMap<String, HashMap<String, usize>> = HashMap::new();
         let mut curr_path: Vec<&str> = vec![];
 

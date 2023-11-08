@@ -6,7 +6,7 @@ pub struct Day08 {
 }
 
 impl AoCProblem for Day08 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         Self {
             tree_grid: input
                 .lines()

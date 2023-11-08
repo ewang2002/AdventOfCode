@@ -7,7 +7,7 @@ pub struct Day06 {
 }
 
 impl AoCProblem for Day06 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         Self {
             data_buffer: input.chars().collect(),
         }

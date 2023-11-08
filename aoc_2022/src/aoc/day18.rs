@@ -20,7 +20,7 @@ pub struct Day18 {
 }
 
 impl AoCProblem for Day18 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         Self {
             droplet_coordinates: input
                 .lines()

@@ -7,7 +7,7 @@ pub struct Day09 {
 }
 
 impl AoCProblem for Day09 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         Self {
             motions: input
                 .lines()

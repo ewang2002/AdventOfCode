@@ -11,7 +11,7 @@ pub struct Day13 {
 }
 
 impl AoCProblem for Day13 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         Self {
             pairs: input
                 .split(TWO_NEWLINE)

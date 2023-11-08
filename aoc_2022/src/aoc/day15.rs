@@ -11,7 +11,7 @@ pub struct Day15 {
 }
 
 impl AoCProblem for Day15 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         let mut sensors = vec![];
         let mut raw_input = vec![];
         let mut all_beacon_locations = HashSet::new();

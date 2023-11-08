@@ -14,7 +14,7 @@ pub struct Day14 {
 }
 
 impl AoCProblem for Day14 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         let vertical_slices: Vec<Vec<(usize, usize)>> = input
             .lines()
             .map(|line| {

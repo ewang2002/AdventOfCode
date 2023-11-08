@@ -5,7 +5,7 @@ pub struct Day10 {
 }
 
 impl AoCProblem for Day10 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         Self {
             program: input.lines().map(|l| l.into()).collect(),
         }

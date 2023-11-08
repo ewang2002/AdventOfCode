@@ -10,7 +10,7 @@ pub struct Day12 {
 }
 
 impl AoCProblem for Day12 {
-    fn prepare(input: &str) -> Self {
+    fn prepare(input: String) -> Self {
         Self {
             height_map: input.lines().map(|line| line.chars().collect()).collect(),
         }

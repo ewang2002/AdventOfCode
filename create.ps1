@@ -106,7 +106,7 @@ foreach ($file in $files) {
     if ($file.Name -match "day(\d{2})\.rs") {
         # Get the number
         $num = [int]::Parse($Matches[1])
-        $run_enum_base += [string]::Format("        {0} => Box::new(aoc::Day{0:d2}::prepare(&input_str)),`n", $num)
+        $run_enum_base += [string]::Format("        {0} => Box::new(aoc::Day{0:d2}::prepare(input_str)),`n", $num)
     }
 }
 
