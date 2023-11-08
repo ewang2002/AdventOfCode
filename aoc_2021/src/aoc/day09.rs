@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::collections::{BinaryHeap, HashSet};
 
 pub struct Day09 {
@@ -6,10 +6,10 @@ pub struct Day09 {
 }
 
 // https://adventofcode.com/2021/day/9
-impl AoCProblem<u32, u32> for Day09 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day09 {
+    fn prepare(input: String) -> Self {
         let mut height_map: Vec<Vec<u32>> = vec![];
-        for line in input {
+        for line in input.lines() {
             height_map.push(
                 line.split("")
                     .filter(|x| !x.is_empty())
@@ -21,13 +21,14 @@ impl AoCProblem<u32, u32> for Day09 {
         Day09 { height_map }
     }
 
-    fn part1(&self) -> u32 {
+    fn part1(&mut self) -> Solution {
         return compute_low_points(&self.height_map)
             .iter()
-            .fold(0, |acc, val| acc + (*val).0 + 1);
+            .fold(0, |acc, val| acc + (*val).0 + 1)
+            .into();
     }
 
-    fn part2(&self) -> u32 {
+    fn part2(&mut self) -> Solution {
         let low_points = compute_low_points(&self.height_map);
         let mut explored: HashSet<(usize, usize)> = HashSet::new();
 
@@ -42,7 +43,7 @@ impl AoCProblem<u32, u32> for Day09 {
         let s1 = poss_basin_sizes.pop().unwrap();
         let s2 = poss_basin_sizes.pop().unwrap();
         let s3 = poss_basin_sizes.pop().unwrap();
-        s1 * s2 * s3
+        (s1 * s2 * s3).into()
     }
 }
 

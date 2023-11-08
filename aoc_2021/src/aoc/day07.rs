@@ -1,30 +1,34 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 pub struct Day07 {
     horiz_pos: Vec<i32>,
 }
 
 // https://adventofcode.com/2021/day/7
-impl AoCProblem<usize, usize> for Day07 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day07 {
+    fn prepare(input: String) -> Self {
         return Day07 {
-            horiz_pos: input[0]
+            horiz_pos: input
+                .lines()
+                .nth(0)
+                .unwrap()
                 .split(',')
                 .map(|x| x.parse::<_>().unwrap())
                 .collect::<_>(),
         };
     }
 
-    fn part1(&self) -> usize {
-        get_amt_fuel(&self.horiz_pos, |n| n.abs())
+    fn part1(&mut self) -> Solution {
+        get_amt_fuel(&self.horiz_pos, |n| n.abs()).into()
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         get_amt_fuel(&self.horiz_pos, |n| {
             let float_num = n.abs() as f32;
             // 1 + 2 + ... + n = 0.5 * n * (n + 1)
             (0.5 * float_num * (float_num + 1.0)) as i32
         })
+        .into()
     }
 }
 

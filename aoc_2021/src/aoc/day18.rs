@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::cmp::max;
 
 // Remark: At a later time, I'll try to implement this using a binary tree (which would have been
@@ -13,17 +13,19 @@ pub struct Day18 {
 }
 
 // https://adventofcode.com/2021/day/18
-impl AoCProblem<i32, i32> for Day18 {
-    fn prepare(input: Vec<String>) -> Self {
-        Self { homework: input }
+impl AoCProblem for Day18 {
+    fn prepare(input: String) -> Self {
+        Self {
+            homework: input.lines().map(|x| x.to_string()).collect(),
+        }
     }
 
-    fn part1(&self) -> i32 {
+    fn part1(&mut self) -> Solution {
         let hw: Vec<&str> = self.homework.iter().map(|x| x.as_str()).collect();
-        solve_homework_problem(&hw)
+        solve_homework_problem(&hw).into()
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&mut self) -> Solution {
         let hw: Vec<&str> = self.homework.iter().map(|x| x.as_str()).collect();
         let mut max_mag: i32 = i32::MIN;
         for i in 0..hw.len() {
@@ -42,7 +44,7 @@ impl AoCProblem<i32, i32> for Day18 {
             }
         }
 
-        max_mag
+        max_mag.into()
     }
 }
 

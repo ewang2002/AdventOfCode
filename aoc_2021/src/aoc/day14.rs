@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::collections::HashMap;
 
 // The plan that I chose to use is as follows:
@@ -71,16 +71,16 @@ pub struct Day14 {
 }
 
 // https://adventofcode.com/2021/day/14
-impl AoCProblem<usize, usize> for Day14 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day14 {
+    fn prepare(input: String) -> Self {
         let mut polymer_rules: HashMap<Pair, char> = HashMap::new();
-        for (rule, res) in input.iter().skip(2).map(|x| x.split_once(" -> ").unwrap()) {
+        for (rule, res) in input.lines().skip(2).map(|x| x.split_once(" -> ").unwrap()) {
             let c = rule.chars().collect::<Vec<_>>();
             polymer_rules.insert([c[0], c[1]], res.chars().next().unwrap());
         }
 
         let mut polymer_template_pairing: HashMap<Pair, usize> = HashMap::new();
-        let polymer = input[0].chars().collect::<Vec<_>>();
+        let polymer = input.lines().nth(0).unwrap().chars().collect::<Vec<_>>();
         for w in polymer.windows(2) {
             *polymer_template_pairing.entry([w[0], w[1]]).or_insert(0) += 1;
         }
@@ -92,12 +92,12 @@ impl AoCProblem<usize, usize> for Day14 {
         }
     }
 
-    fn part1(&self) -> usize {
-        get_max_min_quantity_diff(self, 10)
+    fn part1(&mut self) -> Solution {
+        get_max_min_quantity_diff(self, 10).into()
     }
 
-    fn part2(&self) -> usize {
-        get_max_min_quantity_diff(self, 40)
+    fn part2(&mut self) -> Solution {
+        get_max_min_quantity_diff(self, 40).into()
     }
 }
 

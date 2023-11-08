@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::collections::HashSet;
 
 type Point = (i32, i32);
@@ -13,14 +13,20 @@ pub struct Day20 {
 }
 
 // https://adventofcode.com/2021/day/20
-impl AoCProblem<usize, usize> for Day20 {
-    fn prepare(input: Vec<String>) -> Self {
-        let algorithm = input[0].chars().map(|x| x == '#').collect::<Vec<_>>();
+impl AoCProblem for Day20 {
+    fn prepare(input: String) -> Self {
+        let algorithm = input
+            .lines()
+            .nth(0)
+            .unwrap()
+            .chars()
+            .map(|x| x == '#')
+            .collect::<Vec<_>>();
         assert_eq!(512, algorithm.len());
 
         let mut image: HashSet<Point> = HashSet::new();
         let mut row = 0;
-        for line in input.iter().skip(2) {
+        for line in input.lines().skip(2) {
             let mut col = 0;
             for c in line.chars() {
                 if c != '#' {
@@ -41,11 +47,11 @@ impl AoCProblem<usize, usize> for Day20 {
             min_x: 0,
             min_y: 0,
             max_x: row,
-            max_y: input[2].len() as i32,
+            max_y: input.lines().nth(2).unwrap().len() as i32,
         }
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         enhance_image(
             &self.image,
             &self.algorithm,
@@ -53,9 +59,10 @@ impl AoCProblem<usize, usize> for Day20 {
             (self.max_x, self.max_y),
             2,
         )
+        .into()
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         enhance_image(
             &self.image,
             &self.algorithm,
@@ -63,6 +70,7 @@ impl AoCProblem<usize, usize> for Day20 {
             (self.max_x, self.max_y),
             50,
         )
+        .into()
     }
 }
 

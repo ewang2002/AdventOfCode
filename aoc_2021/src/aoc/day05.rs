@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
@@ -7,11 +7,11 @@ pub struct Day05 {
 }
 
 // https://adventofcode.com/2021/day/5
-impl AoCProblem<usize, usize> for Day05 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day05 {
+    fn prepare(input: String) -> Self {
         return Day05 {
             points: input
-                .iter()
+                .lines()
                 .map(|x| {
                     let pts = x
                         .replace(" -> ", ",")
@@ -29,7 +29,7 @@ impl AoCProblem<usize, usize> for Day05 {
         };
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         let mut map: HashMap<(i32, i32), i32> = HashMap::new();
         self.points
             .iter()
@@ -54,10 +54,10 @@ impl AoCProblem<usize, usize> for Day05 {
                 }
             });
 
-        return map.values().filter(|x| x >= &&2).count();
+        return map.values().filter(|x| x >= &&2).count().into();
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         let mut map: HashMap<(i32, i32), i32> = HashMap::new();
         self.points
             .iter()
@@ -91,7 +91,7 @@ impl AoCProblem<usize, usize> for Day05 {
                 }
             });
 
-        return map.values().filter(|x| x >= &&2).count();
+        return map.values().filter(|x| x >= &&2).count().into();
     }
 }
 

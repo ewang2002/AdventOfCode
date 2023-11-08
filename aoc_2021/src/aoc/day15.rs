@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
 
@@ -11,25 +11,26 @@ pub struct Day15 {
 }
 
 // https://adventofcode.com/2021/day/15
-impl AoCProblem<usize, usize> for Day15 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day15 {
+    fn prepare(input: String) -> Self {
         let risk_levels: Vec<Vec<_>> = input
-            .iter()
+            .lines()
             .map(|i| i.bytes().map(|v| (v - b'0') as usize).collect::<Vec<_>>())
             .collect::<Vec<_>>();
 
         Self { risk_levels }
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         find_shortest_path_score(
             &self.risk_levels,
             |levels, x, y| levels[x][y],
             (self.risk_levels.len() - 1, self.risk_levels[0].len() - 1),
         )
+        .into()
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         find_shortest_path_score(
             &self.risk_levels,
             |levels, x, y| {
@@ -47,6 +48,7 @@ impl AoCProblem<usize, usize> for Day15 {
                 self.risk_levels[0].len() * 5 - 1,
             ),
         )
+        .into()
     }
 }
 

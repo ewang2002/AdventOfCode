@@ -1,5 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
-use crate::helpers::vec_arr::transpose_vec;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::collections::{HashMap, HashSet};
 
 pub struct Day03 {
@@ -7,12 +6,14 @@ pub struct Day03 {
 }
 
 // https://adventofcode.com/2021/day/3
-impl AoCProblem<u32, u32> for Day03 {
-    fn prepare(input: Vec<String>) -> Self {
-        Self { input }
+impl AoCProblem for Day03 {
+    fn prepare(input: String) -> Self {
+        Self {
+            input: input.lines().map(|x| x.to_string()).collect(),
+        }
     }
 
-    fn part1(&self) -> u32 {
+    fn part1(&mut self) -> Solution {
         let binary_str_vec = transpose_vec(
             &self
                 .input
@@ -39,10 +40,10 @@ impl AoCProblem<u32, u32> for Day03 {
             epsilon_rate = (epsilon_rate << 1) | if num_ones > num_zeros { 0 } else { 1 };
         }
 
-        gamma_rate * epsilon_rate
+        (gamma_rate * epsilon_rate).into()
     }
 
-    fn part2(&self) -> u32 {
+    fn part2(&mut self) -> Solution {
         let oxygen_generator_val =
             get_elem_by_bit_criteria(&self.input, |num_zero, num_one, this_char| {
                 (num_one == num_zero && this_char != '1')
@@ -57,7 +58,7 @@ impl AoCProblem<u32, u32> for Day03 {
                     || (num_zero > num_one && this_char != '1')
             });
 
-        oxygen_generator_val * co2_scrubber_rating
+        (oxygen_generator_val * co2_scrubber_rating).into()
     }
 }
 
@@ -119,4 +120,31 @@ where
 /// The vector containing the element from each vector at index `idx`.
 fn get_elems_at_idx(vectors: Vec<&Vec<char>>, idx: usize) -> Vec<char> {
     vectors.iter().map(|x| x[idx]).collect::<Vec<_>>()
+}
+
+/// Transposes a vector of vectors of a copyable type.
+///
+/// # Parameters
+/// - `v`: The vector of vector of type T, which is copyable.
+///
+/// # Returns
+/// The transposed vector.
+fn transpose_vec<T>(v: &[Vec<T>]) -> Vec<Vec<T>>
+where
+    T: Copy,
+{
+    if v.is_empty() {
+        return vec![];
+    }
+
+    let len = v[0].len();
+    let mut iters: Vec<_> = v.iter().map(|n| n.iter()).collect();
+    (0..len)
+        .map(|_| {
+            iters
+                .iter_mut()
+                .map(|n| *n.next().unwrap())
+                .collect::<Vec<T>>()
+        })
+        .collect()
 }

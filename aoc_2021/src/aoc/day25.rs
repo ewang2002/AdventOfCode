@@ -1,18 +1,18 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 pub struct Day25 {
     sea_map: Vec<Vec<char>>,
 }
 
 // https://adventofcode.com/2021/day/25
-impl AoCProblem<usize, usize> for Day25 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day25 {
+    fn prepare(input: String) -> Self {
         Self {
-            sea_map: input.iter().map(|x| x.chars().collect()).collect(),
+            sea_map: input.lines().map(|x| x.chars().collect()).collect(),
         }
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         let mut num_steps = 0;
         let mut curr_map = self.sea_map.clone();
         let max_i = curr_map.len();
@@ -54,11 +54,11 @@ impl AoCProblem<usize, usize> for Day25 {
             }
         }
 
-        num_steps
+        num_steps.into()
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         // Free star that I can't get. :(
-        0
+        0.into()
     }
 }

@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 // Find a sufficiently good bound to check. Brute-force for the win!
 const BOUNDING_BOX: i32 = 350;
@@ -12,10 +12,13 @@ pub struct Day17 {
 }
 
 // https://adventofcode.com/2021/day/17
-impl AoCProblem<i32, usize> for Day17 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day17 {
+    fn prepare(input: String) -> Self {
         // target area: x=248..285, y=-85..-56
-        let bounds: Vec<_> = input[0]
+        let bounds: Vec<_> = input
+            .lines()
+            .nth(0)
+            .unwrap()
             .replace("target area: x=", "")
             .replace(", y=", " ")
             .replace("..", " ")
@@ -32,11 +35,13 @@ impl AoCProblem<i32, usize> for Day17 {
         }
     }
 
-    fn part1(&self) -> i32 {
+    fn part1(&mut self) -> Solution {
         let mut highest: i32 = i32::MIN;
         for dx in -BOUNDING_BOX..=BOUNDING_BOX {
             for dy in -BOUNDING_BOX..=BOUNDING_BOX {
-                if let Some(val) = launch_probe(dx, dy, (self.min_x, self.max_x), (self.min_y, self.max_y)) {
+                if let Some(val) =
+                    launch_probe(dx, dy, (self.min_x, self.max_x), (self.min_y, self.max_y))
+                {
                     if val > highest {
                         highest = val;
                     }
@@ -44,10 +49,10 @@ impl AoCProblem<i32, usize> for Day17 {
             }
         }
 
-        highest
+        highest.into()
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         let mut valid: usize = 0;
         for dx in -BOUNDING_BOX..=BOUNDING_BOX {
             for dy in -BOUNDING_BOX..=BOUNDING_BOX {
@@ -63,7 +68,7 @@ impl AoCProblem<i32, usize> for Day17 {
             }
         }
 
-        valid
+        valid.into()
     }
 }
 

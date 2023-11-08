@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::collections::HashMap;
 
 const MIN_TO_MAX: [i64; 9] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -8,10 +8,10 @@ pub struct Day24 {
     instructions: Vec<ALUInstruction>,
 }
 
-impl AoCProblem<usize, usize> for Day24 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day24 {
+    fn prepare(input: String) -> Self {
         let mut instructions: Vec<ALUInstruction> = vec![];
-        for line in input {
+        for line in input.lines() {
             let mut split_line = line.split(' ');
             let op = match split_line.next().unwrap() {
                 "inp" => Op::Inp,
@@ -46,7 +46,7 @@ impl AoCProblem<usize, usize> for Day24 {
         Self { instructions }
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         run(
             &self.instructions,
             0,
@@ -57,10 +57,11 @@ impl AoCProblem<usize, usize> for Day24 {
             0,
             MAX_TO_MIN,
         )
-        .1 as usize
+        .1
+        .into()
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         run(
             &self.instructions,
             0,
@@ -71,7 +72,8 @@ impl AoCProblem<usize, usize> for Day24 {
             0,
             MIN_TO_MAX,
         )
-        .1 as usize
+        .1
+        .into()
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::collections::HashSet;
 
 pub struct Day13 {
@@ -7,10 +7,10 @@ pub struct Day13 {
 }
 
 // https://adventofcode.com/2021/day/13
-impl AoCProblem<usize, String> for Day13 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day13 {
+    fn prepare(input: String) -> Self {
         let coordinates = input
-            .iter()
+            .lines()
             .filter(|x| x.contains(','))
             .map(|line| {
                 let (x, y) = line.split_once(',').unwrap();
@@ -19,7 +19,7 @@ impl AoCProblem<usize, String> for Day13 {
             .collect::<HashSet<(i32, i32)>>();
 
         let fold_directions = input
-            .iter()
+            .lines()
             .filter(|x| x.contains('='))
             .map(|line| {
                 let (along, amt) = line.split_once('=').unwrap();
@@ -36,11 +36,13 @@ impl AoCProblem<usize, String> for Day13 {
         }
     }
 
-    fn part1(&self) -> usize {
-        run_fold_direction(&self.coordinates, self.fold_directions[0]).len()
+    fn part1(&mut self) -> Solution {
+        run_fold_direction(&self.coordinates, self.fold_directions[0])
+            .len()
+            .into()
     }
 
-    fn part2(&self) -> String {
+    fn part2(&mut self) -> Solution {
         let mut points = self.coordinates.clone();
         for dir in &self.fold_directions {
             points = run_fold_direction(&points, *dir);
@@ -77,7 +79,7 @@ impl AoCProblem<usize, String> for Day13 {
             message.push('\n');
         }
 
-        message
+        message.into()
     }
 }
 

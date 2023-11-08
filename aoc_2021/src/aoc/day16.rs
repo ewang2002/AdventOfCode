@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::cmp::min;
 use std::collections::HashMap;
 
@@ -8,9 +8,9 @@ pub struct Day16 {
 }
 
 // https://adventofcode.com/2021/day/16
-impl AoCProblem<usize, usize> for Day16 {
-    fn prepare(input: Vec<String>) -> Self {
-        let orig_transmission: Vec<char> = input[0].chars().collect();
+impl AoCProblem for Day16 {
+    fn prepare(input: String) -> Self {
+        let orig_transmission: Vec<char> = input.lines().nth(0).unwrap().chars().collect();
         let hex_to_bin_map: HashMap<char, &str> = HashMap::from([
             ('0', "0000"),
             ('1', "0001"),
@@ -43,7 +43,7 @@ impl AoCProblem<usize, usize> for Day16 {
         }
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         process_packet(
             &self.transmission_binary,
             &mut 0,
@@ -51,16 +51,18 @@ impl AoCProblem<usize, usize> for Day16 {
         )
         .all_packet_ids
         .iter()
-        .sum()
+        .sum::<usize>()
+        .into()
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         process_packet(
             &self.transmission_binary,
             &mut 0,
             self.transmission_binary.len(),
         )
         .literal_packets[0]
+            .into()
     }
 }
 

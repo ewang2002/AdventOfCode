@@ -1,22 +1,22 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 pub struct Day00 {
     num: usize,
 }
 
 // Testing
-impl AoCProblem<usize, usize> for Day00 {
-    fn prepare(input: Vec<String>) -> Self {
-        let num = input[0].parse().unwrap();
+impl AoCProblem for Day00 {
+    fn prepare(input: String) -> Self {
+        let num = input.lines().nth(0).unwrap().parse().unwrap();
         Day00 { num }
     }
 
-    fn part1(&self) -> usize {
-        self.num + my_helper_function()
+    fn part1(&mut self) -> Solution {
+        (self.num + my_helper_function()).into()
     }
 
-    fn part2(&self) -> usize {
-        self.num + 1000 + my_helper_function() * 10
+    fn part2(&mut self) -> Solution {
+        (self.num + 1000 + my_helper_function() * 10).into()
     }
 }
 

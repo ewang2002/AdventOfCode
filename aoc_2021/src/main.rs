@@ -1,74 +1,60 @@
-use crate::aoc::AoCProblem;
-use helpers::io;
-use std::time::Instant;
+use run::run;
+use std::{env, path::PathBuf};
 
 mod aoc;
-mod helpers;
+pub mod helper;
+mod run;
 
-/// A macro that can be used to automatically parse the input file and prepare the corresponding
-/// problem structure for execution. To use:
-/// ```
-/// let mut solver = prepare_day!(DayXX);
-/// ```
-/// Where `XX` is the day that you want to execute. For example, to execute:
-/// - The solutions for Day 3, use `03`: `prepare_day!(Day03);`
-/// - The solutions for Day 10, use `10`: `prepare_day!(Day10);`
-macro_rules! prepare_day {
-    ($day: ident) => {{
-        use crate::aoc::*;
-        let input_file = io::file_read_all_lines(
-            format!("input/{}.txt", stringify!($day).to_lowercase()).as_str(),
-        );
-        $day::prepare(input_file)
-    }};
+/// Main function.
+fn main() {
+    let args = env::args().skip(1).take(2).collect::<Vec<_>>();
+    if args.is_empty() {
+        println!("Usage: ./aoc_2021 <day> [test]");
+        println!("\twhere <day> is an integer in [0, 25].");
+        println!("\tand [test] is optionally a positive integer.");
+        return;
+    }
+
+    let day_to_use = match args[0].parse::<u32>() {
+        Ok(o) if o <= 25 => o,
+        _ => {
+            println!("Usage: ./aoc_2022 <day> [test]");
+            println!("\twhere <day> is an integer in [0, 25].");
+            println!("\tand [test] is optionally a positive integer.");
+            return;
+        }
+    };
+
+    let test_case = if args.len() == 2 {
+        args[1].parse::<u32>().ok()
+    } else {
+        None
+    };
+
+    match run(day_to_use, test_case) {
+        RunResult::InputFileNotFound(f) => {
+            eprintln!("[Error] The input file, {:?}, was not found.", f);
+        }
+        RunResult::InputFileNotValid(f) => {
+            eprintln!("[Error] The input file, {:?}, could not be read.", f);
+        }
+        RunResult::ProblemNotFound(d) => {
+            eprintln!("[Error] Day {} has not been implemented yet.", d);
+        }
+        _ => {}
+    }
 }
 
-fn main() {
-    // Prepare to solve
-    let mut start = Instant::now();
+pub enum RunResult {
+    /// The result was successful.
+    Success,
 
-    // Change this to the correct day!
-    #[allow(unused_mut)]
-    let mut solver = prepare_day!(Day18);
-    let in_t = start.elapsed();
+    /// The input file was not found.
+    InputFileNotFound(PathBuf),
 
-    // Execution begins
-    // Part 1
-    start = Instant::now();
-    println!("Part 1 Solution: {}", solver.part1());
-    let p1_t = start.elapsed();
+    /// The input file could not be read.
+    InputFileNotValid(PathBuf),
 
-    // Part 2
-    start = Instant::now();
-    println!("Part 2 Solution: {}", solver.part2());
-    let p2_t = start.elapsed();
-
-    // Execution ends
-    println!();
-    println!(
-        "Input Parse : \t{} ms.\tor\t{} μs.",
-        in_t.as_millis(),
-        in_t.as_micros()
-    );
-    println!(
-        "Part 1 Time : \t{} ms.\tor\t{} μs.",
-        p1_t.as_millis(),
-        p1_t.as_micros()
-    );
-    println!(
-        "Part 2 Time : \t{} ms.\tor\t{} μs.",
-        p2_t.as_millis(),
-        p2_t.as_micros()
-    );
-    println!();
-    println!(
-        "P1 + P2     : \t{} ms.\tor\t{} μs.",
-        (p1_t + p2_t).as_millis(),
-        (p1_t + p2_t).as_micros()
-    );
-    println!(
-        "P + P1 + P2 : \t{} ms.\tor\t{} μs.",
-        (in_t + p1_t + p2_t).as_millis(),
-        (in_t + p1_t + p2_t).as_micros()
-    );
+    /// The problem was not found.
+    ProblemNotFound(u32),
 }

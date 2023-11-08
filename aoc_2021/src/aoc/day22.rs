@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::collections::HashSet;
 
 pub struct Day22 {
@@ -6,10 +6,10 @@ pub struct Day22 {
 }
 
 // https://adventofcode.com/2021/day/22
-impl AoCProblem<usize, usize> for Day22 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day22 {
+    fn prepare(input: String) -> Self {
         let mut reboot_steps: Vec<RebootStep> = vec![];
-        for line in input {
+        for line in input.lines() {
             // on x=10..12,y=10..12,z=10..12
             let (toggle_val, rest) = line.split_once(" ").unwrap();
             let parsed_rest = rest
@@ -34,7 +34,7 @@ impl AoCProblem<usize, usize> for Day22 {
         Self { reboot_steps }
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         let mut enabled: HashSet<(i32, i32, i32)> = HashSet::new();
         for reboot_step in &self.reboot_steps {
             if reboot_step.from_x < -50
@@ -61,11 +61,11 @@ impl AoCProblem<usize, usize> for Day22 {
             }
         }
 
-        enabled.len()
+        enabled.len().into()
     }
 
-    fn part2(&self) -> usize {
-        0
+    fn part2(&mut self) -> Solution {
+        0.into()
     }
 }
 

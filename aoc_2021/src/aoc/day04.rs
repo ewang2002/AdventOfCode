@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::collections::HashSet;
 
 type Board = [[BoardElement; 5]; 5];
@@ -9,9 +9,12 @@ pub struct Day04 {
 }
 
 // https://adventofcode.com/2021/day/4
-impl AoCProblem<i32, i32> for Day04 {
-    fn prepare(input: Vec<String>) -> Self {
-        let numbers_to_draw = input[0]
+impl AoCProblem for Day04 {
+    fn prepare(input: String) -> Self {
+        let numbers_to_draw = input
+            .lines()
+            .nth(0)
+            .unwrap()
             .split(',')
             .into_iter()
             .map(|x| x.parse::<i32>().unwrap())
@@ -21,7 +24,7 @@ impl AoCProblem<i32, i32> for Day04 {
         // Skip first two lines so we start at the board directly.
         // Remove the new lines so we can get proper chunks.
         input
-            .iter()
+            .lines()
             .skip(2)
             .filter(|x| !x.is_empty())
             .collect::<Vec<_>>()
@@ -51,7 +54,7 @@ impl AoCProblem<i32, i32> for Day04 {
         }
     }
 
-    fn part1(&self) -> i32 {
+    fn part1(&mut self) -> Solution {
         let mut boards = self.bingo_boards.clone();
         for num in &self.numbers_to_draw {
             for board in &mut boards {
@@ -62,14 +65,14 @@ impl AoCProblem<i32, i32> for Day04 {
                 }
 
                 // This board won!
-                return get_sum_of_unselected(board) * num;
+                return (get_sum_of_unselected(board) * num).into();
             }
         }
 
-        -1
+        (-1).into()
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&mut self) -> Solution {
         let mut boards = self.bingo_boards.clone();
         let mut checked: HashSet<i32> = HashSet::new();
 
@@ -99,6 +102,7 @@ impl AoCProblem<i32, i32> for Day04 {
         } else {
             *sums.last().unwrap()
         }
+        .into()
     }
 }
 

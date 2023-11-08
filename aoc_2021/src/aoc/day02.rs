@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 enum Direction {
     Up,
@@ -11,11 +11,11 @@ pub struct Day02 {
 }
 
 // https://adventofcode.com/2021/day/2
-impl AoCProblem<i32, i32> for Day02 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day02 {
+    fn prepare(input: String) -> Self {
         Self {
             submarine_direction: input
-                .iter()
+                .lines()
                 .map(|x| {
                     let dir_num = x.split(' ').collect::<Vec<_>>();
                     let dir = match dir_num[0] {
@@ -31,7 +31,7 @@ impl AoCProblem<i32, i32> for Day02 {
         }
     }
 
-    fn part1(&self) -> i32 {
+    fn part1(&mut self) -> Solution {
         let mut depth = 0;
         let mut horiz_pos = 0;
 
@@ -43,10 +43,10 @@ impl AoCProblem<i32, i32> for Day02 {
             };
         });
 
-        depth * horiz_pos
+        (depth * horiz_pos).into()
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&mut self) -> Solution {
         let mut depth = 0;
         let mut horiz_pos = 0;
         let mut aim = 0;
@@ -62,6 +62,6 @@ impl AoCProblem<i32, i32> for Day02 {
             };
         });
 
-        depth * horiz_pos
+        (depth * horiz_pos).into()
     }
 }

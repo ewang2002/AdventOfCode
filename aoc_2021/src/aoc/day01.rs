@@ -1,28 +1,29 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 
 pub struct Day01 {
     nums: Vec<i32>,
 }
 
 // https://adventofcode.com/2021/day/1
-impl AoCProblem<usize, usize> for Day01 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day01 {
+    fn prepare(input: String) -> Self {
         let nums = input
-            .iter()
+            .lines()
             .map(|x| x.parse::<i32>().unwrap())
             .collect::<Vec<_>>();
         Self { nums }
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         self.nums
             .windows(2)
             .into_iter()
             .filter(|x| x[0] < x[1])
             .count()
+            .into()
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         // Note that we need to see if:
         //      a + b + c < b + c + d
         //      => a < d
@@ -31,5 +32,6 @@ impl AoCProblem<usize, usize> for Day01 {
             .into_iter()
             .filter(|x| x[0] < x[3])
             .count()
+            .into()
     }
 }

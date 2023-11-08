@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::collections::HashMap;
 
 pub struct Day12 {
@@ -8,10 +8,10 @@ pub struct Day12 {
 }
 
 // https://adventofcode.com/2021/day/12
-impl<'a> AoCProblem<usize, usize> for Day12 {
-    fn prepare(input: Vec<String>) -> Self {
+impl<'a> AoCProblem for Day12 {
+    fn prepare(input: String) -> Self {
         let all_mappings: Vec<(String, String)> = input
-            .iter()
+            .lines()
             .map(|x| {
                 let start_end = x.split('-').collect::<Vec<_>>();
                 (start_end[0].to_string(), start_end[1].to_string())
@@ -52,7 +52,7 @@ impl<'a> AoCProblem<usize, usize> for Day12 {
         };
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         let mut initial_explored: Vec<usize> = vec![0; self.all_nodes.len()];
         initial_explored[self.start_idx] += 1;
         let start_node = self.all_nodes.get("start").unwrap();
@@ -63,9 +63,10 @@ impl<'a> AoCProblem<usize, usize> for Day12 {
             initial_explored,
             &|node, explored| node.is_small_cave() && explored[node.id] > 0,
         )
+        .into()
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         let mut initial_explored: Vec<usize> = vec![0; self.all_nodes.len()];
         initial_explored[self.start_idx] += 1;
         let start_node = self.all_nodes.get("start").unwrap();
@@ -90,6 +91,7 @@ impl<'a> AoCProblem<usize, usize> for Day12 {
                     > 1
             },
         )
+        .into()
     }
 }
 

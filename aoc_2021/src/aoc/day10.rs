@@ -1,22 +1,22 @@
 use std::collections::HashMap;
 
+use super::{aoc_problem::Solution, AoCProblem};
+
 pub struct Day10 {
     nav_subsystem: Vec<String>,
     incomplete: Vec<String>,
 }
 
 // https://adventofcode.com/2021/day/10
-// Remark: I'm not using the AoCProblem trait since using it would cause a significant
-// inconvenience.
-impl Day10 {
-    pub fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day10 {
+    fn prepare(input: String) -> Self {
         Day10 {
-            nav_subsystem: input,
+            nav_subsystem: input.lines().map(|x| x.to_string()).collect(),
             incomplete: vec![],
         }
     }
 
-    pub fn part1(&mut self) -> usize {
+    fn part1(&mut self) -> Solution {
         let score_map: HashMap<char, usize> =
             HashMap::from([(')', 3), (']', 57), ('}', 1197), ('>', 25137)]);
 
@@ -71,10 +71,10 @@ impl Day10 {
             }
         }
 
-        total_score
+        total_score.into()
     }
 
-    pub fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         let mut all_scores: Vec<usize> = vec![];
         for str in &self.incomplete {
             let mut stack: Vec<char> = vec![];
@@ -109,6 +109,6 @@ impl Day10 {
         }
 
         all_scores.sort_unstable();
-        all_scores[all_scores.len() / 2]
+        all_scores[all_scores.len() / 2].into()
     }
 }

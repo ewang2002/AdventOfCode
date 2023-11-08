@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
@@ -8,16 +8,32 @@ pub struct Day21 {
 }
 
 // https://adventofcode.com/2021/day/21
-impl AoCProblem<usize, usize> for Day21 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day21 {
+    fn prepare(input: String) -> Self {
         assert_eq!(2, input.len());
         Self {
-            p1_starting: input[0].split_once(": ").unwrap().1.parse().unwrap(),
-            p2_starting: input[1].split_once(": ").unwrap().1.parse().unwrap(),
+            p1_starting: input
+                .lines()
+                .nth(0)
+                .unwrap()
+                .split_once(": ")
+                .unwrap()
+                .1
+                .parse()
+                .unwrap(),
+            p2_starting: input
+                .lines()
+                .nth(1)
+                .unwrap()
+                .split_once(": ")
+                .unwrap()
+                .1
+                .parse()
+                .unwrap(),
         }
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         let mut player_position: [usize; 2] = [self.p1_starting, self.p2_starting];
         let mut player_scores: [usize; 2] = [0, 0];
 
@@ -42,10 +58,10 @@ impl AoCProblem<usize, usize> for Day21 {
             p = (p + 1) % 2;
         }
 
-        min(player_scores[0], player_scores[1]) * rolled
+        (min(player_scores[0], player_scores[1]) * rolled).into()
     }
 
-    fn part2(&self) -> usize {
+    fn part2(&mut self) -> Solution {
         let r = play_dirac(
             &mut HashMap::new(),
             self.p1_starting,
@@ -54,7 +70,7 @@ impl AoCProblem<usize, usize> for Day21 {
             0,
             true,
         );
-        max(r.0, r.1)
+        max(r.0, r.1).into()
     }
 }
 

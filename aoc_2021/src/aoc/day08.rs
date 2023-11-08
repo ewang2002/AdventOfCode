@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
 
@@ -15,11 +15,11 @@ pub struct Day08 {
 }
 
 // https://adventofcode.com/2021/day/8
-impl AoCProblem<usize, i32> for Day08 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day08 {
+    fn prepare(input: String) -> Self {
         return Day08 {
             pattern_res: input
-                .iter()
+                .lines()
                 .map(|x| {
                     let s = x.split(" | ").collect::<Vec<_>>();
                     return SegmentDisplayEntry {
@@ -31,16 +31,17 @@ impl AoCProblem<usize, i32> for Day08 {
         };
     }
 
-    fn part1(&self) -> usize {
+    fn part1(&mut self) -> Solution {
         return self
             .pattern_res
             .iter()
             .flat_map(|x| &x.output_value)
             .filter(|x| x.len() == 2 || x.len() == 3 || x.len() == 4 || x.len() == 7)
-            .count();
+            .count()
+            .into();
     }
 
-    fn part2(&self) -> i32 {
+    fn part2(&mut self) -> Solution {
         let get_val = |c: char| -> i32 {
             match c {
                 'a' => A,
@@ -195,7 +196,7 @@ impl AoCProblem<usize, i32> for Day08 {
             final_sum += temp_sum;
         }
 
-        final_sum
+        final_sum.into()
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::aoc::aoc_problem::AoCProblem;
+use crate::aoc::aoc_problem::{AoCProblem, Solution};
 use std::collections::HashSet;
 
 const COORD_DIFF: [(i32, i32); 8] = [
@@ -17,11 +17,11 @@ pub struct Day11 {
 }
 
 // https://adventofcode.com/2021/day/11
-impl AoCProblem<u32, u32> for Day11 {
-    fn prepare(input: Vec<String>) -> Self {
+impl AoCProblem for Day11 {
+    fn prepare(input: String) -> Self {
         Day11 {
             energy_levels: input
-                .iter()
+                .lines()
                 .map(|x| {
                     x.split("")
                         .filter(|y| !y.is_empty())
@@ -32,7 +32,7 @@ impl AoCProblem<u32, u32> for Day11 {
         }
     }
 
-    fn part1(&self) -> u32 {
+    fn part1(&mut self) -> Solution {
         let mut energy_levels = self.energy_levels.clone();
 
         let mut flashes: u32 = 0;
@@ -45,10 +45,10 @@ impl AoCProblem<u32, u32> for Day11 {
             }
         }
 
-        flashes
+        flashes.into()
     }
 
-    fn part2(&self) -> u32 {
+    fn part2(&mut self) -> Solution {
         let mut energy_levels = self.energy_levels.clone();
 
         for step in 1..1000 {
@@ -60,7 +60,7 @@ impl AoCProblem<u32, u32> for Day11 {
             }
 
             if flashed_pts.len() == energy_levels.len() * energy_levels[0].len() {
-                return step as u32;
+                return step.into();
             }
         }
 
