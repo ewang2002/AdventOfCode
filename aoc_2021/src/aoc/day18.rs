@@ -186,7 +186,7 @@ fn get_string_representation(n: &[i32]) -> String {
             LEFT_BRACE => s.push('['),
             RIGHT_BRACE => s.push(']'),
             COMMA => s.push(','),
-            _ => s.push_str(&*c.to_string()),
+            _ => s.push_str(&c.to_string()),
         };
     }
 

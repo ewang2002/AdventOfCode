@@ -24,7 +24,7 @@ impl AoCProblem for Day09 {
     fn part1(&mut self) -> Solution {
         return compute_low_points(&self.height_map)
             .iter()
-            .fold(0, |acc, val| acc + (*val).0 + 1)
+            .fold(0, |acc, val| acc + val.0 + 1)
             .into();
     }
 

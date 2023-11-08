@@ -48,25 +48,25 @@ impl AoCProblem for Day13 {
             points = run_fold_direction(&points, *dir);
         }
 
-        let min_x = (*points
+        let min_x = points
             .iter()
-            .min_by_key(|p| (**p).0)
-            .expect("invalid min x"))
+            .min_by_key(|p| p.0)
+            .expect("invalid min x")
         .0;
-        let max_x = (*points
+        let max_x = points
             .iter()
-            .max_by_key(|p| (**p).0)
-            .expect("invalid max x"))
+            .max_by_key(|p| p.0)
+            .expect("invalid max x")
         .0;
-        let min_y = (*points
+        let min_y = points
             .iter()
-            .min_by_key(|p| (**p).1)
-            .expect("invalid min y"))
+            .min_by_key(|p| p.1)
+            .expect("invalid min y")
         .1;
-        let max_y = (*points
+        let max_y = points
             .iter()
-            .max_by_key(|p| (**p).1)
-            .expect("invalid max y"))
+            .max_by_key(|p| p.1)
+            .expect("invalid max y")
         .1;
 
         // Create output string with the message

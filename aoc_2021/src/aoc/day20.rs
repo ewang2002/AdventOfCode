@@ -120,7 +120,7 @@ fn enhance_image(
                     binary_str.push('0');
                 }
 
-                let b = usize::from_str_radix(&*binary_str, 2).unwrap();
+                let b = usize::from_str_radix(&binary_str, 2).unwrap();
                 if algorithm[b] {
                     temp_image.insert((x, y));
                 }

@@ -230,7 +230,7 @@ fn extract_number(transmissions: &[char], i: &mut usize, extract_num: usize) -> 
         *i += 1;
     }
 
-    usize::from_str_radix(&*processor, 2).unwrap()
+    usize::from_str_radix(&processor, 2).unwrap()
 }
 
 /// Processes the content of a literal packet. This will parse the literal value from this packet.
@@ -256,7 +256,7 @@ fn process_literal_packet(transmissions: &[char], i: &mut usize) -> usize {
         }
     }
 
-    usize::from_str_radix(&*str_processor, 2).unwrap()
+    usize::from_str_radix(&str_processor, 2).unwrap()
 }
 
 #[derive(Debug)]

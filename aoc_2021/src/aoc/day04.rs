@@ -16,7 +16,6 @@ impl AoCProblem for Day04 {
             .nth(0)
             .unwrap()
             .split(',')
-            .into_iter()
             .map(|x| x.parse::<i32>().unwrap())
             .collect::<Vec<_>>();
         let mut bingo_boards: Vec<Board> = vec![];

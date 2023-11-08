@@ -11,7 +11,7 @@ impl AoCProblem for Day22 {
         let mut reboot_steps: Vec<RebootStep> = vec![];
         for line in input.lines() {
             // on x=10..12,y=10..12,z=10..12
-            let (toggle_val, rest) = line.split_once(" ").unwrap();
+            let (toggle_val, rest) = line.split_once(' ').unwrap();
             let parsed_rest = rest
                 .replace("x=", "")
                 .replace(",y=", " ")

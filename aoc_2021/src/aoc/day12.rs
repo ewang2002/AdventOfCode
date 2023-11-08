@@ -27,10 +27,10 @@ impl<'a> AoCProblem for Day12 {
                 .entry(String::from(to))
                 .or_insert_with(|| Node::new(to));
 
-            let f = all_nodes.get_mut(&*from).unwrap();
+            let f = all_nodes.get_mut(from).unwrap();
             f.add_neighbor(to);
 
-            let t = all_nodes.get_mut(&*to).unwrap();
+            let t = all_nodes.get_mut(to).unwrap();
             t.add_neighbor(from);
         }
 
@@ -160,7 +160,7 @@ where
             continue;
         }
 
-        let this_neighbor_node = all_nodes.get(&*neighbor).unwrap();
+        let this_neighbor_node = all_nodes.get(neighbor).unwrap();
         if checker(this_neighbor_node, &explored) {
             continue;
         }

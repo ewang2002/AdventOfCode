@@ -17,7 +17,6 @@ impl AoCProblem for Day01 {
     fn part1(&mut self) -> Solution {
         self.nums
             .windows(2)
-            .into_iter()
             .filter(|x| x[0] < x[1])
             .count()
             .into()
@@ -29,7 +28,6 @@ impl AoCProblem for Day01 {
         //      => a < d
         self.nums
             .windows(4)
-            .into_iter()
             .filter(|x| x[0] < x[3])
             .count()
             .into()

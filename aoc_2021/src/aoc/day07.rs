@@ -53,7 +53,7 @@ where
         let mut fuel_used = 0_usize;
         let mut broken_out = false;
         for elem in horiz_pos {
-            fuel_used += fuel_function(elem - target).abs() as usize;
+            fuel_used += fuel_function(elem - target).unsigned_abs() as usize;
             if fuel_used > min_fuel_used {
                 broken_out = true;
                 break;
