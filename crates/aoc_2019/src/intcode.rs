@@ -396,7 +396,6 @@ pub fn get_digits(mut num: isize) -> Vec<isize> {
 /// The parsed `Intcode` program.
 pub fn parse_intcode(code: &str) -> Vec<isize> {
     code.split(',')
-        .into_iter()
         .map(|x| x.parse::<isize>().unwrap())
         .collect::<Vec<_>>()
 }

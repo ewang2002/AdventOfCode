@@ -14,7 +14,6 @@ impl AoCProblem for Day08 {
         Self {
             input: input.lines().nth(0).unwrap()
                 .chars()
-                .into_iter()
                 .map(|x| x.to_digit(10).unwrap())
                 .collect(),
         }

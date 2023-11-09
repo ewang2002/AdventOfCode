@@ -10,10 +10,8 @@ impl AoCProblem for Day08 {
         Self {
             tree_grid: input
                 .lines()
-                .into_iter()
                 .map(|l| {
                     l.chars()
-                        .into_iter()
                         .map(|c| c.to_digit(10).unwrap())
                         .collect()
                 })
@@ -34,7 +32,7 @@ impl AoCProblem for Day08 {
 
                 // Check up direction
                 let mut up_idx: isize = (i as isize) - 1;
-                while (up_idx as isize) >= 0 {
+                while up_idx >= 0 {
                     if self.tree_grid[up_idx as usize][j] >= self.tree_grid[i][j] {
                         valid_up = false;
                         break;
@@ -67,8 +65,8 @@ impl AoCProblem for Day08 {
 
                 // Check right direction
                 let mut right_idx: usize = j + 1;
-                while (right_idx as usize) < self.tree_grid[i].len() {
-                    if self.tree_grid[i][right_idx as usize] >= self.tree_grid[i][j] {
+                while right_idx < self.tree_grid[i].len() {
+                    if self.tree_grid[i][right_idx] >= self.tree_grid[i][j] {
                         valid_right = false;
                         break;
                     }
@@ -96,7 +94,7 @@ impl AoCProblem for Day08 {
 
                 // Check up direction
                 let mut up_idx: isize = (i as isize) - 1;
-                while (up_idx as isize) >= 0 {
+                while up_idx >= 0 {
                     if self.tree_grid[up_idx as usize][j] >= self.tree_grid[i][j] {
                         break;
                     }
@@ -141,8 +139,8 @@ impl AoCProblem for Day08 {
 
                 // Check right direction
                 let mut right_idx: usize = j + 1;
-                while (right_idx as usize) < self.tree_grid[i].len() {
-                    if self.tree_grid[i][right_idx as usize] >= self.tree_grid[i][j] {
+                while right_idx < self.tree_grid[i].len() {
+                    if self.tree_grid[i][right_idx] >= self.tree_grid[i][j] {
                         break;
                     }
 

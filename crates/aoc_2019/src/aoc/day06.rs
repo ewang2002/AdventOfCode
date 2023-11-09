@@ -18,7 +18,7 @@ impl AoCProblem for Day06 {
             let (to, from) = map_entry.split_once(')').unwrap();
             graph
                 .entry(to.to_string())
-                .or_insert(vec![])
+                .or_default()
                 .push(from.to_string());
         }
 
@@ -32,12 +32,12 @@ impl AoCProblem for Day06 {
             let (to, from) = map_entry.split_once(')').unwrap();
             graph
                 .entry(to.to_string())
-                .or_insert(vec![])
+                .or_default()
                 .push(from.to_string());
 
             graph
                 .entry(from.to_string())
-                .or_insert(vec![])
+                .or_default()
                 .push(to.to_string())
         }
 

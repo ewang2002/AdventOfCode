@@ -38,7 +38,7 @@ impl AoCProblem for Day07 {
                 }
                 "$ ls" => {
                     let path = curr_path.join("/");
-                    map.entry(path.clone()).or_insert_with(HashMap::new);
+                    map.entry(path.clone()).or_default();
                     i += 1;
                     while i < all_lines.len() && !all_lines[i].starts_with('$') {
                         let (type_or_size, name) = all_lines[i].split_once(' ').unwrap();
@@ -50,7 +50,7 @@ impl AoCProblem for Day07 {
                             };
 
                             map.entry(format!("{}{}", base_path, name))
-                                .or_insert_with(HashMap::new);
+                                .or_default();
                         } else {
                             map.get_mut(&path)
                                 .unwrap()

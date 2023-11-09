@@ -9,7 +9,7 @@ pub struct Day09 {
 impl AoCProblem for Day09 {
     fn prepare(input: String) -> Self {
         Self {
-            program: parse_intcode(&input.lines().nth(0).unwrap()),
+            program: parse_intcode(input.lines().nth(0).unwrap()),
         }
     }
 

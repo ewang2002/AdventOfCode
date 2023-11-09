@@ -175,7 +175,7 @@ pub enum PacketComponent {
 /// A representation of the packet.
 pub fn parse_line(packet: &str) -> Vec<PacketComponent> {
     match parse_helper(&packet.chars().collect::<Vec<_>>(), &mut 1) {
-        PacketComponent::List(l) => Vec::from_iter(l.into_iter()),
+        PacketComponent::List(l) => Vec::from_iter(l),
         otherwise => vec![otherwise],
     }
 }
