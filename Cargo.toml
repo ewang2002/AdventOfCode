@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/*"
+]
+exclude = [
+    "csharp/*"
+]
+
+[profile.release]
+lto = true
+panic = "abort"
+opt-level = 3
