@@ -49,8 +49,7 @@ impl AoCProblem for Day07 {
                                 curr_path.join("/") + "/"
                             };
 
-                            map.entry(format!("{}{}", base_path, name))
-                                .or_default();
+                            map.entry(format!("{}{}", base_path, name)).or_default();
                         } else {
                             map.get_mut(&path)
                                 .unwrap()

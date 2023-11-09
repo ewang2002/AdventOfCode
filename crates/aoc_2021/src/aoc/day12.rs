@@ -8,7 +8,7 @@ pub struct Day12 {
 }
 
 // https://adventofcode.com/2021/day/12
-impl<'a> AoCProblem for Day12 {
+impl AoCProblem for Day12 {
     fn prepare(input: String) -> Self {
         let all_mappings: Vec<(String, String)> = input
             .lines()
@@ -34,15 +34,12 @@ impl<'a> AoCProblem for Day12 {
             t.add_neighbor(from);
         }
 
-        let mut id = 0;
         let mut all_lowercase_idx: Vec<usize> = vec![];
-        for node in all_nodes.values_mut() {
+        for (id, node) in all_nodes.values_mut().enumerate() {
             node.id = id;
             if node.is_small_cave() {
                 all_lowercase_idx.push(node.id);
             }
-
-            id += 1;
         }
 
         return Day12 {

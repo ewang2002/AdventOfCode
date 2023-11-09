@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 use common::day::{AoCProblem, Solution};
 
-
 pub struct Day10 {
     nav_subsystem: Vec<String>,
     incomplete: Vec<String>,

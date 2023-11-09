@@ -1,9 +1,8 @@
-﻿use std::{fs, path::Path, time::Instant};
+use std::{fs, path::Path, time::Instant};
 
 use common::day::AoCProblem;
 
 use crate::*;
-
 
 /// Runs your solution to specified day.
 ///

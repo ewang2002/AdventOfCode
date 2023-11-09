@@ -4,7 +4,6 @@ use common::day::AoCProblem;
 
 use crate::*;
 
-
 /// Runs your solution to specified day.
 ///
 /// # Parameters

@@ -1,5 +1,5 @@
-use common::day::{AoCProblem, Solution};
 use crate::intcode::{get_digits, parse_intcode, IntCodeComputer};
+use common::day::{AoCProblem, Solution};
 use std::cmp::max;
 
 pub struct Day07 {

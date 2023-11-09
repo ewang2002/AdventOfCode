@@ -99,7 +99,7 @@ fn process_packet(transmission: &[char], i: &mut usize, to: usize) -> PacketResu
     };
 
     while has_another_packet(transmission, *i, to) {
-        let p = process_one_packet(transmission, i, to);
+        let p = process_one_packet(transmission, i);
         p.literal_packets
             .into_iter()
             .for_each(|x| res.literal_packets.push(x));
@@ -116,11 +116,10 @@ fn process_packet(transmission: &[char], i: &mut usize, to: usize) -> PacketResu
 /// # Parameters
 /// - `transmission`: The transmission.
 /// - `i`: The current index.
-/// - `to`: The end index.
 ///
 /// # Returns
 /// The packet result.
-fn process_one_packet(transmission: &[char], i: &mut usize, to: usize) -> PacketResult {
+fn process_one_packet(transmission: &[char], i: &mut usize) -> PacketResult {
     let mut res: PacketResult = PacketResult {
         literal_packets: vec![],
         all_packet_ids: vec![],
@@ -156,7 +155,7 @@ fn process_one_packet(transmission: &[char], i: &mut usize, to: usize) -> Packet
             let mut num_sub_packets = extract_number(transmission, i, 11);
             let mut literal_packets: Vec<usize> = vec![];
             while num_sub_packets > 0 {
-                let p = process_one_packet(transmission, i, to);
+                let p = process_one_packet(transmission, i);
                 p.all_packet_ids
                     .into_iter()
                     .for_each(|x| res.all_packet_ids.push(x));

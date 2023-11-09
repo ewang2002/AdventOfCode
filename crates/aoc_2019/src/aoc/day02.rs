@@ -1,6 +1,6 @@
-use common::day::{Solution, AoCProblem};
+use common::day::{AoCProblem, Solution};
 
-use crate::intcode::{IntCodeComputer, parse_intcode};
+use crate::intcode::{parse_intcode, IntCodeComputer};
 
 pub struct Day02 {
     opcodes: Vec<isize>,

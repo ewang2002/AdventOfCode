@@ -133,12 +133,10 @@ impl PartialOrd<Self> for PointValue {
 impl Ord for PointValue {
     fn cmp(&self, other: &Self) -> Ordering {
         // Flip the meaning of greater/less than weights
-        if self.weight < other.weight {
-            Ordering::Greater
-        } else if self.weight > other.weight {
-            Ordering::Less
-        } else {
-            Ordering::Equal
+        match self.weight.cmp(&other.weight) {
+            Ordering::Less => Ordering::Greater,
+            Ordering::Equal => Ordering::Equal,
+            Ordering::Greater => Ordering::Less,
         }
     }
 }

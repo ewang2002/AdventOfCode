@@ -101,12 +101,10 @@ fn launch_probe(mut x_vel: i32, mut y_vel: i32, x_bound: Point, y_bound: Point) 
 
         x += x_vel;
         y += y_vel;
-        x_vel += if x_vel > 0 {
-            -1
-        } else if x_vel < 0 {
-            1
-        } else {
-            0
+        x_vel += match x_vel.cmp(&0) {
+            std::cmp::Ordering::Less => 1,
+            std::cmp::Ordering::Equal => 0,
+            std::cmp::Ordering::Greater => -1,
         };
         y_vel -= 1;
     }

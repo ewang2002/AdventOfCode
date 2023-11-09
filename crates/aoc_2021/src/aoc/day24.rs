@@ -95,6 +95,7 @@ type Cache = HashMap<CacheKey, CacheValue>;
 ///
 /// # Returns
 /// Whether `z` is 0, and the corresponding value (or `-1` if no such value exists).
+#[allow(clippy::too_many_arguments)]
 fn run(
     instructions: &[ALUInstruction],
     i: usize,

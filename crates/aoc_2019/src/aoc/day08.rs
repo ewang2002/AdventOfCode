@@ -12,7 +12,10 @@ pub struct Day08 {
 impl AoCProblem for Day08 {
     fn prepare(input: String) -> Self {
         Self {
-            input: input.lines().nth(0).unwrap()
+            input: input
+                .lines()
+                .nth(0)
+                .unwrap()
                 .chars()
                 .map(|x| x.to_digit(10).unwrap())
                 .collect(),

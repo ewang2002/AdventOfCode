@@ -43,6 +43,7 @@ impl AoCProblem for Day03 {
         (gamma_rate * epsilon_rate).into()
     }
 
+    #[allow(clippy::nonminimal_bool)]
     fn part2(&mut self) -> Solution {
         let oxygen_generator_val =
             get_elem_by_bit_criteria(&self.input, |num_zero, num_one, this_char| {

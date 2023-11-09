@@ -8,7 +8,9 @@ pub struct Day06 {
 // https://adventofcode.com/2019/day/6
 impl AoCProblem for Day06 {
     fn prepare(input: String) -> Self {
-        Self { input: input.lines().map(|d| d.to_string()).collect() }
+        Self {
+            input: input.lines().map(|d| d.to_string()).collect(),
+        }
     }
 
     fn part1(&mut self) -> Solution {

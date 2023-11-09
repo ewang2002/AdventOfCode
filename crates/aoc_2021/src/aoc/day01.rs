@@ -15,21 +15,13 @@ impl AoCProblem for Day01 {
     }
 
     fn part1(&mut self) -> Solution {
-        self.nums
-            .windows(2)
-            .filter(|x| x[0] < x[1])
-            .count()
-            .into()
+        self.nums.windows(2).filter(|x| x[0] < x[1]).count().into()
     }
 
     fn part2(&mut self) -> Solution {
         // Note that we need to see if:
         //      a + b + c < b + c + d
         //      => a < d
-        self.nums
-            .windows(4)
-            .filter(|x| x[0] < x[3])
-            .count()
-            .into()
+        self.nums.windows(4).filter(|x| x[0] < x[3]).count().into()
     }
 }

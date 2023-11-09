@@ -14,8 +14,20 @@ pub struct Day03 {
 impl AoCProblem for Day03 {
     fn prepare(input: String) -> Self {
         Self {
-            first_wire: input.lines().nth(0).unwrap().split(',').map(WireComponent::new).collect(),
-            second_wire: input.lines().nth(1).unwrap().split(',').map(WireComponent::new).collect(),
+            first_wire: input
+                .lines()
+                .nth(0)
+                .unwrap()
+                .split(',')
+                .map(WireComponent::new)
+                .collect(),
+            second_wire: input
+                .lines()
+                .nth(1)
+                .unwrap()
+                .split(',')
+                .map(WireComponent::new)
+                .collect(),
         }
     }
 
@@ -117,10 +129,10 @@ impl WireComponent {
     pub fn new(s: &str) -> Self {
         let amt = s[1..].parse::<i64>().unwrap();
         match s.chars().next() {
-            Some(c) if c == 'U' => WireComponent::Up(amt),
-            Some(c) if c == 'D' => WireComponent::Down(amt),
-            Some(c) if c == 'L' => WireComponent::Left(amt),
-            Some(c) if c == 'R' => WireComponent::Right(amt),
+            Some('U') => WireComponent::Up(amt),
+            Some('D') => WireComponent::Down(amt),
+            Some('L') => WireComponent::Left(amt),
+            Some('R') => WireComponent::Right(amt),
             _ => panic!("Unknown input."),
         }
     }
