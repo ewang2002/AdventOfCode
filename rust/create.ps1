@@ -60,10 +60,14 @@ impl AoCProblem for Day{0:d2} {{
     fn day() -> u32 {{
         {0}
     }}
+
+    fn year() -> u32 {{
+        {1}
+    }}
 }}
 '@
 
-[string]::Format($base_problem_str, $day) | Out-File -FilePath $new_prob_file_name -Encoding UTF8
+[string]::Format($base_problem_str, $day, $year) | Out-File -FilePath $new_prob_file_name -Encoding UTF8
 if (!$?) {
     Write-Warning ([string]::Format("Failed to write to file 'day{0:d2}.rs'", $day))
     Set-Location ..
