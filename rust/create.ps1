@@ -12,7 +12,7 @@ param(
     $day
 )
 
-$aoc_folder = "aoc_" + $year
+$aoc_folder = "aoc" + $year
 if (!(Test-Path -Path $aoc_folder)) {
     Write-Warning ([string]::Format("AOC folder '{0}' does not exist.", $aoc_folder))
     exit 1
@@ -56,6 +56,10 @@ impl AoCProblem for Day{0:d2} {{
     fn part2(&mut self) -> Solution {{
         0.into()
     }}
+
+    fn day() -> u32 {{
+        {0}
+    }}
 }}
 '@
 
@@ -72,7 +76,7 @@ if (!$?) {
 $mod_append_str = @'
 
 mod day{0:d2};
-pub use day{0:d2}::Day{0:d2};
+pub use day{0:d2}::problem::day{0:d2};
 '@
 
 Add-Content -Path "src/aoc/mod.rs" -Value ([string]::Format($mod_append_str, $day))
@@ -96,7 +100,7 @@ if (!(Test-Path -Path $input_name)) {
 }
 
 # =================================================================================== #
-#                       Finally, update run.rs                                        #
+#                       Finally, update main.rs                                       #
 # =================================================================================== #
 $run_enum_base = ""
 # Go through each file in the aoc directory
@@ -106,85 +110,53 @@ foreach ($file in $files) {
     if ($file.Name -match "day(\d{2})\.rs") {
         # Get the number
         $num = [int]::Parse($Matches[1])
-        $run_enum_base += [string]::Format("        {0} => Box::new(aoc::Day{0:d2}::prepare(input_str)),`n", $num)
+        $run_enum_base += [string]::Format("        {0} => run::<crate::aoc::Day{0:d2}>(test_case),`n", $num)
     }
 }
 
 # Finally, apply $run_enum_base to the file base
 $run_base = @'
-use std::{{fs, path::Path, time::Instant}};
+use common::problem::run;
+use std::env;
+mod aoc;
 
-use crate::*;
+fn main() {{
+    let args = env::args().skip(1).take(2).collect::<Vec<_>>();
+    if args.is_empty() {{
+        println!("Usage: ./{0} <day> [test]");
+        println!("\twhere <day> is an integer in [0, 25].");
+        println!("\tand [test] is optionally a positive integer.");
+        return;
+    }}
 
-use crate::aoc::{{self, AoCProblem}};
+    let day_to_use = match args[0].parse::<u32>() {{
+        Ok(o) if o <= 25 => o,
+        _ => {{
+            println!("Usage: ./{0} <day> [test]");
+            println!("\twhere <day> is an integer in [0, 25].");
+            println!("\tand [test] is optionally a positive integer.");
+            return;
+        }}
+    }};
 
-/// Runs your solution to specified day.
-///
-/// # Parameters
-/// - `day`: The day to run. This should be in the range [0, 25].
-/// - `test_case`: The test case to run, if any. If `None`, then the
-/// solution file is executed.
-///
-/// # Returns
-/// A result representing whether the execution was successful or not.
-pub fn run(day: u32, test_case: Option<u32>) -> RunResult {{
-    // Look for input file.
-    let input_file = Path::new("input").join(if let Some(t) = test_case {{
-        format!("day{{:02}}_test{{}}.txt", day, t)
+    let test_case = if args.len() == 2 {{
+        args[1].parse::<u32>().ok()
     }} else {{
-        format!("day{{:02}}.txt", day)
-    }});
-
-    if !input_file.exists() {{
-        return RunResult::InputFileNotFound(input_file);
-    }}
-
-    let mut start = Instant::now();
-    let input_str = match fs::read_to_string(&input_file) {{
-        Ok(o) => o,
-        Err(_) => return RunResult::InputFileNotValid(input_file),
+        None
     }};
 
-    let mut solver: Box<dyn AoCProblem> = match day {{
-        {0}
-        _ => return RunResult::ProblemNotFound(day),
-    }};
-
-    let input_time = start.elapsed();
-
-    // Part 1
-    start = Instant::now();
-    println!("Part 1 Solution: {{}}", solver.part1());
-    let p1_t = start.elapsed();
-
-    // Part 2
-    start = Instant::now();
-    println!("Part 2 Solution: {{}}", solver.part2());
-    let p2_t = start.elapsed();
-
-    // Execution ends, display time statistics.
-    println!();
-    match test_case {{
-        Some(t) => println!("[!] Running Code for Test Case {{}}.", t),
-        None => println!("[.] Running Code for Solution."),
+    match day_to_use {{
+        {1}
+        _ => {{
+            eprintln!("[Error] Day {{day_to_use}} has not been implemented yet.");
+        }}
     }}
-    println!("Input Parse : \t{{}} ms.", input_time.as_millis());
-    println!("Part 1 Time : \t{{}} ms.", p1_t.as_millis());
-    println!("Part 2 Time : \t{{}} ms.", p2_t.as_millis());
-    println!();
-    println!("P1 + P2     : \t{{}} ms.", (p1_t + p2_t).as_millis(),);
-    println!(
-        "P + P1 + P2 : \t{{}} ms.",
-        (input_time + p1_t + p2_t).as_millis(),
-    );
-
-    RunResult::Success
 }}
 '@
 
-[string]::Format($run_base, $run_enum_base.Trim()) | Out-File -FilePath "src/run.rs" -Encoding UTF8
+[string]::Format($run_base, $year, $run_enum_base.Trim()) | Out-File -FilePath "src/main.rs" -Encoding UTF8
 if (!$?) {
-    Write-Warning "Unable to apply changes to 'run.rs'; please do so manually."
+    Write-Warning "Unable to apply changes to 'main.rs'; please do so manually."
     Set-Location ..
     exit 1
 }

@@ -30,7 +30,7 @@ param(
     $release = $false
 )
 
-$aoc_folder = "aoc_" + $year
+$aoc_folder = "aoc" + $year
 if (!(Test-Path -Path $aoc_folder)) {
     Write-Warning ([string]::Format("AOC folder '{0}' does not exist.", $aoc_folder))
     exit 1
