@@ -38,14 +38,14 @@ if (Test-Path -Path $new_prob_file_name) {
 #                       Create the problem file                                       #
 # =================================================================================== #
 $base_problem_str = @'
-use crate::aoc::aoc_problem::{{AoCProblem, Solution}};
+use common::problem::day::{{AoCProblem, Solution}};
 
 pub struct Day{0:d2} {{
     // fields here
 }}
 
 impl AoCProblem for Day{0:d2} {{
-    fn prepare(input: &str) -> Self {{
+    fn prepare(input: String) -> Self {{
         Self {{}}
     }}
 
@@ -76,7 +76,7 @@ if (!$?) {
 $mod_append_str = @'
 
 mod day{0:d2};
-pub use day{0:d2}::problem::day{0:d2};
+pub use day{0:d2}::Day{0:d2};
 '@
 
 Add-Content -Path "src/aoc/mod.rs" -Value ([string]::Format($mod_append_str, $day))
@@ -123,7 +123,7 @@ mod aoc;
 fn main() {{
     let args = env::args().skip(1).take(2).collect::<Vec<_>>();
     if args.is_empty() {{
-        println!("Usage: ./{0} <day> [test]");
+        println!("Usage: ./aoc{0} <day> [test]");
         println!("\twhere <day> is an integer in [0, 25].");
         println!("\tand [test] is optionally a positive integer.");
         return;
@@ -161,4 +161,5 @@ if (!$?) {
     exit 1
 }
 
+Set-Location ..
 exit 0
