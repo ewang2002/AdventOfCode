@@ -79,6 +79,10 @@ impl AoCProblem for Day24 {
     fn day() -> u32 {
         24
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 type CacheKey = (usize, i64, i64, i64, i64);

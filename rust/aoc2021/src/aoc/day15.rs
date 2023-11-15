@@ -54,6 +54,10 @@ impl AoCProblem for Day15 {
     fn day() -> u32 {
         15
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Finds the shortest path score from the top-left point of the risk level "maze" to the specified

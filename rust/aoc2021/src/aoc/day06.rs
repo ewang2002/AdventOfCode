@@ -29,6 +29,10 @@ impl AoCProblem for Day06 {
     fn day() -> u32 {
         6
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Calculates the number of fish after a certain number of day.

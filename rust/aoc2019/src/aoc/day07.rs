@@ -135,6 +135,10 @@ impl AoCProblem for Day07 {
     fn day() -> u32 {
         7
     }
+
+    fn year() -> u32 {
+        2019
+    }
 }
 
 /// Checks if the given number is a valid phase setting (the number has no duplicates).

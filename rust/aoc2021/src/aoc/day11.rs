@@ -70,6 +70,10 @@ impl AoCProblem for Day11 {
     fn day() -> u32 {
         11
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Increments the current energy level at the specified `(row, col)` coordinate. This will account

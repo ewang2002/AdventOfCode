@@ -49,6 +49,10 @@ impl AoCProblem for Day09 {
     fn day() -> u32 {
         9
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Recursively explores a basin, getting the size of it.

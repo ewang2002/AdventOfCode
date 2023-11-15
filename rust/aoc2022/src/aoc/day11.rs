@@ -75,6 +75,10 @@ impl AoCProblem for Day11 {
     fn day() -> u32 {
         11
     }
+
+    fn year() -> u32 {
+        2022
+    }
 }
 
 /// Simulates the monkey game.

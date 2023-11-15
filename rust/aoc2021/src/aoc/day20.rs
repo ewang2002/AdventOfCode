@@ -76,6 +76,10 @@ impl AoCProblem for Day20 {
     fn day() -> u32 {
         20
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Enhances an image, returning the number of bright pixels.

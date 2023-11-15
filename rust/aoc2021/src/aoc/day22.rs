@@ -71,6 +71,10 @@ impl AoCProblem for Day22 {
     fn day() -> u32 {
         22
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 #[derive(Copy, Clone)]

@@ -75,6 +75,10 @@ impl AoCProblem for Day13 {
     fn day() -> u32 {
         13
     }
+
+    fn year() -> u32 {
+        2022
+    }
 }
 
 /// Evaluates a pair of packets, returning a decision on whether the ordering

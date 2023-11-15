@@ -24,6 +24,10 @@ impl AoCProblem for Day06 {
     fn day() -> u32 {
         6
     }
+
+    fn year() -> u32 {
+        2022
+    }
 }
 
 /// Finds the position of the first start-of-packet marker in the datastream.

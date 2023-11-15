@@ -94,6 +94,10 @@ impl AoCProblem for Day12 {
     fn day() -> u32 {
         12
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 pub struct Node {

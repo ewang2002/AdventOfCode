@@ -65,6 +65,10 @@ impl AoCProblem for Day03 {
     fn day() -> u32 {
         3
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Gets the binary number that matches the given criteria. Used in part 2.

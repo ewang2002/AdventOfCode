@@ -32,6 +32,12 @@ pub trait AoCProblem {
     /// # Returns
     /// - The day that this problem is for.
     fn day() -> u32;
+
+    /// The year that this problem solution is for.
+    /// 
+    /// # Returns
+    /// - The year that this problem solution is for.
+    fn year() -> u32;
 }
 
 #[derive(Clone)]

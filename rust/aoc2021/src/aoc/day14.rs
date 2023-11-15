@@ -103,6 +103,10 @@ impl AoCProblem for Day14 {
     fn day() -> u32 {
         14
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Gets the difference between the most and least occurring characters in the polymer after

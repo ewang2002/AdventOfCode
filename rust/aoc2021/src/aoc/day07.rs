@@ -34,6 +34,10 @@ impl AoCProblem for Day07 {
     fn day() -> u32 {
         7
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Gets the amount of fuel needed to align every crab to the same horizontal position.

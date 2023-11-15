@@ -69,6 +69,10 @@ impl AoCProblem for Day13 {
     fn day() -> u32 {
         13
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Runs one fold direction, applying the directions to all valid points and returning a new set

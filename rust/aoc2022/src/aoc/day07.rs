@@ -91,6 +91,10 @@ impl AoCProblem for Day07 {
     fn day() -> u32 {
         7
     }
+
+    fn year() -> u32 {
+        2022
+    }
 }
 
 /// Computes the size of all directories.

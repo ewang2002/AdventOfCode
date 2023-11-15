@@ -22,6 +22,10 @@ impl AoCProblem for Day00 {
     fn day() -> u32 {
         0
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// A random helper function that does something.

@@ -76,6 +76,10 @@ impl AoCProblem for Day21 {
     fn day() -> u32 {
         21
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 // Key = game state,

@@ -68,6 +68,10 @@ impl AoCProblem for Day16 {
     fn day() -> u32 {
         16
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Checks if there is another (sub)packet that needs to be processed.

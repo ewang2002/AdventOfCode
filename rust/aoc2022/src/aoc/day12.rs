@@ -60,6 +60,10 @@ impl AoCProblem for Day12 {
     fn day() -> u32 {
         12
     }
+
+    fn year() -> u32 {
+        2022
+    }
 }
 
 const NEIGHBORS: [(isize, isize); 4] = [(1, 0), (0, 1), (-1, 0), (0, -1)];

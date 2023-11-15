@@ -65,4 +65,8 @@ impl AoCProblem for Day25 {
     fn day() -> u32 {
         25
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }

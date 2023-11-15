@@ -86,6 +86,10 @@ impl AoCProblem for Day06 {
     fn day() -> u32 {
         6
     }
+
+    fn year() -> u32 {
+        2019
+    }
 }
 
 /// Calculates the number of possible paths from node A to node B, including subsets.

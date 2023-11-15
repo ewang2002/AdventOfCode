@@ -74,6 +74,10 @@ impl AoCProblem for Day17 {
     fn day() -> u32 {
         17
     }
+
+    fn year() -> u32 {
+        2021
+    }
 }
 
 /// Simulates launching a probe at the specified velocities.

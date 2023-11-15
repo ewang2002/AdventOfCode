@@ -120,6 +120,10 @@ impl AoCProblem for Day03 {
     fn day() -> u32 {
         3
     }
+
+    fn year() -> u32 {
+        2019
+    }
 }
 
 pub enum WireComponent {

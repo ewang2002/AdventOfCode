@@ -33,6 +33,12 @@ pub fn run<P: AoCProblem>(test_case: Option<u32>) {
         }
     };
 
+    println!("Advent of Code: Year {} Day {}", P::year(), P::day());
+    match test_case {
+        Some(t) => println!("[!] Running Code for Test Case {}.", t),
+        None => println!("[.] Running Code for Solution."),
+    };
+
     let mut solver = P::prepare(input_str);
     let input_time = start.elapsed();
 
@@ -48,10 +54,6 @@ pub fn run<P: AoCProblem>(test_case: Option<u32>) {
 
     // Execution ends, display time statistics.
     println!();
-    match test_case {
-        Some(t) => println!("[!] Running Code for Test Case {}.", t),
-        None => println!("[.] Running Code for Solution."),
-    }
     println!("Input Parse : \t{} ms.", input_time.as_millis());
     println!("Part 1 Time : \t{} ms.", p1_t.as_millis());
     println!("Part 2 Time : \t{} ms.", p2_t.as_millis());

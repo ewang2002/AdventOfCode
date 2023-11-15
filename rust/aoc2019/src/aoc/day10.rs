@@ -38,6 +38,10 @@ impl AoCProblem for Day10 {
     fn day() -> u32 {
         10
     }
+
+    fn year() -> u32 {
+        2019
+    }
 }
 
 const BASE_DIRECTIONS: [[isize; 2]; 4] = [

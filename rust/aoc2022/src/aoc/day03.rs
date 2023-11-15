@@ -57,6 +57,10 @@ impl AoCProblem for Day03 {
     fn day() -> u32 {
         3
     }
+
+    fn year() -> u32 {
+        2022
+    }
 }
 
 /// Calculates the priority of the character according to the given prompt.
