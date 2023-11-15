@@ -136,7 +136,7 @@ fn main() {{
     let day_to_use = match args[0].parse::<u32>() {{
         Ok(o) if o <= 25 => o,
         _ => {{
-            println!("Usage: ./{0} <day> [test]");
+            println!("Usage: ./aoc{0} <day> [test]");
             println!("\twhere <day> is an integer in [0, 25].");
             println!("\tand [test] is optionally a positive integer.");
             return;
