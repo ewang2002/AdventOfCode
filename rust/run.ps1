@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 # Usage
 # - ./run -y <year> -d <day> -r <0 or 1> -t <int>     e.g., ./run -y 2022 -d 1 -r 0
 #
