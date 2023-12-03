@@ -76,4 +76,5 @@ if (!$?) {
     exit 1
 }
 
+Set-Location ..
 Write-Host "Created new test file: $new_file_name"
