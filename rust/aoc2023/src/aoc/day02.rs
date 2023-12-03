@@ -68,16 +68,17 @@ impl AoCProblem for Day02 {
         self.game_info
             .iter()
             .map(|rounds| {
-                let mut min_red = 0;
-                let mut min_green = 0;
-                let mut min_blue = 0;
-                for [blue, red, green] in rounds {
-                    min_red = max(min_red, *red);
-                    min_green = max(min_green, *green);
-                    min_blue = max(min_blue, *blue);
-                }
-
-                min_red * min_green * min_blue
+                rounds
+                    .iter()
+                    .fold([0, 0, 0], |acc, curr| {
+                        [
+                            max(acc[0], curr[0]),
+                            max(acc[1], curr[1]),
+                            max(acc[2], curr[2]),
+                        ]
+                    })
+                    .into_iter()
+                    .product::<usize>()
             })
             .sum::<usize>()
             .into()
