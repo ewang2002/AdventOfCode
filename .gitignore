@@ -1,5 +1,9 @@
 .idea/
-
 # Added by cargo
-
 target/
+
+# Ignore input folder except for .gitkeep
+**/input/*
+!**/input/.gitkeep
+**/Inputs/*
+!**/Inputs/.gitkeep
