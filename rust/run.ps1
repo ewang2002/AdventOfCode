@@ -28,8 +28,8 @@ param(
 
     [Parameter()]
     [Alias('r')]
-    [bool] 
-    $release = $false
+    [int] 
+    $release = 0
 )
 
 $aoc_folder = "aoc" + $year
@@ -46,7 +46,7 @@ if (!(Test-Path -Path ($aoc_folder + "/Cargo.toml"))) {
 Set-Location $aoc_folder
 
 try {
-    if ($release) {
+    if ($release -ne 0) {
         if ($test -eq 0) {
             cargo -q run -r -- $day
         }
