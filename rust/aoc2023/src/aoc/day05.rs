@@ -1,6 +1,9 @@
 use std::cmp::min;
 
-use common::{problem::day::{AoCProblem, Solution}, constants::TWO_NEWLINE};
+use common::{
+    constants::TWO_NEWLINE,
+    problem::day::{AoCProblem, Solution},
+};
 
 type AlmanacEntry = [usize; 3];
 
@@ -20,40 +23,59 @@ impl AoCProblem for Day05 {
         let split_input: Vec<&str> = input.split(TWO_NEWLINE).collect();
         // Parse seeds
         let (_, raw_seeds) = split_input[0].split_once(": ").unwrap();
-        let seeds: Vec<usize> = raw_seeds.split_whitespace().map(|seed| seed.parse::<usize>().unwrap()).collect();
+        let seeds: Vec<usize> = raw_seeds
+            .split_whitespace()
+            .map(|seed| seed.parse::<usize>().unwrap())
+            .collect();
 
         let map_to_usize_vec = |s: &str| -> [usize; 3] {
-            let mut iter = s.split(" ").map(|m| m.parse::<usize>().unwrap());
-            [iter.next().unwrap(), iter.next().unwrap(), iter.next().unwrap()]
+            let mut iter = s.split(' ').map(|m| m.parse::<usize>().unwrap());
+            [
+                iter.next().unwrap(),
+                iter.next().unwrap(),
+                iter.next().unwrap(),
+            ]
         };
 
-        // Parse seed-to-soil
-        let seed_to_soil: Vec<_> = split_input[1].lines().skip(1)
-            .map(map_to_usize_vec)
-            .collect();
-            
-        // Parse soil-to-fertilizer
-        let soil_to_fertilizer: Vec<_> = split_input[2].lines().skip(1)
+        let seed_to_soil: Vec<_> = split_input[1]
+            .lines()
+            .skip(1)
             .map(map_to_usize_vec)
             .collect();
 
-        let fertilizer_to_water: Vec<_> = split_input[3].lines().skip(1)
+        let soil_to_fertilizer: Vec<_> = split_input[2]
+            .lines()
+            .skip(1)
             .map(map_to_usize_vec)
             .collect();
 
-        let water_to_light: Vec<_> = split_input[4].lines().skip(1)
+        let fertilizer_to_water: Vec<_> = split_input[3]
+            .lines()
+            .skip(1)
             .map(map_to_usize_vec)
             .collect();
 
-        let light_to_temp: Vec<_> = split_input[5].lines().skip(1)
+        let water_to_light: Vec<_> = split_input[4]
+            .lines()
+            .skip(1)
             .map(map_to_usize_vec)
             .collect();
 
-        let temp_to_humidity: Vec<_> = split_input[6].lines().skip(1)
+        let light_to_temp: Vec<_> = split_input[5]
+            .lines()
+            .skip(1)
             .map(map_to_usize_vec)
             .collect();
 
-        let humidity_to_loc: Vec<_> = split_input[7].lines().skip(1)
+        let temp_to_humidity: Vec<_> = split_input[6]
+            .lines()
+            .skip(1)
+            .map(map_to_usize_vec)
+            .collect();
+
+        let humidity_to_loc: Vec<_> = split_input[7]
+            .lines()
+            .skip(1)
             .map(map_to_usize_vec)
             .collect();
 
@@ -65,7 +87,7 @@ impl AoCProblem for Day05 {
             water_to_light,
             light_to_temp,
             temp_to_humidity,
-            humidity_to_loc
+            humidity_to_loc,
         }
     }
 
@@ -86,8 +108,29 @@ impl AoCProblem for Day05 {
     }
 
     fn part2(&mut self) -> Solution {
-        // TODO
-        0.into()
+        // This is brute-force so I will probably come back here and fix it up later.
+        self.seeds
+            .chunks(2)
+            .map(|chunk| {
+                let mut lowest = usize::MAX;
+                let seed_start = chunk[0];
+                let seed_end = seed_start + chunk[1] - 1;
+                for seed in seed_start..=seed_end {
+                    let soil = almanac_mapper(&self.seed_to_soil, seed);
+                    let fertilizer = almanac_mapper(&self.soil_to_fertilizer, soil);
+                    let water = almanac_mapper(&self.fertilizer_to_water, fertilizer);
+                    let light = almanac_mapper(&self.water_to_light, water);
+                    let temp = almanac_mapper(&self.light_to_temp, light);
+                    let humidity = almanac_mapper(&self.temp_to_humidity, temp);
+                    let location = almanac_mapper(&self.humidity_to_loc, humidity);
+                    lowest = min(lowest, location);
+                }
+
+                lowest
+            })
+            .min()
+            .unwrap()
+            .into()
     }
 
     fn day() -> u32 {
@@ -100,11 +143,11 @@ impl AoCProblem for Day05 {
 }
 
 /// Maps an input to its output according to the list of almanac entries.
-/// 
+///
 /// # Parameters
 /// - `data`: The almanac.
 /// - `input`: The input item.
-/// 
+///
 /// # Returns
 /// THe output based on the almanac.
 fn almanac_mapper(data: &[AlmanacEntry], input: usize) -> usize {
