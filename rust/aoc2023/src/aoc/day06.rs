@@ -67,17 +67,21 @@ impl AoCProblem for Day06 {
         //          -> AH - HH <= D
         //          -> AH - HH - D <= 0
         //          -> 0 <= HH - AH + D
-        //          -> HH - AH + D >= 0 
+        //          -> HH - AH + D >= 0
         //
-        // We can use the quadratic formula to solve this inequality for H 
+        // We can use the quadratic formula to solve this inequality for H
         //
         //          H = (-(-A) ± sqrt((-A)(-A) - 4(1)(D))) / 2(1)
         //          -> H = (A ± sqrt(AA - 4D)) / 2
         //          -> H = (A + sqrt(AA - 4D)) / 2      -or     H = (A - sqrt(AA - 4D)) / 2
-        
-        let ans1 = (target_time as f64 + ((target_time * target_time - 4 * target_distance) as f64).sqrt()) / 2.0;
-        let ans2 = (target_time as f64 - ((target_time * target_time - 4 * target_distance) as f64).sqrt()) / 2.0;
-        
+
+        let ans1 = (target_time as f64
+            + ((target_time * target_time - 4 * target_distance) as f64).sqrt())
+            / 2.0;
+        let ans2 = (target_time as f64
+            - ((target_time * target_time - 4 * target_distance) as f64).sqrt())
+            / 2.0;
+
         let max_ans = f64::max(ans1, ans2).floor() as usize;
         let min_ans = f64::min(ans1, ans2).ceil() as usize;
 
