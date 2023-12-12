@@ -15,6 +15,7 @@ pub const SOUTH_WEST_TILE: char = '7';
 pub const SOUTH_EAST_TILE: char = 'F';
 pub const GROUND_TILE: char = '.';
 pub const START_TILE: char = 'S';
+pub const MARKED_TILE: char = '#';
 
 pub struct Day10 {
     surface_pipes: Vec<Vec<Tile>>,
@@ -184,7 +185,126 @@ impl AoCProblem for Day10 {
     }
 
     fn part2(&mut self) -> Solution {
-        0.into()
+        // Step 1: Scale the grid up by 3x by representing each tile as a char[3][3]. For example, the tiles 
+        // '|' and 'L' would be represented as
+        //          .#.          .#.
+        //          .#.          .##
+        //          .#.          ...
+        //
+        // This way, we can see exactly what tiles are accessible from outside the loop (without needing
+        // to worry about the squeezing aspect of the initial grid).
+        let mut scaled_grid =
+            vec![vec![GROUND_TILE; self.surface_pipes[0].len() * 3]; self.surface_pipes.len() * 3];
+        for (row_idx, row) in self.surface_pipes.iter().enumerate() {
+            let scaled_row_idx = row_idx * 3;
+            for (col_idx, tile) in row.iter().enumerate() {
+                let scaled_col_idx = col_idx * 3;
+                match tile {
+                    Tile::Vertical => {
+                        scaled_grid[scaled_row_idx][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 2][scaled_col_idx + 1] = MARKED_TILE;
+                    }
+                    Tile::Horizontal => {
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx + 2] = MARKED_TILE;
+                    }
+                    Tile::NorthEastBend => {
+                        scaled_grid[scaled_row_idx][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx + 2] = MARKED_TILE;
+                    }
+                    Tile::NorthWestBend => {
+                        scaled_grid[scaled_row_idx][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx] = MARKED_TILE;
+                    }
+                    Tile::SouthWestBend => {
+                        scaled_grid[scaled_row_idx + 2][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx] = MARKED_TILE;
+                    }
+                    Tile::SouthEastBend => {
+                        scaled_grid[scaled_row_idx + 2][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx + 1] = MARKED_TILE;
+                        scaled_grid[scaled_row_idx + 1][scaled_col_idx + 2] = MARKED_TILE;
+                    }
+                    Tile::Ground => continue,
+                }
+            }
+        }
+
+        // Step 2: DFS through the scaled grid to see what's reachable from the outside. For this, we can
+        // pick any random starting point as long as it's by the edge of the grid.
+        let starting_point = scaled_grid[0]
+            .iter()
+            .enumerate()
+            .find(|(_, t)| **t == GROUND_TILE)
+            .and_then(|(col, _)| Some((0, col)))
+            .or_else(|| {
+                scaled_grid[scaled_grid.len() - 1]
+                    .iter()
+                    .enumerate()
+                    .find(|(_, t)| **t == GROUND_TILE)
+                    .and_then(|(col, _)| Some((scaled_grid.len() - 1, col)))
+            })
+            .expect("could not find starting point.");
+
+        let mut stack = vec![starting_point];
+        while let Some((x, y)) = stack.pop() {
+            if scaled_grid[x][y] == MARKED_TILE {
+                continue;
+            }
+
+            scaled_grid[x][y] = MARKED_TILE;
+            if x != 0 {
+                stack.push((x - 1, y));
+            }
+
+            if x + 1 < scaled_grid.len() {
+                stack.push((x + 1, y));
+            }
+
+            if y != 0 {
+                stack.push((x, y - 1));
+            }
+
+            if y + 1 < scaled_grid[0].len() {
+                stack.push((x, y + 1));
+            }
+        }
+
+        // Step 3: We now want to compute the number of 3x3 grids that contains JUST
+        // the ground tile. In other words, we want to compute the number of coordinates
+        // (x, y) such that x % 3 == 0 AND y % 3 == 0 AND, with the fact that this coordinate
+        // is the top-left coordinate of this 3x3 grid, whose corresponding grid is
+        //
+        //          ...
+        //          ...
+        //          ...
+        let mut area_enclosed = 0;
+        for r_idx in (0..scaled_grid.len()).step_by(3) {
+            for c_idx in (0..scaled_grid[r_idx].len()).step_by(3) {
+                let mut all_ground = true;
+                'grid_check: for dr in 0..3 {
+                    for dc in 0..3 {
+                        if scaled_grid[r_idx + dr][c_idx + dc] != GROUND_TILE {
+                            all_ground = false;
+                            break 'grid_check;
+                        }
+                    }
+                }
+
+                if all_ground {
+                    area_enclosed += 1;
+                }
+            }
+        }
+
+        // 31 - too low
+        print_grid(&scaled_grid);
+        area_enclosed.into()
     }
 
     fn day() -> u32 {
@@ -227,4 +347,23 @@ impl Display for Tile {
             Tile::Ground => f.write_char(GROUND_TILE),
         }
     }
+}
+
+/// Prints the grid.
+///
+/// # Parameters
+/// - `grid`: The grid.
+#[allow(dead_code)]
+fn print_grid<T: Display>(grid: &[Vec<T>]) {
+    println!(
+        "{}\n",
+        grid.iter()
+            .map(|row| row
+                .iter()
+                .map(|c| c.to_string())
+                .collect::<Vec<_>>()
+                .join(""))
+            .collect::<Vec<_>>()
+            .join("\n")
+    );
 }
