@@ -103,89 +103,19 @@ impl AoCProblem for Day10 {
     }
 
     fn part1(&mut self) -> Solution {
-        let mut coords: HashSet<Point> = HashSet::new();
-        let mut stack: Vec<Point> = vec![];
-        stack.push(self.starting_location);
-
-        while let Some(p @ (x, y)) = stack.pop() {
-            if coords.contains(&p) {
-                continue;
-            }
-
-            coords.insert(p);
-            match self.surface_pipes[x][y] {
-                Tile::Vertical => {
-                    // Check up and down
-                    if x != 0 {
-                        stack.push((x - 1, y));
-                    }
-
-                    if x + 1 < self.surface_pipes.len() {
-                        stack.push((x + 1, y));
-                    }
-                }
-                Tile::Horizontal => {
-                    // Check left and right
-                    if y != 0 {
-                        stack.push((x, y - 1));
-                    }
-
-                    if y + 1 < self.surface_pipes[0].len() {
-                        stack.push((x, y + 1));
-                    }
-                }
-                Tile::NorthEastBend => {
-                    // Check up and right
-                    if x != 0 {
-                        stack.push((x - 1, y));
-                    }
-
-                    if y + 1 < self.surface_pipes[0].len() {
-                        stack.push((x, y + 1));
-                    }
-                }
-                Tile::NorthWestBend => {
-                    // Check up and left
-                    if x != 0 {
-                        stack.push((x - 1, y));
-                    }
-
-                    if y != 0 {
-                        stack.push((x, y - 1));
-                    }
-                }
-                Tile::SouthWestBend => {
-                    // Check down and left
-                    if x + 1 < self.surface_pipes.len() {
-                        stack.push((x + 1, y));
-                    }
-
-                    if y != 0 {
-                        stack.push((x, y - 1));
-                    }
-                }
-                Tile::SouthEastBend => {
-                    // Check down and right
-                    if x + 1 < self.surface_pipes.len() {
-                        stack.push((x + 1, y));
-                    }
-
-                    if y + 1 < self.surface_pipes[0].len() {
-                        stack.push((x, y + 1));
-                    }
-                }
-                Tile::Ground => continue,
-            }
-        }
-
         // We're assuming that the longest path is just the path that involves exploring every single
         // tile connected from the start. Divide by 2 because we aren't allowed to step on the same
         // tiles again.
-        (coords.len() / 2).into()
+        (get_loop_tile_coordinates(&self.surface_pipes, self.starting_location).len() / 2).into()
     }
 
     fn part2(&mut self) -> Solution {
-        // Step 1: Scale the grid up by 3x by representing each tile as a char[3][3]. For example, the tiles 
+        // Step 0: We want to get all coordinates that are connected to the main loop. In particular,
+        // "Any tile that isn't part of the main loop can count as being enclosed by the loop."
+        let main_loop_coords =
+            get_loop_tile_coordinates(&self.surface_pipes, self.starting_location);
+
+        // Step 1: Scale the grid up by 3x by representing each tile as a char[3][3]. For example, the tiles
         // '|' and 'L' would be represented as
         //          .#.          .#.
         //          .#.          .##
@@ -196,8 +126,14 @@ impl AoCProblem for Day10 {
         let mut scaled_grid =
             vec![vec![GROUND_TILE; self.surface_pipes[0].len() * 3]; self.surface_pipes.len() * 3];
         for (row_idx, row) in self.surface_pipes.iter().enumerate() {
-            let scaled_row_idx = row_idx * 3;
             for (col_idx, tile) in row.iter().enumerate() {
+                // If this tile isn't part of the main loop, then we don't care about it. Like the instructions
+                // said, "Any tile that isn't part of the main loop can count as being enclosed by the loop."
+                if !main_loop_coords.contains(&(row_idx, col_idx)) {
+                    continue;
+                }
+
+                let scaled_row_idx = row_idx * 3;
                 let scaled_col_idx = col_idx * 3;
                 match tile {
                     Tile::Vertical => {
@@ -241,13 +177,13 @@ impl AoCProblem for Day10 {
             .iter()
             .enumerate()
             .find(|(_, t)| **t == GROUND_TILE)
-            .and_then(|(col, _)| Some((0, col)))
+            .map(|(col, _)| (0, col))
             .or_else(|| {
                 scaled_grid[scaled_grid.len() - 1]
                     .iter()
                     .enumerate()
                     .find(|(_, t)| **t == GROUND_TILE)
-                    .and_then(|(col, _)| Some((scaled_grid.len() - 1, col)))
+                    .map(|(col, _)| (scaled_grid.len() - 1, col))
             })
             .expect("could not find starting point.");
 
@@ -347,6 +283,96 @@ impl Display for Tile {
             Tile::Ground => f.write_char(GROUND_TILE),
         }
     }
+}
+
+/// Gets the coordinates of all tiles that are connected to the main loop.
+///
+/// # Parameters
+/// - `surface_pipes`: The surface pipes.
+/// - `starting_location`: The starting location.
+///
+/// # Returns
+/// The coordinates of all tiles that are connected to the main loop.
+fn get_loop_tile_coordinates(
+    surface_pipes: &[Vec<Tile>],
+    starting_location: Point,
+) -> HashSet<Point> {
+    let mut coords: HashSet<Point> = HashSet::new();
+    let mut stack: Vec<Point> = vec![];
+    stack.push(starting_location);
+
+    while let Some(p @ (x, y)) = stack.pop() {
+        if coords.contains(&p) {
+            continue;
+        }
+
+        coords.insert(p);
+        match surface_pipes[x][y] {
+            Tile::Vertical => {
+                // Check up and down
+                if x != 0 {
+                    stack.push((x - 1, y));
+                }
+
+                if x + 1 < surface_pipes.len() {
+                    stack.push((x + 1, y));
+                }
+            }
+            Tile::Horizontal => {
+                // Check left and right
+                if y != 0 {
+                    stack.push((x, y - 1));
+                }
+
+                if y + 1 < surface_pipes[0].len() {
+                    stack.push((x, y + 1));
+                }
+            }
+            Tile::NorthEastBend => {
+                // Check up and right
+                if x != 0 {
+                    stack.push((x - 1, y));
+                }
+
+                if y + 1 < surface_pipes[0].len() {
+                    stack.push((x, y + 1));
+                }
+            }
+            Tile::NorthWestBend => {
+                // Check up and left
+                if x != 0 {
+                    stack.push((x - 1, y));
+                }
+
+                if y != 0 {
+                    stack.push((x, y - 1));
+                }
+            }
+            Tile::SouthWestBend => {
+                // Check down and left
+                if x + 1 < surface_pipes.len() {
+                    stack.push((x + 1, y));
+                }
+
+                if y != 0 {
+                    stack.push((x, y - 1));
+                }
+            }
+            Tile::SouthEastBend => {
+                // Check down and right
+                if x + 1 < surface_pipes.len() {
+                    stack.push((x + 1, y));
+                }
+
+                if y + 1 < surface_pipes[0].len() {
+                    stack.push((x, y + 1));
+                }
+            }
+            Tile::Ground => continue,
+        }
+    }
+
+    coords
 }
 
 /// Prints the grid.
