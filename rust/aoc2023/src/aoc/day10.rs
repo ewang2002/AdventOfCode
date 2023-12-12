@@ -238,8 +238,6 @@ impl AoCProblem for Day10 {
             }
         }
 
-        // 31 - too low
-        print_grid(&scaled_grid);
         area_enclosed.into()
     }
 
@@ -373,23 +371,4 @@ fn get_loop_tile_coordinates(
     }
 
     coords
-}
-
-/// Prints the grid.
-///
-/// # Parameters
-/// - `grid`: The grid.
-#[allow(dead_code)]
-fn print_grid<T: Display>(grid: &[Vec<T>]) {
-    println!(
-        "{}\n",
-        grid.iter()
-            .map(|row| row
-                .iter()
-                .map(|c| c.to_string())
-                .collect::<Vec<_>>()
-                .join(""))
-            .collect::<Vec<_>>()
-            .join("\n")
-    );
 }
