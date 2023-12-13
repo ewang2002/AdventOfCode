@@ -40,6 +40,7 @@ fn main() {
         9 => run::<crate::aoc::Day09>(test_case),
         10 => run::<crate::aoc::Day10>(test_case),
         11 => run::<crate::aoc::Day11>(test_case),
+        12 => run::<crate::aoc::Day12>(test_case),
         13 => run::<crate::aoc::Day13>(test_case),
         _ => {
             eprintln!("[Error] Day {day_to_use} has not been implemented yet.");

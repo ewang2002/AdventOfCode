@@ -36,3 +36,6 @@ pub use day11::Day11;
 
 mod day13;
 pub use day13::Day13;
+
+mod day12;
+pub use day12::Day12;
