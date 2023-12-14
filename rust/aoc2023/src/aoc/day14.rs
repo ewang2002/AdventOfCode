@@ -34,7 +34,7 @@ impl AoCProblem for Day14 {
     }
 
     fn part1(&mut self) -> Solution {
-        // For each round rock, determine how far up the rock can go 
+        // For each round rock, determine how far up the rock can go
         // without encountering a cube rock.
         let mut total_load = 0;
         for (row, _) in tilt_north(&self.rounded_rocks, &self.cube_rocks) {
@@ -48,7 +48,7 @@ impl AoCProblem for Day14 {
         // Implementation idea: Keep track of all states (rounded rocks) we've seen so far.
         // Eventually, we'll reach a state we've seen before.
 
-        // 100467 - too low 
+        // 100467 - too low
         0.into()
     }
 
@@ -95,7 +95,10 @@ fn tilt_east(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> Ve
     let mut set_round_rocks = vec![];
     while let Some(EastOrderPt((row, col))) = heap.pop() {
         let mut new_col = col;
-        while new_col < height - 1 && !cube_rocks.contains(&(row, new_col + 1)) && !set_round_rocks.contains(&(row, new_col + 1)) {
+        while new_col < height - 1
+            && !cube_rocks.contains(&(row, new_col + 1))
+            && !set_round_rocks.contains(&(row, new_col + 1))
+        {
             new_col += 1;
         }
 
@@ -139,7 +142,10 @@ fn tilt_west(rounded_rocks: &[Point], cube_rocks: &[Point]) -> Vec<Point> {
     let mut set_round_rocks = vec![];
     while let Some(WestOrderPt((row, col))) = heap.pop() {
         let mut new_col = col;
-        while new_col > 0 && !cube_rocks.contains(&(row, new_col - 1)) && !set_round_rocks.contains(&(row, new_col - 1)) {
+        while new_col > 0
+            && !cube_rocks.contains(&(row, new_col - 1))
+            && !set_round_rocks.contains(&(row, new_col - 1))
+        {
             new_col -= 1;
         }
 
@@ -184,7 +190,10 @@ fn tilt_south(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> V
 
     while let Some(SouthOrderPt((row, col))) = heap.pop() {
         let mut new_row = row;
-        while new_row < height - 1 && !cube_rocks.contains(&(new_row + 1, col)) && !set_round_rocks.contains(&(new_row + 1, col)) {
+        while new_row < height - 1
+            && !cube_rocks.contains(&(new_row + 1, col))
+            && !set_round_rocks.contains(&(new_row + 1, col))
+        {
             new_row += 1;
         }
 
@@ -228,7 +237,10 @@ fn tilt_north(rounded_rocks: &[Point], cube_rocks: &[Point]) -> Vec<Point> {
     let mut set_round_rocks = vec![];
     while let Some(NorthOrderPt((row, col))) = heap.pop() {
         let mut new_row = row;
-        while new_row > 0 && !cube_rocks.contains(&(new_row - 1, col)) && !set_round_rocks.contains(&(new_row - 1, col)) {
+        while new_row > 0
+            && !cube_rocks.contains(&(new_row - 1, col))
+            && !set_round_rocks.contains(&(new_row - 1, col))
+        {
             new_row -= 1;
         }
 
