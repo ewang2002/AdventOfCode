@@ -132,7 +132,6 @@ impl AoCProblem for Day14 {
 ///
 /// # Returns
 /// The new positions of the rounded rocks.
-#[allow(dead_code)]
 fn tilt_east(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> Vec<Point> {
     #[derive(Debug, PartialEq, Eq)]
     struct EastOrderPt(Point);
@@ -185,7 +184,6 @@ fn tilt_east(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> Ve
 ///
 /// # Returns
 /// The new positions of the rounded rocks.
-#[allow(dead_code)]
 fn tilt_west(rounded_rocks: &[Point], cube_rocks: &[Point]) -> Vec<Point> {
     #[derive(Debug, PartialEq, Eq)]
     struct WestOrderPt(Point);
@@ -238,7 +236,6 @@ fn tilt_west(rounded_rocks: &[Point], cube_rocks: &[Point]) -> Vec<Point> {
 ///
 /// # Returns
 /// The new positions of the rounded rocks.
-#[allow(dead_code)]
 fn tilt_south(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> Vec<Point> {
     #[derive(Debug, PartialEq, Eq)]
     struct SouthOrderPt(Point);
@@ -292,7 +289,6 @@ fn tilt_south(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> V
 ///
 /// # Returns
 /// The new positions of the rounded rocks.
-#[allow(dead_code)]
 fn tilt_north(rounded_rocks: &[Point], cube_rocks: &[Point]) -> Vec<Point> {
     #[derive(Debug, PartialEq, Eq)]
     struct NorthOrderPt(Point);
