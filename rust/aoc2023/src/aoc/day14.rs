@@ -1,4 +1,7 @@
-use std::{cmp::Ordering, collections::BinaryHeap};
+use std::{
+    cmp::Ordering,
+    collections::{BinaryHeap, HashMap},
+};
 
 use common::problem::day::{AoCProblem, Solution};
 
@@ -47,9 +50,69 @@ impl AoCProblem for Day14 {
     fn part2(&mut self) -> Solution {
         // Implementation idea: Keep track of all states (rounded rocks) we've seen so far.
         // Eventually, we'll reach a state we've seen before.
+        const CYCLES_TO_COMPLETE: usize = 1000000000;
+        let mut rounded_rocks = self.rounded_rocks.clone();
 
-        // 100467 - too low
-        0.into()
+        // Key = state
+        // Value = index that state was seen at
+        let mut seen_states: HashMap<Vec<Point>, usize> = HashMap::new();
+
+        // Figure out where the cycle starts
+        let mut cycles_completed = 0;
+        while cycles_completed < CYCLES_TO_COMPLETE {
+            // north -> west -> south -> east
+            let r1 = tilt_north(&rounded_rocks, &self.cube_rocks);
+            let r2 = tilt_west(&r1, &self.cube_rocks);
+            let r3 = tilt_south(&r2, &self.cube_rocks, self.height);
+            let r4 = tilt_east(&r3, &self.cube_rocks, self.height);
+            rounded_rocks = r4;
+            cycles_completed += 1;
+
+            if seen_states.contains_key(&rounded_rocks) {
+                break;
+            }
+
+            seen_states.insert(rounded_rocks.clone(), cycles_completed);
+        }
+
+        let last_seen_state = seen_states.get(&rounded_rocks).unwrap();
+        let cycle_length = cycles_completed - last_seen_state;
+
+        // Now that we know what the cycle length is, along with the number of cycles completed,
+        // we can "jump" ahead towards the final state
+        //
+        // CYCLES_TO_COMPLETE - cycles_completed
+        // => Gives us the number of cycles left to complete. Note that this does NOT tell us where
+        //    the cycle started, just that the cycle is of that length. So, we'll need to apply an
+        //    offset to get to the correct base state (where the cycle begins).
+        //
+        // ((CYCLES_TO_COMPLETE - cycles_completed) / cycle_length)
+        // => Gives us the number of cycles left to complete, in terms of the cycle length
+        //
+        // ((CYCLES_TO_COMPLETE - cycles_completed) / cycle_length) * cycle_length
+        // => Maps the base index 0 (cycles_completed = 0) to the corresponding index that is before the
+        //    final state.
+        //
+        // ((CYCLES_TO_COMPLETE - cycles_completed) / cycle_length) * cycle_length + last_seen_state
+        // => Correctly maps the previous value so that it maps with the first state in the original cycle.
+        cycles_completed = ((CYCLES_TO_COMPLETE - cycles_completed) / cycle_length) * cycle_length
+            + last_seen_state;
+        while cycles_completed < CYCLES_TO_COMPLETE {
+            let r1 = tilt_north(&rounded_rocks, &self.cube_rocks);
+            let r2 = tilt_west(&r1, &self.cube_rocks);
+            let r3 = tilt_south(&r2, &self.cube_rocks, self.height);
+            let r4 = tilt_east(&r3, &self.cube_rocks, self.height);
+            rounded_rocks = r4;
+            cycles_completed += 1;
+        }
+
+        // Compute the total load
+        let mut total_load = 0;
+        for (row, _) in rounded_rocks {
+            total_load += self.height - row;
+        }
+
+        total_load.into()
     }
 
     fn day() -> u32 {
@@ -61,6 +124,14 @@ impl AoCProblem for Day14 {
     }
 }
 
+/// Tilts the rocks east, returning the new positions of the rocks.
+///
+/// # Parameters
+/// - `rounded_rocks`: The positions of the rounded rocks.
+/// - `cube_rocks`: The positions of the cube rocks.
+///
+/// # Returns
+/// The new positions of the rounded rocks.
 #[allow(dead_code)]
 fn tilt_east(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> Vec<Point> {
     #[derive(Debug, PartialEq, Eq)]
@@ -77,12 +148,10 @@ fn tilt_east(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> Ve
             let (row1, col1) = self.0;
             let (row2, col2) = other.0;
 
-            if col1 < col2 {
-                Ordering::Less
-            } else if col1 > col2 {
-                Ordering::Greater
-            } else {
-                row1.cmp(&row2)
+            match col1.cmp(&col2) {
+                Ordering::Less => Ordering::Less,
+                Ordering::Greater => Ordering::Greater,
+                Ordering::Equal => row1.cmp(&row2),
             }
         }
     }
@@ -108,6 +177,14 @@ fn tilt_east(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> Ve
     set_round_rocks
 }
 
+/// Tilts the rocks west, returning the new positions of the rocks.
+///
+/// # Parameters
+/// - `rounded_rocks`: The positions of the rounded rocks.
+/// - `cube_rocks`: The positions of the cube rocks.
+///
+/// # Returns
+/// The new positions of the rounded rocks.
 #[allow(dead_code)]
 fn tilt_west(rounded_rocks: &[Point], cube_rocks: &[Point]) -> Vec<Point> {
     #[derive(Debug, PartialEq, Eq)]
@@ -124,12 +201,10 @@ fn tilt_west(rounded_rocks: &[Point], cube_rocks: &[Point]) -> Vec<Point> {
             let (row1, col1) = self.0;
             let (row2, col2) = other.0;
 
-            if col1 > col2 {
-                Ordering::Less
-            } else if col1 < col2 {
-                Ordering::Greater
-            } else {
-                row1.cmp(&row2)
+            match col1.cmp(&col2) {
+                Ordering::Less => Ordering::Greater,
+                Ordering::Greater => Ordering::Less,
+                Ordering::Equal => row1.cmp(&row2),
             }
         }
     }
@@ -155,6 +230,14 @@ fn tilt_west(rounded_rocks: &[Point], cube_rocks: &[Point]) -> Vec<Point> {
     set_round_rocks
 }
 
+/// Tilts the rocks south, returning the new positions of the rocks.
+///
+/// # Parameters
+/// - `rounded_rocks`: The positions of the rounded rocks.
+/// - `cube_rocks`: The positions of the cube rocks.
+///
+/// # Returns
+/// The new positions of the rounded rocks.
 #[allow(dead_code)]
 fn tilt_south(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> Vec<Point> {
     #[derive(Debug, PartialEq, Eq)]
@@ -171,12 +254,10 @@ fn tilt_south(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> V
             let (row1, col1) = self.0;
             let (row2, col2) = other.0;
 
-            if row1 < row2 {
-                Ordering::Less
-            } else if row1 > row2 {
-                Ordering::Greater
-            } else {
-                col1.cmp(&col2)
+            match row1.cmp(&row2) {
+                Ordering::Less => Ordering::Less,
+                Ordering::Greater => Ordering::Greater,
+                Ordering::Equal => col1.cmp(&col2),
             }
         }
     }
@@ -203,6 +284,14 @@ fn tilt_south(rounded_rocks: &[Point], cube_rocks: &[Point], height: usize) -> V
     set_round_rocks
 }
 
+/// Tilts the rocks north, returning the new positions of the rocks.
+///
+/// # Parameters
+/// - `rounded_rocks`: The positions of the rounded rocks.
+/// - `cube_rocks`: The positions of the cube rocks.
+///
+/// # Returns
+/// The new positions of the rounded rocks.
 #[allow(dead_code)]
 fn tilt_north(rounded_rocks: &[Point], cube_rocks: &[Point]) -> Vec<Point> {
     #[derive(Debug, PartialEq, Eq)]
@@ -219,12 +308,10 @@ fn tilt_north(rounded_rocks: &[Point], cube_rocks: &[Point]) -> Vec<Point> {
             let (row1, col1) = self.0;
             let (row2, col2) = other.0;
 
-            if row1 > row2 {
-                Ordering::Less
-            } else if row1 < row2 {
-                Ordering::Greater
-            } else {
-                col1.cmp(&col2)
+            match row1.cmp(&row2) {
+                Ordering::Less => Ordering::Greater,
+                Ordering::Greater => Ordering::Less,
+                Ordering::Equal => col1.cmp(&col2),
             }
         }
     }
