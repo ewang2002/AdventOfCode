@@ -258,7 +258,7 @@ impl IntCodeComputer {
     /// Sets the value `new_val` to the current program at the index specified by the value at
     /// the current program's index at index `ins_pointer + offset`. In other words, this will
     /// perform the operation
-    /// ```
+    /// ```ignore
     /// curr_prgm[curr_prgm[ins_pointer + offset]] = new_val
     /// ```
     ///
