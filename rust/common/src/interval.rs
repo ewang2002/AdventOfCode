@@ -79,6 +79,23 @@ impl IntInterval {
             None
         }
     }
+
+    /// Finds the commonly shared region between two intervals. This is also known as the intersection of two intervals.
+    ///
+    /// # Parameters
+    /// - `other`: The other interval to intersect with.
+    ///
+    /// # Returns
+    /// The interval, if intersection is possible. Otherwise, `None` is returned.
+    pub fn intersect(&self, other: &IntInterval) -> Option<IntInterval> {
+        let start_pt = max(self.low, other.low);
+        let end_pt = min(self.high, other.high);
+        if start_pt <= end_pt {
+            Some(IntInterval::new(start_pt, end_pt))
+        } else {
+            None
+        }
+    }
 }
 
 impl Display for IntInterval {
@@ -129,7 +146,7 @@ mod interval_tests {
     }
 
     #[test]
-    fn test_no_overlap() {
+    fn test_merge_no_overlap() {
         let int1 = IntInterval::new(0, 100);
         let int2 = IntInterval::new(102, 150);
 
@@ -138,7 +155,7 @@ mod interval_tests {
     }
 
     #[test]
-    fn test_partial_enclosure() {
+    fn test_merge_partial_enclosure() {
         let int1 = IntInterval::new(0, 100);
         let int2 = IntInterval::new(50, 150);
 
@@ -147,7 +164,7 @@ mod interval_tests {
     }
 
     #[test]
-    fn test_touching_interval() {
+    fn test_merge_touching_interval() {
         let int1 = IntInterval::new(0, 50);
         let int2 = IntInterval::new(51, 100);
         let int3 = IntInterval::new(50, 100);
@@ -159,7 +176,7 @@ mod interval_tests {
     }
 
     #[test]
-    fn test_enclose_merge_general() {
+    fn test_merge_enclose_general() {
         let int1 = IntInterval::new(0, 100);
         let int2 = IntInterval::new(10, 30);
 
@@ -168,7 +185,7 @@ mod interval_tests {
     }
 
     #[test]
-    fn test_enclose_merge_endpoint() {
+    fn test_merge_enclose_endpoint() {
         let int1 = IntInterval::new(0, 100);
         let int2 = IntInterval::new(0, 30);
         let int4 = IntInterval::new(55, 100);
@@ -177,6 +194,57 @@ mod interval_tests {
         assert_eq!(Some(IntInterval::new(0, 100)), int2.merge(&int1));
         assert_eq!(Some(IntInterval::new(0, 100)), int1.merge(&int4));
         assert_eq!(Some(IntInterval::new(0, 100)), int4.merge(&int1));
+    }
+
+    #[test]
+    fn test_merge_identity() {
+        let int1 = IntInterval::new(0, 100);
         assert_eq!(Some(IntInterval::new(0, 100)), int1.merge(&int1));
+    }
+
+    #[test]
+    fn test_intersect_identity() {
+        let int1 = IntInterval::new(0, 100);
+        assert_eq!(Some(IntInterval::new(0, 100)), int1.intersect(&int1));
+    }
+
+    #[test]
+    fn test_intersect_enclose() {
+        let int1 = IntInterval::new(10, 50);
+        let int2 = IntInterval::new(20, 40);
+
+        assert_eq!(Some(IntInterval::new(20, 40)), int1.intersect(&int2));
+        assert_eq!(Some(IntInterval::new(20, 40)), int2.intersect(&int1));
+    }
+
+    #[test]
+    fn test_intersect_enclose_endpoint() {
+        let int1 = IntInterval::new(0, 100);
+        let int2 = IntInterval::new(0, 30);
+        let int3 = IntInterval::new(70, 100);
+
+        assert_eq!(Some(IntInterval::new(0, 30)), int1.intersect(&int2));
+        assert_eq!(Some(IntInterval::new(0, 30)), int2.intersect(&int1));
+        
+        assert_eq!(Some(IntInterval::new(70, 100)), int1.intersect(&int3));
+        assert_eq!(Some(IntInterval::new(70, 100)), int3.intersect(&int1));
+    }
+
+    #[test]
+    fn test_intersect_no_overlap() {
+        let int1 = IntInterval::new(0, 100);
+        let int2 = IntInterval::new(102, 150);
+
+        assert_eq!(None, int1.intersect(&int2));
+        assert_eq!(None, int2.intersect(&int1));
+    }
+
+    #[test]
+    fn test_intersect_partial_enclosure() {
+        let int1 = IntInterval::new(0, 100);
+        let int2 = IntInterval::new(50, 150);
+
+        assert_eq!(Some(IntInterval::new(50, 100)), int1.intersect(&int2));
+        assert_eq!(Some(IntInterval::new(50, 100)), int2.intersect(&int1));
     }
 }
