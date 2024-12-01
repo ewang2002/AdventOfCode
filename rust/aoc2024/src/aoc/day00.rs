@@ -1,15 +1,13 @@
-﻿use common::problem::day::{AoCProblem, Solution};
+use common::problem::day::{AoCProblem, Solution};
 
 pub struct Day00 {
-    nums: Vec<usize>
+    nums: Vec<usize>,
 }
 
 impl AoCProblem for Day00 {
     fn prepare(input: String) -> Self {
         Self {
-            nums: input.lines()
-                .map(|x| x.parse().unwrap())
-                .collect()
+            nums: input.lines().map(|x| x.parse().unwrap()).collect(),
         }
     }
 
