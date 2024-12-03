@@ -55,10 +55,10 @@ impl AoCProblem for Day02 {
 }
 
 /// Checks if a report is increasing, or can be fixed at most once to make it increasing.
-/// 
+///
 /// # Parameters
 /// - `report`: The report.
-/// 
+///
 /// # Returns
 /// Whether the report is increasing or can be fixed one time to make it increasing.
 fn is_increasing_report_ok(report: &[isize]) -> bool {
