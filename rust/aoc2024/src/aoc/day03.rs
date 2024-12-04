@@ -122,11 +122,11 @@ enum Instr {
 }
 
 /// Gets the next token (i.e., instruction) to process.
-/// 
+///
 /// # Parameters
 /// - `memory`: The active memory to operate on.
 /// - `i`: The index to start parsing at.
-/// 
+///
 /// # Returns
 /// The next possible token (Mul, Do, or Don't), or None if no more tokens can be found.
 fn get_next_token(memory: &[char], i: &mut usize) -> Instr {
