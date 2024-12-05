@@ -225,7 +225,7 @@ mod interval_tests {
 
         assert_eq!(Some(IntInterval::new(0, 30)), int1.intersect(&int2));
         assert_eq!(Some(IntInterval::new(0, 30)), int2.intersect(&int1));
-        
+
         assert_eq!(Some(IntInterval::new(70, 100)), int1.intersect(&int3));
         assert_eq!(Some(IntInterval::new(70, 100)), int3.intersect(&int1));
     }

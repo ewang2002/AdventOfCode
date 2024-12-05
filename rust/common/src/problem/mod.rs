@@ -7,7 +7,7 @@ use self::day::AoCProblem;
 /// # Parameters
 /// - `day`: The day to run. This should be in the range [0, 25].
 /// - `test_case`: The test case to run, if any. If `None`, then the
-/// solution file is executed.
+///   solution file is executed.
 ///
 /// # Returns
 /// A result representing whether the execution was successful or not.
