@@ -1,4 +1,5 @@
 pub mod constants;
+pub mod graphs;
 pub mod intcode;
 pub mod interval;
 pub mod numbers;
