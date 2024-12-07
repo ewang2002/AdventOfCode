@@ -1,4 +1,4 @@
-use common::problem::run;
+﻿use common::problem::run;
 use std::env;
 mod aoc;
 
@@ -34,6 +34,7 @@ fn main() {
         3 => run::<crate::aoc::Day03>(test_case),
         4 => run::<crate::aoc::Day04>(test_case),
         5 => run::<crate::aoc::Day05>(test_case),
+        6 => run::<crate::aoc::Day06>(test_case),
         _ => {
             eprintln!("[Error] Day {day_to_use} has not been implemented yet.");
         }
