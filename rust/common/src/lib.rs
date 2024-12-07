@@ -5,4 +5,4 @@ pub mod interval;
 pub mod numbers;
 pub mod problem;
 
-pub use chrono;
+pub use rayon;

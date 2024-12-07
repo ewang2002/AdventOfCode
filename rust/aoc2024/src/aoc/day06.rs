@@ -1,4 +1,5 @@
 use common::problem::day::{AoCProblem, Solution};
+use common::rayon::prelude::*;
 use std::collections::HashSet;
 
 const GUARD: char = '^';
@@ -97,7 +98,7 @@ impl AoCProblem for Day06 {
         };
 
         self.seen_points
-            .iter()
+            .par_iter()
             .filter(|pt| will_infinite_loop(**pt))
             .count()
             .into()
