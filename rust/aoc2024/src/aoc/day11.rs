@@ -120,9 +120,9 @@ fn build_number_graph(num: usize, graph: &mut HashMap<usize, Vec<usize>>) {
 ///    |-----|       |-----|         |-----|
 ///   40     48     40     48       80     96       level 6
 /// ```
-/// Note here that `<cycle>` below the `0` means that we will refer back to all the nodes below the 
+/// Note here that `<cycle>` below the `0` means that we will refer back to all the nodes below the
 /// top-most `0` node.
-/// 
+///
 /// To get all the stones after 4 blinks, we just need to get all the stones at the 4th level. So,
 ///
 /// | Level | Stones                           |
