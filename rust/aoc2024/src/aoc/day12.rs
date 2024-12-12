@@ -1,4 +1,4 @@
-use std::collections::{HashSet, VecDeque};
+use std::collections::HashSet;
 
 use common::problem::day::{AoCProblem, Solution};
 
@@ -138,37 +138,8 @@ fn calculate_num_sides(
     plant: char,
     region: &HashSet<(isize, isize)>,
 ) -> usize {
-    fn explore(
-        all_points: &HashSet<(isize, isize)>,
-        seen: &mut HashSet<(isize, isize)>,
-        i: isize,
-        j: isize,
-        sides: &mut usize,
-    ) {
-        if !all_points.contains(&(i, j)) {
-            return;
-        }
-
-        if seen.contains(&(i, j)) {
-            return;
-        }
-
-        seen.insert((i, j));
-
-        // Check if this point is a corner
-        let is_corner = (all_points.contains(&(i + 1, j)) || all_points.contains(&(i - 1, j)))
-            && (all_points.contains(&(i, j + 1)) || all_points.contains(&(i, j - 1)));
-        if is_corner {
-            *sides += 1;
-        }
-
-        for (di, dj) in DIRECTIONS {
-            explore(all_points, seen, i + di, j + dj, sides);
-        }
-    }
-
     // Get a set of all the points that belong to the edge of the region.
-    let mut edge_points = region
+    let edge_points = region
         .iter()
         .cloned()
         .filter(|&(pt_i, pt_j)| {
@@ -180,19 +151,15 @@ fn calculate_num_sides(
                         || garden_plot[(pt_i + di) as usize][(pt_j + dj) as usize] != plant
                 })
         })
-        .collect::<VecDeque<_>>();
+        .collect::<HashSet<_>>();
 
-    let all_points = edge_points.iter().cloned().collect::<HashSet<_>>();
-    let mut sides = 0;
-    let mut seen = HashSet::new();
-    while let Some((i, j)) = edge_points.pop_back() {
-        if seen.contains(&(i, j)) {
-            continue;
-        }
-        explore(&all_points, &mut seen, i, j, &mut sides);
-    }
-
-    sides
+    edge_points
+        .iter()
+        .filter(|&&(i, j)| {
+            (edge_points.contains(&(i + 1, j)) || edge_points.contains(&(i - 1, j)))
+                && (edge_points.contains(&(i, j + 1)) || edge_points.contains(&(i, j - 1)))
+        })
+        .count()
 }
 
 /// Calculates the area and perimeter of the plant region.
