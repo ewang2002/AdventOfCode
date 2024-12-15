@@ -6,3 +6,4 @@ pub mod numbers;
 pub mod problem;
 
 pub use rayon;
+pub use regex;
